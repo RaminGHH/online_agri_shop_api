@@ -25,7 +25,8 @@ DJANGO_APPS = [
 ]
 
 LOCAL_APPS = [
-    "api",
+    # "api",
+    "apps.accounts.apps.AccountConfig",
 ]
 
 THIRD_PARTY_APPS = [
