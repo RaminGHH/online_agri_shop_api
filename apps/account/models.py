@@ -95,7 +95,7 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     USERNAME_FIELD = "phone_number"
 
-    REQUIRED_FIELDS = []
+    REQUIRED_FIELDS = ["email", "full_name"]
 
     def __str__(self):
         return self.phone_number
@@ -112,8 +112,8 @@ class Profile(models.Model):
     Related Model:
         - User
     """
-    user = models.ForeignKey(
-        "accounts.User",
+    user = models.OneToOneField(
+        "account.User",
         on_delete=models.CASCADE,
         related_name="profile"
     )
@@ -157,7 +157,7 @@ class Address(models.Model):
         - Order
     """
     user = models.ForeignKey(
-        "accounts.User",
+        "account.User",
         on_delete=models.CASCADE,
         related_name="addresses"
     )

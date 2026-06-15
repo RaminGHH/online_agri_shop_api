@@ -25,8 +25,7 @@ DJANGO_APPS = [
 ]
 
 LOCAL_APPS = [
-    # "api",
-    "apps.accounts.apps.AccountConfig",
+    "apps.account.apps.AccountConfig",
 ]
 
 THIRD_PARTY_APPS = [
@@ -147,5 +146,5 @@ USE_I18N = True
 USE_TZ = True
 
 
-
+AUTH_USER_MODEL = "account.User"
 
