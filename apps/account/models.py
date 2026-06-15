@@ -63,33 +63,18 @@ class User(AbstractBaseUser, PermissionsMixin):
         This model is designed to support future authentication
         mechanisms such as OTP, SMS verification, and social login.
     """
-    email = models.EmailField(
-        unique=True,
-        blank=True,
-        null=True
-    )
+    email = models.EmailField( unique=True, blank=True, null=True )
+    phone_number = models.CharField( max_length=11, unique=True )
+    full_name = models.CharField( max_length=255, blank=True )
 
-    phone_number = models.CharField(
-        max_length=11,
-        unique=True
-    )
+    is_active = models.BooleanField( default=True )
+    is_staff = models.BooleanField( default=False )
 
-    full_name = models.CharField(
-        max_length=255,
-        blank=True
-    )
+    is_phone_verified = models.BooleanField( default=False )
+    is_email_verified = models.BooleanField( default=False )
 
-    is_active = models.BooleanField(
-        default=True
-    )
 
-    is_staff = models.BooleanField(
-        default=False
-    )
-
-    date_joined = models.DateTimeField(
-        auto_now_add=True
-    )
+    date_joined = models.DateTimeField( auto_now_add=True )
 
     objects = UserManager()
 
@@ -112,34 +97,36 @@ class Profile(models.Model):
     Related Model:
         - User
     """
+    class GenderChoices(models.TextChoices):
+        MALE = "male", "Male"
+        FEMALE = "female", "Female"
+
     user = models.OneToOneField(
         "account.User",
         on_delete=models.CASCADE,
         related_name="profile"
     )
 
-    avatar = models.ImageField(
-        upload_to="avatars",
-        blank=True,
-        null=True
-    )
+    avatar = models.ImageField( upload_to="avatars", blank=True, null=True )
 
-    bio = models.TextField(
+    bio = models.TextField( blank=True )
+
+    birth_date = models.DateField( blank=True, null=True )
+
+    gender = models.CharField(
+        max_length=10,
+        choices=GenderChoices.choices,
         blank=True
     )
 
-    birth_date = models.DateField(
-        blank=True,
-        null=True
+    national_code = models.CharField(
+        max_length=10,
+        blank=True
     )
 
-    created_at = models.DateTimeField(
-        auto_now_add=True
-    )
+    created_at = models.DateTimeField( auto_now_add=True )
 
-    updated_at = models.DateTimeField(
-        auto_now=True
-    )
+    updated_at = models.DateTimeField( auto_now=True )
 
     def __str__(self):
         return f"{self.user.phone_number} Profile"

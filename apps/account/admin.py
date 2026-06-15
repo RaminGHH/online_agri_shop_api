@@ -17,6 +17,9 @@ class UserAdmin(admin.ModelAdmin):
         "email",
         "is_staff",
         "is_active",
+        "is_phone_verified",
+        "is_email_verified",
+
     )
 
     list_filter = (

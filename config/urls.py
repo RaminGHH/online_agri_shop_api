@@ -4,9 +4,16 @@ from django.urls import include, path
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+]
 
-    # path(
-    #     "api/v1/",
-    #     include("api.urls")
-    # )
+# --------------API URLS ------------ #
+api_version = "api/v1/"
+
+urlpatterns += [
+    path(
+        api_version + "accounts/",
+        include(
+            "apps.account.urls"
+        )
+    ),
 ]
