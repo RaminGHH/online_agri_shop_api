@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>سبزینه — پنل مدیریت</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;600;700;900&display=swap');
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#0F1A14;--bg2:#131E11;--bg3:#192318;
+  --surf:#1C2B1A;--surf2:#223021;
+  --bdr:rgba(255,255,255,0.06);--bdr2:rgba(255,255,255,0.11);
+  --fg:#52936B;--fg2:#6BAD83;
+  --gold:#C8A84B;--gold-l:#F0DFA0;
+  --txt:#E8F0E9;--txt2:rgba(232,240,233,0.6);--txt3:rgba(232,240,233,0.32);
+  --red:#E05454;--red-l:rgba(224,84,84,0.12);
+  --blue:#4A9EDB;--blue-l:rgba(74,158,219,0.12);
+  --amber:#D4925A;--amber-l:rgba(212,146,90,0.12);
+  --purple:#8B6BD4;--purple-l:rgba(139,107,212,0.12);
+}
+body{font-family:'Vazirmatn',sans-serif;background:var(--bg);color:var(--txt);direction:rtl;min-height:100vh;display:flex;overflow-x:hidden}
+
+/* SIDEBAR */
+.sidebar{width:220px;min-height:100vh;background:var(--bg2);border-left:1px solid var(--bdr);display:flex;flex-direction:column;position:fixed;right:0;top:0;bottom:0;z-index:100}
+.sb-logo{padding:18px 16px 14px;border-bottom:1px solid var(--bdr);display:flex;align-items:center;gap:9px}
+.sb-lm{width:31px;height:31px;background:var(--gold);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:900;color:#1a1a0a;flex-shrink:0}
+.sb-lt{font-size:13px;font-weight:800;color:var(--txt)}
+.sb-lt small{display:block;font-size:10px;font-weight:400;color:var(--txt3);margin-top:1px}
+.sb-sec{padding:14px 14px 5px;font-size:9px;font-weight:700;color:var(--txt3);letter-spacing:1.2px;text-transform:uppercase}
+.sb-item{display:flex;align-items:center;gap:9px;padding:8px 11px;margin:1px 7px;border-radius:8px;cursor:pointer;font-size:12px;font-weight:600;color:var(--txt2);transition:all .15s;position:relative;border:1px solid transparent}
+.sb-item:hover{background:var(--surf);color:var(--txt)}
+.sb-item.on{background:rgba(82,147,107,0.12);color:var(--fg2);border-color:rgba(82,147,107,0.18)}
+.sb-item i{font-size:16px;flex-shrink:0}
+.sb-badge{margin-right:auto;font-size:9px;font-weight:700;padding:2px 6px;border-radius:7px}
+.sb-badge.red{background:var(--red);color:#fff}
+.sb-badge.gold{background:var(--gold);color:#1a1a0a}
+.sb-bottom{margin-top:auto;border-top:1px solid var(--bdr);padding:10px 7px}
+.sb-user{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:8px;cursor:pointer;transition:background .15s}
+.sb-user:hover{background:var(--surf)}
+.sb-av{width:28px;height:28px;border-radius:50%;background:rgba(82,147,107,0.15);border:1px solid rgba(82,147,107,0.25);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:var(--fg2);flex-shrink:0}
+.sb-uname{font-size:11px;font-weight:700;color:var(--txt)}
+.sb-urole{font-size:10px;color:var(--txt3)}
+.sb-logout{margin-right:auto;color:var(--txt3);font-size:14px;cursor:pointer;transition:color .15s}
+.sb-logout:hover{color:var(--red)}
+
+/* MAIN */
+.main{margin-right:220px;flex:1;display:flex;flex-direction:column;min-height:100vh;overflow-x:hidden}
+
+/* TOPBAR */
+.topbar{background:var(--bg2);border-bottom:1px solid var(--bdr);height:50px;padding:0 20px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50;gap:12px}
+.tb-left{display:flex;align-items:center;gap:10px}
+.tb-title{font-size:14px;font-weight:800;color:var(--txt)}
+.tb-sub{font-size:10px;color:var(--txt3)}
+.tb-right{display:flex;align-items:center;gap:8px}
+.tb-search{background:var(--surf);border:1px solid var(--bdr2);border-radius:8px;display:flex;align-items:center;gap:6px;padding:0 10px;height:30px;width:180px}
+.tb-search input{background:transparent;border:none;outline:none;color:var(--txt);font-size:11px;font-family:'Vazirmatn',sans-serif;flex:1;direction:rtl}
+.tb-search input::placeholder{color:var(--txt3)}
+.tb-search i{color:var(--txt3);font-size:13px}
+.tb-icon{width:30px;height:30px;background:var(--surf);border:1px solid var(--bdr2);border-radius:7px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--txt2);position:relative;transition:all .15s}
+.tb-icon:hover{color:var(--txt);border-color:var(--bdr2)}
+.notif-dot{position:absolute;top:5px;left:5px;width:6px;height:6px;background:var(--red);border-radius:50%;border:1.5px solid var(--bg2)}
+.tb-date{font-size:10px;color:var(--txt3);display:flex;align-items:center;gap:4px;white-space:nowrap}
+.btn-site{height:28px;background:rgba(82,147,107,0.12);border:1px solid rgba(82,147,107,0.2);border-radius:6px;padding:0 10px;font-size:10px;font-weight:700;color:var(--fg2);cursor:pointer;font-family:'Vazirmatn',sans-serif;display:flex;align-items:center;gap:4px;white-space:nowrap}
+
+/* CONTENT */
+.content{padding:18px 20px 40px;flex:1}
+
+/* KPI */
+.kpi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:16px}
+.kpi{background:var(--surf);border:1px solid var(--bdr);border-radius:11px;padding:14px;position:relative;overflow:hidden;transition:border-color .15s}
+.kpi:hover{border-color:var(--bdr2)}
+.kpi::after{content:'';position:absolute;top:0;left:0;right:0;height:2px;border-radius:11px 11px 0 0}
+.kpi.gr::after{background:linear-gradient(90deg,transparent,var(--fg))}
+.kpi.go::after{background:linear-gradient(90deg,transparent,var(--gold))}
+.kpi.bl::after{background:linear-gradient(90deg,transparent,var(--blue))}
+.kpi.rd::after{background:linear-gradient(90deg,transparent,var(--red))}
+.kpi-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:10px}
+.kpi-lbl{font-size:10px;color:var(--txt3);font-weight:600}
+.kpi-ico{width:28px;height:28px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:14px}
+.kpi-num{font-size:24px;font-weight:900;color:var(--txt);line-height:1;margin-bottom:7px}
+.kpi-num sup{font-size:11px;font-weight:400;color:var(--txt3)}
+.kpi-chg{font-size:10px;display:flex;align-items:center;gap:4px}
+.kpi-chg.up{color:#52C97A}.kpi-chg.dn{color:var(--red)}
+.kpi-chg .per{color:var(--txt3)}
+.kpi-bar{height:3px;background:var(--bg3);border-radius:2px;margin-top:10px;overflow:hidden}
+.kpi-bar-fill{height:100%;border-radius:2px;transition:width 1s ease}
+
+/* GRID LAYOUTS */
+.row2{display:grid;grid-template-columns:1.55fr 1fr;gap:10px;margin-bottom:16px}
+.row3{display:grid;grid-template-columns:1.1fr 1fr 1fr;gap:10px}
+
+/* CARD */
+.card{background:var(--surf);border:1px solid var(--bdr);border-radius:11px;overflow:hidden}
+.card-h{padding:12px 14px;border-bottom:1px solid var(--bdr);display:flex;align-items:center;justify-content:space-between}
+.card-ht{font-size:12px;font-weight:800;color:var(--txt);display:flex;align-items:center;gap:6px}
+.card-ht i{color:var(--fg);font-size:15px}
+.card-b{padding:14px}
+
+/* CHART TABS */
+.ctabs{display:flex;gap:2px;background:var(--bg3);border-radius:6px;padding:2px}
+.ct{padding:4px 9px;border-radius:4px;font-size:10px;font-weight:600;color:var(--txt3);cursor:pointer;transition:all .15s}
+.ct.on{background:var(--surf2);color:var(--txt)}
+
+/* BAR CHART */
+.bar-chart{display:flex;align-items:flex-end;gap:6px;height:110px;margin-bottom:6px}
+.bc-col{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px}
+.bc-bars{display:flex;gap:2px;align-items:flex-end;width:100%}
+.bc-bar{flex:1;border-radius:3px 3px 0 0;transition:opacity .15s;cursor:pointer;min-width:6px}
+.bc-bar:hover{opacity:.75}
+.bc-lbl{font-size:9px;color:var(--txt3);white-space:nowrap}
+
+/* DONUT */
+.donut-section{display:flex;align-items:center;gap:14px;padding:6px 0}
+.donut-svg{width:84px;height:84px;flex-shrink:0}
+.donut-leg{flex:1;display:flex;flex-direction:column;gap:6px}
+.dl{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--txt2)}
+.dl-dot{width:7px;height:7px;border-radius:2px;flex-shrink:0}
+.dl-pct{margin-right:auto;font-size:11px;font-weight:700;color:var(--txt)}
+
+/* ORDERS TABLE */
+.otable{width:100%;border-collapse:collapse}
+.otable th{font-size:9px;font-weight:700;color:var(--txt3);text-align:right;padding:8px 14px;border-bottom:1px solid var(--bdr);letter-spacing:.5px;text-transform:uppercase;white-space:nowrap}
+.otable td{font-size:11px;color:var(--txt2);padding:9px 14px;border-bottom:1px solid var(--bdr);vertical-align:middle}
+.otable tr:last-child td{border-bottom:none}
+.otable tr:hover td{background:var(--surf2)}
+.oid{font-weight:700;color:var(--txt);direction:ltr;display:inline-block;font-size:11px}
+.spill{display:inline-flex;align-items:center;gap:3px;padding:2px 7px;border-radius:4px;font-size:9px;font-weight:700;white-space:nowrap}
+.sp-pend{background:var(--amber-l);color:var(--amber)}
+.sp-proc{background:var(--blue-l);color:var(--blue)}
+.sp-sent{background:var(--purple-l);color:var(--purple)}
+.sp-done{background:rgba(82,147,107,0.15);color:var(--fg2)}
+.sp-cncl{background:var(--red-l);color:var(--red)}
+.oamt{font-weight:700;color:var(--txt);font-size:11px}
+.ocust{font-size:11px;color:var(--txt2)}
+
+/* TOP PRODS */
+.tp-list{padding:4px 0}
+.tp-item{display:flex;align-items:center;gap:9px;padding:8px 14px;border-bottom:1px solid var(--bdr);cursor:pointer;transition:background .15s}
+.tp-item:last-child{border-bottom:none}
+.tp-item:hover{background:var(--surf2)}
+.tp-rank{width:16px;font-size:10px;font-weight:900;color:var(--txt3);text-align:center;flex-shrink:0}
+.rank-1{color:var(--gold)}.rank-2{color:#A8A8B8}.rank-3{color:var(--amber)}
+.tp-img{width:32px;height:32px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+.tp-inf{flex:1;min-width:0}
+.tp-name{font-size:11px;font-weight:700;color:var(--txt);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tp-cat{font-size:10px;color:var(--txt3);margin-top:1px}
+.tp-r{text-align:left;flex-shrink:0}
+.tp-sale{font-size:11px;font-weight:700;color:var(--txt)}
+.tp-rev{font-size:10px;color:var(--txt3)}
+.tp-prog{height:2px;background:var(--bg3);border-radius:1px;margin-top:5px;width:48px;margin-right:auto}
+.tp-prog-f{height:100%;border-radius:1px;background:var(--fg)}
+
+/* ACTIVITY */
+.act-list{padding:2px 0}
+.act-item{display:flex;align-items:flex-start;gap:9px;padding:8px 14px;border-bottom:1px solid var(--bdr)}
+.act-item:last-child{border-bottom:none}
+.act-dot{width:27px;height:27px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0}
+.act-txt{font-size:11px;color:var(--txt2);line-height:1.6}
+.act-txt strong{color:var(--txt);font-weight:700}
+.act-time{font-size:10px;color:var(--txt3);margin-top:2px}
+
+/* QUICK ACTIONS */
+.qa-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px;padding:10px}
+.qa{background:var(--bg3);border:1px solid var(--bdr);border-radius:8px;padding:10px;cursor:pointer;transition:all .15s;text-align:center}
+.qa:hover{border-color:var(--bdr2);background:var(--surf2)}
+.qa-ico{font-size:20px;margin-bottom:5px}
+.qa-lbl{font-size:11px;font-weight:700;color:var(--txt);margin-bottom:1px}
+.qa-sub{font-size:9px;color:var(--txt3)}
+
+/* LOW STOCK */
+.ls-list{}
+.ls-item{display:flex;align-items:center;gap:9px;padding:8px 14px;border-bottom:1px solid var(--bdr)}
+.ls-item:last-child{border-bottom:none}
+.ls-img{width:30px;height:30px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0}
+.ls-inf{flex:1;min-width:0}
+.ls-name{font-size:11px;font-weight:700;color:var(--txt);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ls-sku{font-size:9px;color:var(--txt3)}
+.ls-r{text-align:left;flex-shrink:0;min-width:56px}
+.ls-num{font-size:13px;font-weight:900;color:var(--red)}
+.ls-unit{font-size:9px;color:var(--txt3)}
+.ls-b{height:3px;background:var(--bg3);border-radius:2px;margin-top:4px;overflow:hidden}
+.ls-bf{height:100%;border-radius:2px}
+
+/* BTNS */
+.btn-xs{height:26px;background:var(--surf2);border:1px solid var(--bdr2);border-radius:6px;padding:0 9px;font-size:10px;font-weight:700;color:var(--txt2);cursor:pointer;font-family:'Vazirmatn',sans-serif;display:inline-flex;align-items:center;gap:3px;transition:all .15s;white-space:nowrap}
+.btn-xs:hover{color:var(--txt);border-color:var(--fg)}
+.btn-xs.gr{background:rgba(82,147,107,0.1);border-color:rgba(82,147,107,0.2);color:var(--fg2)}
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<div class="sidebar">
+  <div class="sb-logo">
+    <div class="sb-lm">س</div>
+    <div class="sb-lt">سبزینه <small>پنل مدیریت</small></div>
+  </div>
+
+  <div class="sb-sec">اصلی</div>
+  <div class="sb-item on" onclick="nav(this)"><i class="ti ti-layout-dashboard"></i> داشبورد</div>
+  <div class="sb-item" onclick="nav(this)"><i class="ti ti-chart-bar"></i> گزارش‌ها</div>
+
+  <div class="sb-sec">فروشگاه</div>
+  <div class="sb-item" onclick="nav(this)"><i class="ti ti-receipt"></i> سفارش‌ها <span class="sb-badge red">۱۲</span></div>
+  <div class="sb-item" onclick="nav(this)"><i class="ti ti-shopping-bag"></i> محصولات</div>
+  <div class="sb-item" onclick="nav(this)"><i class="ti ti-category"></i> دسته‌بندی‌ها</div>
+  <div class="sb-item" onclick="nav(this)"><i class="ti ti-tag"></i> کوپن‌ها <span class="sb-badge gold">۳</span></div>
+
+  <div class="sb-sec">کاربران</div>
+  <div class="sb-item" onclick="nav(this)"><i class="ti ti-users"></i> کاربران</div>
+  <div class="sb-item" onclick="nav(this)"><i class="ti ti-message-dots"></i> نظرات <span class="sb-badge red">۵</span></div>
+
+  <div class="sb-sec">محتوا</div>
+  <div class="sb-item" onclick="nav(this)"><i class="ti ti-article"></i> مقالات</div>
+  <div class="sb-item" onclick="nav(this)"><i class="ti ti-photo"></i> رسانه‌ها</div>
+
+  <div class="sb-sec">سیستم</div>
+  <div class="sb-item" onclick="nav(this)"><i class="ti ti-settings"></i> تنظیمات</div>
+
+  <div class="sb-bottom">
+    <div class="sb-user">
+      <div class="sb-av">مر</div>
+      <div><div class="sb-uname">محمد رضایی</div><div class="sb-urole">مدیر ارشد</div></div>
+      <i class="ti ti-logout sb-logout" title="خروج"></i>
+    </div>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+
+  <!-- TOPBAR -->
+  <div class="topbar">
+    <div class="tb-left">
+      <div>
+        <div class="tb-title">داشبورد</div>
+        <div class="tb-sub">خوش آمدید، محمد — آخرین به‌روزرسانی: ۲ دقیقه پیش</div>
+      </div>
+    </div>
+    <div class="tb-right">
+      <div class="tb-search">
+        <i class="ti ti-search"></i>
+        <input placeholder="جستجو در پنل...">
+      </div>
+      <div class="tb-icon"><i class="ti ti-bell" style="font-size:15px"></i><div class="notif-dot"></div></div>
+      <div class="tb-icon" onclick="spin(this)" title="تازه‌سازی"><i class="ti ti-refresh" style="font-size:15px"></i></div>
+      <div class="tb-date"><i class="ti ti-calendar" style="font-size:12px"></i> ۱۶ خرداد ۱۴۰۴</div>
+      <button class="btn-site"><i class="ti ti-external-link" style="font-size:10px"></i> مشاهده سایت</button>
+    </div>
+  </div>
+
+  <!-- CONTENT -->
+  <div class="content">
+
+    <!-- KPI -->
+    <div class="kpi-grid">
+      <div class="kpi gr">
+        <div class="kpi-top">
+          <div class="kpi-lbl">فروش امروز</div>
+          <div class="kpi-ico" style="background:rgba(82,147,107,0.15)"><i class="ti ti-trending-up" style="color:var(--fg2);font-size:14px"></i></div>
+        </div>
+        <div class="kpi-num">۱۲.۴<sup>میلیون</sup></div>
+        <div class="kpi-chg up"><i class="ti ti-arrow-up-right" style="font-size:11px"></i> ۱۸.۳٪ <span class="per">نسبت به دیروز</span></div>
+        <div class="kpi-bar"><div class="kpi-bar-fill" style="width:72%;background:var(--fg)"></div></div>
+      </div>
+      <div class="kpi go">
+        <div class="kpi-top">
+          <div class="kpi-lbl">سفارش‌های جدید</div>
+          <div class="kpi-ico" style="background:var(--amber-l)"><i class="ti ti-shopping-cart" style="color:var(--amber);font-size:14px"></i></div>
+        </div>
+        <div class="kpi-num">۴۷<sup>سفارش</sup></div>
+        <div class="kpi-chg up"><i class="ti ti-arrow-up-right" style="font-size:11px"></i> ۷.۲٪ <span class="per">نسبت به دیروز</span></div>
+        <div class="kpi-bar"><div class="kpi-bar-fill" style="width:58%;background:var(--gold)"></div></div>
+      </div>
+      <div class="kpi bl">
+        <div class="kpi-top">
+          <div class="kpi-lbl">کاربران فعال</div>
+          <div class="kpi-ico" style="background:var(--blue-l)"><i class="ti ti-users" style="color:var(--blue);font-size:14px"></i></div>
+        </div>
+        <div class="kpi-num">۲۸۴<sup>نفر</sup></div>
+        <div class="kpi-chg up"><i class="ti ti-arrow-up-right" style="font-size:11px"></i> ۴.۱٪ <span class="per">این هفته</span></div>
+        <div class="kpi-bar"><div class="kpi-bar-fill" style="width:48%;background:var(--blue)"></div></div>
+      </div>
+      <div class="kpi rd">
+        <div class="kpi-top">
+          <div class="kpi-lbl">موجودی بحرانی</div>
+          <div class="kpi-ico" style="background:var(--red-l)"><i class="ti ti-alert-triangle" style="color:var(--red);font-size:14px"></i></div>
+        </div>
+        <div class="kpi-num">۸<sup>محصول</sup></div>
+        <div class="kpi-chg dn"><i class="ti ti-arrow-down-right" style="font-size:11px"></i> نیاز به تأمین فوری</div>
+        <div class="kpi-bar"><div class="kpi-bar-fill" style="width:20%;background:var(--red)"></div></div>
+      </div>
+    </div>
+
+    <!-- ROW 2: CHART + DONUT -->
+    <div class="row2">
+      <div class="card">
+        <div class="card-h">
+          <div class="card-ht"><i class="ti ti-chart-bar"></i> فروش ۷ روز اخیر</div>
+          <div class="ctabs">
+            <div class="ct on" onclick="setct(this,0)">روزانه</div>
+            <div class="ct" onclick="setct(this,1)">هفتگی</div>
+            <div class="ct" onclick="setct(this,2)">ماهانه</div>
+          </div>
+        </div>
+        <div class="card-b">
+          <div class="bar-chart" id="barchart"></div>
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-top:4px">
+            <span style="font-size:10px;color:var(--txt3)">مجموع: <strong style="color:var(--txt)">۸۴.۶ میلیون تومان</strong></span>
+            <div style="display:flex;gap:10px">
+              <span style="font-size:9px;color:var(--txt3);display:flex;align-items:center;gap:4px"><span style="width:8px;height:8px;background:var(--fg);border-radius:2px;display:inline-block"></span>فروش</span>
+              <span style="font-size:9px;color:var(--txt3);display:flex;align-items:center;gap:4px"><span style="width:8px;height:8px;background:var(--gold);border-radius:2px;display:inline-block"></span>هدف</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-h">
+          <div class="card-ht"><i class="ti ti-chart-donut"></i> فروش بر دسته‌بندی</div>
+          <button class="btn-xs">این ماه</button>
+        </div>
+        <div class="card-b">
+          <div class="donut-section">
+            <svg class="donut-svg" viewBox="0 0 36 36">
+              <circle cx="18" cy="18" r="14" fill="none" stroke="var(--bg3)" stroke-width="4"/>
+              <circle cx="18" cy="18" r="14" fill="none" stroke="var(--fg)" stroke-width="4" stroke-dasharray="34 66" stroke-dashoffset="25" transform="rotate(-90 18 18)"/>
+              <circle cx="18" cy="18" r="14" fill="none" stroke="var(--gold)" stroke-width="4" stroke-dasharray="22 78" stroke-dashoffset="-9" transform="rotate(-90 18 18)"/>
+              <circle cx="18" cy="18" r="14" fill="none" stroke="var(--blue)" stroke-width="4" stroke-dasharray="18 82" stroke-dashoffset="-31" transform="rotate(-90 18 18)"/>
+              <circle cx="18" cy="18" r="14" fill="none" stroke="var(--amber)" stroke-width="4" stroke-dasharray="14 86" stroke-dashoffset="-49" transform="rotate(-90 18 18)"/>
+              <circle cx="18" cy="18" r="14" fill="none" stroke="var(--purple)" stroke-width="4" stroke-dasharray="12 88" stroke-dashoffset="-63" transform="rotate(-90 18 18)"/>
+              <text x="18" y="19" text-anchor="middle" font-size="4" fill="var(--txt2)" font-family="Vazirmatn,sans-serif" font-weight="700">دسته</text>
+            </svg>
+            <div class="donut-leg">
+              <div class="dl"><div class="dl-dot" style="background:var(--fg)"></div> آبیاری <span class="dl-pct">۳۴٪</span></div>
+              <div class="dl"><div class="dl-dot" style="background:var(--gold)"></div> کود <span class="dl-pct">۲۲٪</span></div>
+              <div class="dl"><div class="dl-dot" style="background:var(--blue)"></div> ابزار <span class="dl-pct">۱۸٪</span></div>
+              <div class="dl"><div class="dl-dot" style="background:var(--amber)"></div> بذر <span class="dl-pct">۱۴٪</span></div>
+              <div class="dl"><div class="dl-dot" style="background:var(--purple)"></div> سموم <span class="dl-pct">۱۲٪</span></div>
+            </div>
+          </div>
+          <div style="border-top:1px solid var(--bdr);margin-top:10px;padding-top:10px;display:grid;grid-template-columns:1fr 1fr;gap:6px">
+            <div style="background:var(--bg3);border-radius:7px;padding:9px 11px">
+              <div style="font-size:9px;color:var(--txt3);margin-bottom:3px">میانگین سفارش</div>
+              <div style="font-size:14px;font-weight:900;color:var(--txt)">۸۴۰,۰۰۰<span style="font-size:9px;font-weight:400;color:var(--txt3);margin-right:2px">ت</span></div>
+            </div>
+            <div style="background:var(--bg3);border-radius:7px;padding:9px 11px">
+              <div style="font-size:9px;color:var(--txt3);margin-bottom:3px">نرخ تبدیل</div>
+              <div style="font-size:14px;font-weight:900;color:var(--fg2)">۳.۸٪</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ROW: ORDERS + TOP PRODS -->
+    <div class="row2" style="margin-bottom:16px">
+      <div class="card">
+        <div class="card-h">
+          <div class="card-ht"><i class="ti ti-receipt"></i> آخرین سفارش‌ها</div>
+          <button class="btn-xs">مشاهده همه <i class="ti ti-arrow-left" style="font-size:9px"></i></button>
+        </div>
+        <table class="otable">
+          <thead>
+            <tr><th>سفارش</th><th>مشتری</th><th>مبلغ</th><th>وضعیت</th><th>عملیات</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><span class="oid">#100064</span></td><td class="ocust">علی احمدی</td><td><span class="oamt">۹۴۰,۵۰۰</span></td><td><span class="spill sp-sent"><i class="ti ti-truck" style="font-size:9px"></i> ارسال</span></td><td><button class="btn-xs">جزئیات</button></td></tr>
+            <tr><td><span class="oid">#100063</span></td><td class="ocust">فاطمه رضایی</td><td><span class="oamt">۱,۲۸۰,۰۰۰</span></td><td><span class="spill sp-proc"><i class="ti ti-loader" style="font-size:9px"></i> پردازش</span></td><td><button class="btn-xs">جزئیات</button></td></tr>
+            <tr><td><span class="oid">#100062</span></td><td class="ocust">حسین محمدی</td><td><span class="oamt">۴۵۵,۰۰۰</span></td><td><span class="spill sp-done"><i class="ti ti-check" style="font-size:9px"></i> تحویل</span></td><td><button class="btn-xs">جزئیات</button></td></tr>
+            <tr><td><span class="oid">#100061</span></td><td class="ocust">زهرا کریمی</td><td><span class="oamt">۲,۱۴۰,۰۰۰</span></td><td><span class="spill sp-pend"><i class="ti ti-clock" style="font-size:9px"></i> انتظار</span></td><td><button class="btn-xs">جزئیات</button></td></tr>
+            <tr><td><span class="oid">#100060</span></td><td class="ocust">محمدرضا نوری</td><td><span class="oamt">۷۸۰,۰۰۰</span></td><td><span class="spill sp-cncl"><i class="ti ti-x" style="font-size:9px"></i> لغو</span></td><td><button class="btn-xs">جزئیات</button></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="card">
+        <div class="card-h">
+          <div class="card-ht"><i class="ti ti-star"></i> پرفروش‌ترین محصولات</div>
+          <button class="btn-xs">این ماه <i class="ti ti-chevron-down" style="font-size:9px"></i></button>
+        </div>
+        <div class="tp-list">
+          <div class="tp-item">
+            <div class="tp-rank rank-1">۱</div>
+            <div class="tp-img" style="background:rgba(82,147,107,0.15)">🌿</div>
+            <div class="tp-inf"><div class="tp-name">کود هیومیک اسید ۱ کیلو</div><div class="tp-cat">کود آلی</div></div>
+            <div class="tp-r"><div class="tp-sale">۲۳۶ فروش</div><div class="tp-rev">۴۳.۶ م</div><div class="tp-prog"><div class="tp-prog-f" style="width:100%"></div></div></div>
+          </div>
+          <div class="tp-item">
+            <div class="tp-rank rank-2">۲</div>
+            <div class="tp-img" style="background:rgba(74,158,219,0.15)">💧</div>
+            <div class="tp-inf"><div class="tp-name">قطره‌چکان ۱۰۰ عددی</div><div class="tp-cat">آبیاری</div></div>
+            <div class="tp-r"><div class="tp-sale">۱۸۴ فروش</div><div class="tp-rev">۴۴.۱ م</div><div class="tp-prog"><div class="tp-prog-f" style="width:78%"></div></div></div>
+          </div>
+          <div class="tp-item">
+            <div class="tp-rank rank-3">۳</div>
+            <div class="tp-img" style="background:rgba(200,168,75,0.15)">🌻</div>
+            <div class="tp-inf"><div class="tp-name">بذر گوجه هیبرید</div><div class="tp-cat">بذر</div></div>
+            <div class="tp-r"><div class="tp-sale">۱۶۱ فروش</div><div class="tp-rev">۱۵.۳ م</div><div class="tp-prog"><div class="tp-prog-f" style="width:68%"></div></div></div>
+          </div>
+          <div class="tp-item">
+            <div class="tp-rank">۴</div>
+            <div class="tp-img" style="background:rgba(139,107,212,0.15)">🔧</div>
+            <div class="tp-inf"><div class="tp-name">کاتر باغبانی حرفه‌ای</div><div class="tp-cat">ابزار</div></div>
+            <div class="tp-r"><div class="tp-sale">۱۲۸ فروش</div><div class="tp-rev">۲۳.۶ م</div><div class="tp-prog"><div class="tp-prog-f" style="width:54%"></div></div></div>
+          </div>
+          <div class="tp-item">
+            <div class="tp-rank">۵</div>
+            <div class="tp-img" style="background:rgba(224,84,84,0.15)">🧪</div>
+            <div class="tp-inf"><div class="tp-name">قارچ‌کش مانکوزب</div><div class="tp-cat">سموم</div></div>
+            <div class="tp-r"><div class="tp-sale">۹۷ فروش</div><div class="tp-rev">۳۰.۰ م</div><div class="tp-prog"><div class="tp-prog-f" style="width:41%"></div></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ROW 3 BOTTOM -->
+    <div class="row3">
+
+      <!-- ACTIVITY -->
+      <div class="card">
+        <div class="card-h">
+          <div class="card-ht"><i class="ti ti-activity"></i> فعالیت‌های اخیر</div>
+          <button class="btn-xs">پاک کردن</button>
+        </div>
+        <div class="act-list">
+          <div class="act-item"><div class="act-dot" style="background:rgba(82,147,107,0.15)">🛒</div><div><div class="act-txt">سفارش <strong>#100064</strong> توسط علی احمدی ثبت شد</div><div class="act-time">۵ دقیقه پیش</div></div></div>
+          <div class="act-item"><div class="act-dot" style="background:var(--blue-l)">👤</div><div><div class="act-txt">کاربر <strong>سارا موسوی</strong> ثبت‌نام کرد</div><div class="act-time">۱۸ دقیقه پیش</div></div></div>
+          <div class="act-item"><div class="act-dot" style="background:var(--amber-l)">⚠️</div><div><div class="act-txt">موجودی <strong>کود NPK</strong> به ۴ عدد رسید</div><div class="act-time">۴۵ دقیقه پیش</div></div></div>
+          <div class="act-item"><div class="act-dot" style="background:rgba(82,147,107,0.15)">💳</div><div><div class="act-txt">پرداخت <strong>۱,۲۸۰,۰۰۰ تومان</strong> تأیید شد</div><div class="act-time">۱ ساعت پیش</div></div></div>
+          <div class="act-item"><div class="act-dot" style="background:var(--purple-l)">⭐</div><div><div class="act-txt">نظر جدید برای <strong>قطره‌چکان</strong> — منتظر تأیید</div><div class="act-time">۲ ساعت پیش</div></div></div>
+        </div>
+      </div>
+
+      <!-- QUICK ACTIONS -->
+      <div class="card">
+        <div class="card-h">
+          <div class="card-ht"><i class="ti ti-bolt"></i> دسترسی سریع</div>
+        </div>
+        <div class="qa-grid">
+          <div class="qa"><div class="qa-ico">➕</div><div class="qa-lbl">محصول جدید</div><div class="qa-sub">افزودن محصول</div></div>
+          <div class="qa"><div class="qa-ico">📦</div><div class="qa-lbl">سفارش‌ها</div><div class="qa-sub">۱۲ سفارش جدید</div></div>
+          <div class="qa"><div class="qa-ico">🏷️</div><div class="qa-lbl">کوپن تخفیف</div><div class="qa-sub">ایجاد کد جدید</div></div>
+          <div class="qa"><div class="qa-ico">📝</div><div class="qa-lbl">مقاله جدید</div><div class="qa-sub">ایجاد پست</div></div>
+          <div class="qa"><div class="qa-ico">👥</div><div class="qa-lbl">کاربران</div><div class="qa-sub">مدیریت</div></div>
+          <div class="qa"><div class="qa-ico">📊</div><div class="qa-lbl">گزارش فروش</div><div class="qa-sub">دانلود اکسل</div></div>
+        </div>
+      </div>
+
+      <!-- LOW STOCK -->
+      <div class="card">
+        <div class="card-h">
+          <div class="card-ht" style="color:var(--red)"><i class="ti ti-alert-triangle" style="color:var(--red)"></i> موجودی بحرانی</div>
+          <button class="btn-xs">تأمین موجودی</button>
+        </div>
+        <div class="ls-list">
+          <div class="ls-item"><div class="ls-img" style="background:rgba(82,147,107,0.15)">🌿</div><div class="ls-inf"><div class="ls-name">کود هیومیک اسید</div><div class="ls-sku">SKU-1042</div></div><div class="ls-r"><div class="ls-num">۴</div><div class="ls-unit">عدد</div><div class="ls-b"><div class="ls-bf" style="width:8%;background:var(--red)"></div></div></div></div>
+          <div class="ls-item"><div class="ls-img" style="background:var(--blue-l)">💧</div><div class="ls-inf"><div class="ls-name">شیر برقی تایمردار</div><div class="ls-sku">SKU-2018</div></div><div class="ls-r"><div class="ls-num">۶</div><div class="ls-unit">عدد</div><div class="ls-b"><div class="ls-bf" style="width:12%;background:var(--amber)"></div></div></div></div>
+          <div class="ls-item"><div class="ls-img" style="background:rgba(200,168,75,0.15)">🌾</div><div class="ls-inf"><div class="ls-name">بذر خیار گلخانه‌ای</div><div class="ls-sku">SKU-0384</div></div><div class="ls-r"><div class="ls-num">۸</div><div class="ls-unit">عدد</div><div class="ls-b"><div class="ls-bf" style="width:16%;background:var(--amber)"></div></div></div></div>
+          <div class="ls-item"><div class="ls-img" style="background:var(--red-l)">🧪</div><div class="ls-inf"><div class="ls-name">قارچ‌کش مانکوزب</div><div class="ls-sku">SKU-3021</div></div><div class="ls-r"><div class="ls-num">۳</div><div class="ls-unit">عدد</div><div class="ls-b"><div class="ls-bf" style="width:6%;background:var(--red)"></div></div></div></div>
+          <div class="ls-item"><div class="ls-img" style="background:var(--purple-l)">🔧</div><div class="ls-inf"><div class="ls-name">کاتر باغبانی SS</div><div class="ls-sku">SKU-4105</div></div><div class="ls-r"><div class="ls-num">۵</div><div class="ls-unit">عدد</div><div class="ls-b"><div class="ls-bf" style="width:10%;background:var(--red)"></div></div></div></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+// NAV
+function nav(el){
+  document.querySelectorAll('.sb-item').forEach(i=>i.classList.remove('on'));
+  el.classList.add('on');
+}
+
+// CHART TABS
+var chartData = [
+  [[8.2,11.4,9.8,14.6,10.2,16.8,12.4],[10,10,12,12,12,14,14]],
+  [[48,62,54,71,58,84,63],[55,55,65,65,65,75,75]],
+  [[180,210,195,240,188,265,220],[200,200,220,220,220,240,240]]
+];
+var chartDays = [['شن','یک','دو','سه','چه','پن','جم'],['ه۱','ه۲','ه۳','ه۴','ه۵','ه۶','ه۷'],['فر','ار','خر','تیر','مر','شه','مه']];
+var curChart = 0;
+
+function setct(el, idx){
+  el.closest('.ctabs').querySelectorAll('.ct').forEach(t=>t.classList.remove('on'));
+  el.classList.add('on');
+  curChart = idx;
+  buildChart();
+}
+
+function buildChart(){
+  var data = chartData[curChart];
+  var days = chartDays[curChart];
+  var sales = data[0], targets = data[1];
+  var max = Math.max(...sales,...targets)*1.18;
+  var c = document.getElementById('barchart');
+  c.innerHTML = sales.map((v,i)=>`
+    <div class="bc-col">
+      <div class="bc-bars" style="height:100px;align-items:flex-end">
+        <div class="bc-bar" style="background:var(--fg);height:${(v/max)*100}px" title="${v}"></div>
+        <div class="bc-bar" style="background:var(--gold);opacity:.45;height:${(targets[i]/max)*100}px" title="هدف: ${targets[i]}"></div>
+      </div>
+      <div class="bc-lbl">${days[i]}</div>
+    </div>
+  `).join('');
+}
+buildChart();
+
+// REFRESH SPIN
+function spin(el){
+  var ic = el.querySelector('i');
+  ic.style.transition = 'transform .6s ease';
+  ic.style.transform = 'rotate(360deg)';
+  setTimeout(()=>{ ic.style.transition=''; ic.style.transform=''; },650);
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>سبزینه — سفارش و پیگیری</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;600;700;900&display=swap');
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --fg:#1C3829;--fm:#2D5A3D;--fa:#52936B;
+  --gold:#C8A84B;--gold-l:#F0DFA0;
+  --cream:#F2EDE4;--white:#fff;
+  --txt:#1a2e1f;--txt2:#4a6b52;--txt3:#8a9e8d;
+  --bdr:#D8E8D4;--red:#C0392B;
+}
+body{font-family:'Vazirmatn',sans-serif;background:var(--cream);color:var(--txt);direction:rtl;min-height:100vh}
+
+/* NAV */
+nav{background:var(--fg);height:54px;padding:0 20px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}
+.nlogo{display:flex;align-items:center;gap:8px;cursor:pointer}
+.nlm{width:30px;height:30px;background:var(--gold);border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:900;color:var(--fg)}
+.nlt{color:#fff;font-size:13px;font-weight:700}
+.nlt span{color:rgba(255,255,255,0.4);font-weight:300}
+.nav-tabs{display:flex;gap:4px}
+.ntab{padding:6px 14px;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;border:none;font-family:'Vazirmatn',sans-serif;transition:all .18s}
+.ntab.ghost{background:transparent;color:rgba(255,255,255,0.6)}
+.ntab.ghost:hover{background:rgba(255,255,255,0.08);color:#fff}
+.ntab.active-tab{background:rgba(255,255,255,0.15);color:#fff}
+
+/* PAGE SWITCH */
+.page{display:none}.page.on{display:block}
+
+/* ═══════════════════════════════
+   RECEIPT PAGE
+═══════════════════════════════ */
+.receipt-wrap{max-width:620px;margin:0 auto;padding:28px 20px 56px}
+
+/* success hero */
+.success-hero{text-align:center;padding:32px 20px 28px;background:var(--white);border:0.5px solid var(--bdr);border-radius:18px;margin-bottom:16px;position:relative;overflow:hidden}
+.success-hero::before{content:'';position:absolute;top:-60px;left:50%;transform:translateX(-50%);width:240px;height:240px;background:radial-gradient(circle,rgba(82,147,107,.08) 0%,transparent 70%)}
+.success-ring{width:80px;height:80px;border-radius:50%;background:linear-gradient(135deg,#EAF3DE,#C8E6C9);border:3px solid var(--fa);display:flex;align-items:center;justify-content:center;margin:0 auto 16px;position:relative;z-index:1}
+.success-ring i{font-size:36px;color:var(--fa)}
+.success-hero h2{font-size:22px;font-weight:900;color:var(--fg);margin-bottom:6px}
+.success-hero p{font-size:13px;color:var(--txt3);line-height:1.9;margin-bottom:20px}
+.order-num-box{display:inline-flex;align-items:center;gap:10px;background:var(--cream);border:0.5px solid var(--bdr);border-radius:10px;padding:10px 20px}
+.on-label{font-size:11px;color:var(--txt3)}
+.on-val{font-size:20px;font-weight:900;color:var(--fg);letter-spacing:2px}
+.notify-row{display:flex;align-items:center;justify-content:center;gap:16px;margin-top:16px}
+.notif-chip{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--txt2);background:var(--cream);border:0.5px solid var(--bdr);border-radius:20px;padding:4px 12px}
+.notif-chip i{font-size:13px;color:var(--fa)}
+
+/* receipt card */
+.rcard{background:var(--white);border:0.5px solid var(--bdr);border-radius:14px;overflow:hidden;margin-bottom:14px}
+.rcard-head{padding:13px 18px;border-bottom:0.5px solid var(--bdr);display:flex;align-items:center;justify-content:space-between}
+.rcard-head h3{font-size:13px;font-weight:800;color:var(--txt);display:flex;align-items:center;gap:7px}
+.rcard-head h3 i{color:var(--fa);font-size:16px}
+.rcard-body{padding:16px 18px}
+
+/* order items */
+.receipt-item{display:flex;align-items:center;gap:12px;padding:9px 0;border-bottom:0.5px solid var(--bdr)}
+.receipt-item:last-child{border-bottom:none}
+.ri-img{width:44px;height:44px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0}
+.ri-info{flex:1}
+.ri-name{font-size:12px;font-weight:700;color:var(--txt);margin-bottom:2px}
+.ri-meta{font-size:10px;color:var(--txt3)}
+.ri-price{text-align:left;flex-shrink:0}
+.ri-unit-p{font-size:10px;color:var(--txt3);display:block;text-align:center}
+.ri-total-p{font-size:13px;font-weight:800;color:var(--fg);display:block;text-align:center}
+
+/* price breakdown */
+.price-breakdown{display:flex;flex-direction:column;gap:0}
+.pb-row{display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-bottom:0.5px solid var(--bdr)}
+.pb-row:last-child{border-bottom:none}
+.pb-label{font-size:12px;color:var(--txt2)}
+.pb-val{font-size:12px;font-weight:600;color:var(--txt)}
+.pb-val.green{color:#27500A;font-weight:700}
+.pb-val.free{color:var(--fa);font-weight:700}
+.pb-total{background:linear-gradient(135deg,var(--fg),#2D5A3D);border-radius:10px;padding:14px 16px;display:flex;justify-content:space-between;align-items:center;margin-top:12px}
+.pbt-label{font-size:13px;font-weight:700;color:#fff}
+.pbt-amount{font-size:20px;font-weight:900;color:var(--gold-l)}
+.pbt-unit{font-size:11px;font-weight:400;color:rgba(255,255,255,.5);margin-right:4px}
+
+/* info rows */
+.info-rows{display:flex;flex-direction:column;gap:0}
+.ir{display:flex;align-items:flex-start;gap:10px;padding:10px 0;border-bottom:0.5px solid var(--bdr)}
+.ir:last-child{border-bottom:none}
+.ir-icon{width:30px;height:30px;background:var(--cream);border-radius:8px;display:flex;align-items:center;justify-content:center;color:var(--fa);flex-shrink:0;font-size:15px}
+.ir-body{flex:1}
+.ir-label{font-size:10px;color:var(--txt3);font-weight:700;margin-bottom:2px}
+.ir-val{font-size:12px;color:var(--txt);line-height:1.7}
+.ir-badge{display:inline-flex;align-items:center;gap:4px;background:#EAF3DE;color:#27500A;font-size:10px;font-weight:700;padding:2px 8px;border-radius:4px}
+
+/* action buttons */
+.receipt-actions{display:flex;gap:10px;margin-bottom:14px}
+.btn-primary{flex:1;height:44px;background:var(--fg);color:#fff;border:none;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;font-family:'Vazirmatn',sans-serif;display:flex;align-items:center;justify-content:center;gap:7px;transition:background .18s}
+.btn-primary:hover{background:var(--fm)}
+.btn-outline{flex:1;height:44px;background:transparent;color:var(--fg);border:1.5px solid var(--fg);border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;font-family:'Vazirmatn',sans-serif;display:flex;align-items:center;justify-content:center;gap:7px}
+.btn-print{width:44px;height:44px;background:var(--cream);border:0.5px solid var(--bdr);border-radius:10px;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--txt2);flex-shrink:0}
+
+/* ═══════════════════════════════
+   TRACKING PAGE
+═══════════════════════════════ */
+.tracking-wrap{max-width:700px;margin:0 auto;padding:24px 20px 56px}
+
+/* search box */
+.track-search{background:var(--white);border:0.5px solid var(--bdr);border-radius:14px;padding:20px;margin-bottom:16px}
+.track-search h3{font-size:14px;font-weight:800;color:var(--txt);margin-bottom:14px;display:flex;align-items:center;gap:7px}
+.track-search h3 i{color:var(--fa);font-size:17px}
+.track-row{display:flex;gap:8px}
+.track-inp{flex:1;height:42px;background:var(--cream);border:0.5px solid var(--bdr);border-radius:9px;padding:0 14px;font-size:13px;font-family:'Vazirmatn',sans-serif;color:var(--txt);outline:none;direction:ltr;text-align:center;letter-spacing:2px;transition:border .18s}
+.track-inp:focus{border-color:var(--fa);background:#fff}
+.track-inp::placeholder{letter-spacing:0;direction:rtl;text-align:right}
+.btn-track{height:42px;background:var(--fg);color:#fff;border:none;border-radius:9px;padding:0 20px;font-size:12px;font-weight:700;cursor:pointer;font-family:'Vazirmatn',sans-serif;display:flex;align-items:center;gap:6px;white-space:nowrap}
+
+/* order card */
+.tcard{background:var(--white);border:0.5px solid var(--bdr);border-radius:14px;overflow:hidden;margin-bottom:14px}
+.tcard-head{padding:14px 18px;border-bottom:0.5px solid var(--bdr);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px}
+.tch-right{}
+.order-id{font-size:16px;font-weight:900;color:var(--fg);margin-bottom:2px}
+.order-date{font-size:11px;color:var(--txt3)}
+.tch-left{display:flex;align-items:center;gap:8px}
+.status-pill{display:flex;align-items:center;gap:5px;font-size:11px;font-weight:700;padding:5px 12px;border-radius:20px}
+.sp-processing{background:#FEF3CD;color:#8a6400}
+.sp-sent{background:#E6F1FB;color:#0C447C}
+.sp-delivered{background:#EAF3DE;color:#27500A}
+.sp-cancelled{background:#FDECEA;color:var(--red)}
+.status-dot{width:7px;height:7px;border-radius:50%}
+.dot-processing{background:#C8A84B}
+.dot-sent{background:#3B82F6}
+.dot-delivered{background:var(--fa)}
+.dot-cancelled{background:var(--red)}
+
+/* TIMELINE */
+.timeline-wrap{padding:20px 18px;border-bottom:0.5px solid var(--bdr)}
+.timeline{position:relative;padding-right:16px}
+.timeline::before{content:'';position:absolute;right:6px;top:8px;bottom:8px;width:1.5px;background:var(--bdr)}
+.tl-item{display:flex;gap:14px;margin-bottom:20px;position:relative}
+.tl-item:last-child{margin-bottom:0}
+.tl-dot{width:14px;height:14px;border-radius:50%;flex-shrink:0;margin-top:3px;position:relative;z-index:1;border:2px solid var(--bdr);background:var(--white)}
+.tl-dot.done{background:var(--fa);border-color:var(--fa)}
+.tl-dot.active{background:var(--gold);border-color:var(--gold);box-shadow:0 0 0 3px rgba(200,168,75,.2)}
+.tl-dot.idle{background:var(--white);border-color:var(--bdr)}
+.tl-content{}
+.tl-title{font-size:13px;font-weight:700;color:var(--txt);margin-bottom:3px}
+.tl-title.idle{color:var(--txt3);font-weight:500}
+.tl-sub{font-size:11px;color:var(--txt3);line-height:1.7}
+.tl-time{font-size:10px;color:var(--txt3);margin-top:4px;display:flex;align-items:center;gap:4px}
+.tl-time i{font-size:11px}
+
+/* shipping detail */
+.ship-detail{padding:14px 18px;border-bottom:0.5px solid var(--bdr);display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.sd-item{background:var(--cream);border-radius:9px;padding:10px 12px}
+.sd-label{font-size:10px;color:var(--txt3);font-weight:700;margin-bottom:4px}
+.sd-val{font-size:12px;font-weight:700;color:var(--txt)}
+.sd-val.highlight{color:var(--fg);font-size:13px}
+
+/* tracking code */
+.tracking-code{padding:14px 18px;border-bottom:0.5px solid var(--bdr);display:flex;align-items:center;gap:12px;background:#EFF6FF}
+.tc-icon{width:36px;height:36px;background:#DBEAFE;border-radius:9px;display:flex;align-items:center;justify-content:center;color:#1D4ED8;font-size:18px;flex-shrink:0}
+.tc-info{flex:1}
+.tc-label{font-size:10px;color:#1D4ED8;font-weight:700;margin-bottom:3px}
+.tc-val{font-size:14px;font-weight:900;color:#1E3A8A;letter-spacing:2px}
+.btn-copy{background:#DBEAFE;color:#1D4ED8;border:none;border-radius:7px;padding:6px 14px;font-size:11px;font-weight:700;cursor:pointer;font-family:'Vazirmatn',sans-serif;display:flex;align-items:center;gap:5px;flex-shrink:0}
+
+/* order items in tracking */
+.track-items{padding:14px 18px;border-bottom:0.5px solid var(--bdr)}
+.track-item{display:flex;align-items:center;gap:10px;padding:7px 0;border-bottom:0.5px solid var(--bdr)}
+.track-item:last-child{border-bottom:none}
+.ti-img{width:38px;height:38px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.ti-name{flex:1;font-size:11px;font-weight:600;color:var(--txt)}
+.ti-qty{font-size:10px;color:var(--txt3);margin-top:2px}
+.ti-price{font-size:12px;font-weight:700;color:var(--fg);flex-shrink:0}
+
+/* track footer */
+.track-footer{padding:13px 18px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px}
+.tf-total{font-size:13px;color:var(--txt2)}
+.tf-total strong{color:var(--fg);font-weight:900;font-size:15px}
+.tf-actions{display:flex;gap:7px}
+.btn-sm{height:34px;border-radius:8px;padding:0 14px;font-size:11px;font-weight:700;cursor:pointer;font-family:'Vazirmatn',sans-serif;display:flex;align-items:center;gap:5px;border:0.5px solid var(--bdr);background:var(--cream);color:var(--txt2)}
+.btn-sm.danger{border-color:#FECACA;background:#FEF2F2;color:var(--red)}
+
+/* orders list */
+.orders-list{display:flex;flex-direction:column;gap:10px;margin-bottom:16px}
+.order-mini{background:var(--white);border:0.5px solid var(--bdr);border-radius:12px;padding:13px 16px;display:flex;align-items:center;gap:12px;cursor:pointer;transition:all .15s}
+.order-mini:hover{border-color:var(--fa);box-shadow:0 4px 16px rgba(28,56,41,.06)}
+.order-mini.active-order{border-color:var(--fa);background:#EAF3DE}
+.om-icon{width:42px;height:42px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+.om-info{flex:1}
+.om-num{font-size:12px;font-weight:700;color:var(--txt);margin-bottom:2px}
+.om-items{font-size:10px;color:var(--txt3)}
+.om-right{text-align:center;flex-shrink:0}
+.om-price{font-size:13px;font-weight:800;color:var(--fg);display:block;margin-bottom:4px}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nlogo">
+    <div class="nlm">س</div>
+    <div class="nlt">سبزینه <span>/ حساب کاربری</span></div>
+  </div>
+  <div class="nav-tabs">
+    <button class="ntab ghost active-tab" onclick="showPage('receipt')">رسید سفارش</button>
+    <button class="ntab ghost" onclick="showPage('tracking')">پیگیری سفارش</button>
+  </div>
+</nav>
+
+<!-- ═══════════════════════════════
+     RECEIPT PAGE
+═══════════════════════════════ -->
+<div class="page on" id="page-receipt">
+  <div class="receipt-wrap">
+
+    <div class="success-hero">
+      <div class="success-ring"><i class="ti ti-check"></i></div>
+      <h2>سفارش شما با موفقیت ثبت شد!</h2>
+      <p>پرداخت تأیید شد و سفارش شما در حال آماده‌سازی است.<br>اطلاعات کامل به پیامک و ایمیل شما ارسال شد.</p>
+      <div class="order-num-box">
+        <div>
+          <div class="on-label">شماره سفارش</div>
+          <div class="on-val">#۱۰۰۶۴</div>
+        </div>
+        <div style="width:0.5px;height:36px;background:var(--bdr)"></div>
+        <div>
+          <div class="on-label">تاریخ ثبت</div>
+          <div style="font-size:12px;font-weight:700;color:var(--txt)">۱۳ خرداد ۱۴۰۴</div>
+        </div>
+      </div>
+      <div class="notify-row">
+        <div class="notif-chip"><i class="ti ti-message"></i> پیامک ارسال شد</div>
+        <div class="notif-chip"><i class="ti ti-mail"></i> ایمیل ارسال شد</div>
+      </div>
+    </div>
+
+    <!-- ORDER ITEMS -->
+    <div class="rcard">
+      <div class="rcard-head">
+        <h3><i class="ti ti-package"></i> محصولات سفارش</h3>
+        <span style="font-size:11px;color:var(--txt3)">۳ محصول</span>
+      </div>
+      <div class="rcard-body" style="padding-top:6px;padding-bottom:6px">
+        <div class="receipt-item">
+          <div class="ri-img" style="background:#EAF3DE">🌿</div>
+          <div class="ri-info">
+            <div class="ri-name">کود هیومیک اسید پتاسیم‌دار ۱ کیلوگرم</div>
+            <div class="ri-meta">۱۸۵,۰۰۰ تومان × ۲ عدد</div>
+          </div>
+          <div class="ri-price">
+            <span class="ri-unit-p">جمع</span>
+            <span class="ri-total-p">۳۷۰,۰۰۰</span>
+          </div>
+        </div>
+        <div class="receipt-item">
+          <div class="ri-img" style="background:#E6F1FB">💧</div>
+          <div class="ri-info">
+            <div class="ri-name">قطره‌چکان تنظیم‌پذیر بسته ۱۰۰ عددی</div>
+            <div class="ri-meta">۲۴۰,۰۰۰ تومان × ۱ عدد</div>
+          </div>
+          <div class="ri-price">
+            <span class="ri-unit-p">جمع</span>
+            <span class="ri-total-p">۲۴۰,۰۰۰</span>
+          </div>
+        </div>
+        <div class="receipt-item">
+          <div class="ri-img" style="background:#FEF3CD">🌱</div>
+          <div class="ri-info">
+            <div class="ri-name">بذر گوجه‌فرنگی هیبرید پرمحصول ۵ گرم</div>
+            <div class="ri-meta">۹۵,۰۰۰ تومان × ۳ عدد</div>
+          </div>
+          <div class="ri-price">
+            <span class="ri-unit-p">جمع</span>
+            <span class="ri-total-p">۲۸۵,۰۰۰</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PRICE BREAKDOWN -->
+    <div class="rcard">
+      <div class="rcard-head">
+        <h3><i class="ti ti-receipt"></i> صورت‌حساب</h3>
+        <span style="font-size:10px;color:var(--fa);font-weight:700;display:flex;align-items:center;gap:3px"><i class="ti ti-lock" style="font-size:11px"></i> پرداخت موفق</span>
+      </div>
+      <div class="rcard-body">
+        <div class="price-breakdown">
+          <div class="pb-row"><span class="pb-label">جمع محصولات</span><span class="pb-val">۱,۰۶۶,۰۰۰ تومان</span></div>
+          <div class="pb-row"><span class="pb-label">تخفیف محصولات</span><span class="pb-val green">− ۸۱,۰۰۰ تومان</span></div>
+          <div class="pb-row"><span class="pb-label">کد تخفیف (SABZ10)</span><span class="pb-val green">− ۸۹,۵۰۰ تومان</span></div>
+          <div class="pb-row"><span class="pb-label">هزینه ارسال (پست پیشتاز)</span><span class="pb-val">۴۵,۰۰۰ تومان</span></div>
+        </div>
+        <div class="pb-total">
+          <span class="pbt-label">مبلغ پرداخت‌شده</span>
+          <span class="pbt-amount">۹۴۰,۵۰۰<span class="pbt-unit">تومان</span></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- DELIVERY INFO -->
+    <div class="rcard">
+      <div class="rcard-head">
+        <h3><i class="ti ti-map-pin"></i> اطلاعات تحویل</h3>
+      </div>
+      <div class="rcard-body" style="padding-top:6px;padding-bottom:6px">
+        <div class="info-rows">
+          <div class="ir">
+            <div class="ir-icon"><i class="ti ti-user"></i></div>
+            <div class="ir-body">
+              <div class="ir-label">گیرنده</div>
+              <div class="ir-val">علی احمدی — ۰۹۱۲۱۲۳۴۵۶۷</div>
+            </div>
+          </div>
+          <div class="ir">
+            <div class="ir-icon"><i class="ti ti-home"></i></div>
+            <div class="ir-body">
+              <div class="ir-label">آدرس تحویل</div>
+              <div class="ir-val">تهران، خیابان ولیعصر، کوچه گلها، پلاک ۱۲، واحد ۳<br>کد پستی: ۱۴۵۶۸۷۳۲۱۰</div>
+            </div>
+          </div>
+          <div class="ir">
+            <div class="ir-icon"><i class="ti ti-truck"></i></div>
+            <div class="ir-body">
+              <div class="ir-label">روش ارسال</div>
+              <div class="ir-val">پست پیشتاز — تحویل تخمینی <strong>۱۸ تا ۲۰ خرداد ۱۴۰۴</strong></div>
+            </div>
+          </div>
+          <div class="ir">
+            <div class="ir-icon"><i class="ti ti-credit-card"></i></div>
+            <div class="ir-body">
+              <div class="ir-label">روش پرداخت</div>
+              <div class="ir-val">پرداخت آنلاین — درگاه زرین‌پال <span class="ir-badge"><i class="ti ti-check" style="font-size:9px"></i> تأیید شد</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="receipt-actions">
+      <button class="btn-primary" onclick="showPage('tracking')"><i class="ti ti-map-search" style="font-size:14px"></i> پیگیری سفارش</button>
+      <button class="btn-outline"><i class="ti ti-shopping-bag" style="font-size:14px"></i> ادامه خرید</button>
+      <button class="btn-print" aria-label="چاپ رسید"><i class="ti ti-printer" style="font-size:16px"></i></button>
+    </div>
+
+  </div>
+</div>
+
+<!-- ═══════════════════════════════
+     TRACKING PAGE
+═══════════════════════════════ -->
+<div class="page" id="page-tracking">
+  <div class="tracking-wrap">
+
+    <!-- SEARCH -->
+    <div class="track-search">
+      <h3><i class="ti ti-search"></i> پیگیری سفارش</h3>
+      <div class="track-row">
+        <input class="track-inp" id="track-inp" placeholder="شماره سفارش یا کد پیگیری را وارد کنید" value="#۱۰۰۶۴">
+        <button class="btn-track" onclick="doTrack()"><i class="ti ti-radar" style="font-size:13px"></i> پیگیری</button>
+      </div>
+    </div>
+
+    <!-- MY ORDERS LIST -->
+    <div style="font-size:13px;font-weight:700;color:var(--txt);margin-bottom:10px;display:flex;align-items:center;gap:7px">
+      <span style="width:3px;height:15px;background:var(--fm);border-radius:2px;display:block"></span>
+      سفارش‌های اخیر من
+    </div>
+    <div class="orders-list">
+      <div class="order-mini active-order" onclick="selectOrder(this,'sent')">
+        <div class="om-icon" style="background:#E6F1FB">💧</div>
+        <div class="om-info">
+          <div class="om-num">#۱۰۰۶۴ — ۱۳ خرداد ۱۴۰۴</div>
+          <div class="om-items">کود هیومیک، قطره‌چکان، بذر گوجه</div>
+        </div>
+        <div class="om-right">
+          <span class="om-price">۹۴۰,۵۰۰</span>
+          <div class="status-pill sp-sent" style="font-size:9px;padding:3px 8px"><span class="status-dot dot-sent"></span> ارسال شد</div>
+        </div>
+      </div>
+      <div class="order-mini" onclick="selectOrder(this,'delivered')">
+        <div class="om-icon" style="background:#EAF3DE">🌿</div>
+        <div class="om-info">
+          <div class="om-num">#۱۰۰۵۲ — ۲۸ اردیبهشت ۱۴۰۴</div>
+          <div class="om-items">قطره‌چکان تنظیم‌پذیر × ۱</div>
+        </div>
+        <div class="om-right">
+          <span class="om-price">۲۴۰,۰۰۰</span>
+          <div class="status-pill sp-delivered" style="font-size:9px;padding:3px 8px"><span class="status-dot dot-delivered"></span> تحویل داده شد</div>
+        </div>
+      </div>
+      <div class="order-mini" onclick="selectOrder(this,'processing')">
+        <div class="om-icon" style="background:#FEF3CD">🌾</div>
+        <div class="om-info">
+          <div class="om-num">#۱۰۰۴۵ — ۱۴ اردیبهشت ۱۴۰۴</div>
+          <div class="om-items">کود هیومیک اسید × ۳</div>
+        </div>
+        <div class="om-right">
+          <span class="om-price">۵۵۵,۰۰۰</span>
+          <div class="status-pill sp-processing" style="font-size:9px;padding:3px 8px"><span class="status-dot dot-processing"></span> در حال پردازش</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ORDER DETAIL CARD -->
+    <div class="tcard" id="track-detail">
+      <div class="tcard-head">
+        <div class="tch-right">
+          <div class="order-id">#۱۰۰۶۴</div>
+          <div class="order-date">ثبت: ۱۳ خرداد ۱۴۰۴ — ۱۴:۳۲</div>
+        </div>
+        <div class="tch-left">
+          <div class="status-pill sp-sent" id="track-status-pill">
+            <span class="status-dot dot-sent"></span>
+            <span id="track-status-text">ارسال شد</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- TIMELINE -->
+      <div class="timeline-wrap">
+        <div style="font-size:12px;font-weight:700;color:var(--txt);margin-bottom:14px;display:flex;align-items:center;gap:6px"><i class="ti ti-timeline" style="color:var(--fa);font-size:15px"></i> مراحل سفارش</div>
+        <div class="timeline" id="track-timeline">
+
+          <div class="tl-item">
+            <div class="tl-dot done"></div>
+            <div class="tl-content">
+              <div class="tl-title">سفارش ثبت شد</div>
+              <div class="tl-sub">پرداخت آنلاین با موفقیت تأیید شد</div>
+              <div class="tl-time"><i class="ti ti-clock"></i> ۱۳ خرداد ۱۴۰۴ — ۱۴:۳۲</div>
+            </div>
+          </div>
+
+          <div class="tl-item">
+            <div class="tl-dot done"></div>
+            <div class="tl-content">
+              <div class="tl-title">در حال آماده‌سازی</div>
+              <div class="tl-sub">انبار سفارش را دریافت و پک کرد</div>
+              <div class="tl-time"><i class="ti ti-clock"></i> ۱۳ خرداد ۱۴۰۴ — ۱۸:۱۵</div>
+            </div>
+          </div>
+
+          <div class="tl-item">
+            <div class="tl-dot active"></div>
+            <div class="tl-content">
+              <div class="tl-title">تحویل به پست / ارسال شد</div>
+              <div class="tl-sub">مرسوله به شبکه پست پیشتاز تحویل داده شد</div>
+              <div class="tl-time"><i class="ti ti-clock"></i> ۱۴ خرداد ۱۴۰۴ — ۰۹:۴۰</div>
+            </div>
+          </div>
+
+          <div class="tl-item">
+            <div class="tl-dot idle"></div>
+            <div class="tl-content">
+              <div class="tl-title idle">در مسیر تحویل</div>
+              <div class="tl-sub">بسته در مرکز توزیع منطقه شما</div>
+            </div>
+          </div>
+
+          <div class="tl-item">
+            <div class="tl-dot idle"></div>
+            <div class="tl-content">
+              <div class="tl-title idle">تحویل به گیرنده</div>
+              <div class="tl-sub">تحویل تخمینی: ۱۸ تا ۲۰ خرداد ۱۴۰۴</div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- TRACKING CODE -->
+      <div class="tracking-code">
+        <div class="tc-icon"><i class="ti ti-barcode"></i></div>
+        <div class="tc-info">
+          <div class="tc-label">کد رهگیری پست پیشتاز</div>
+          <div class="tc-val" id="track-code">۱۴۰۴۰۳۱۴۰۰۱۲۳۴۵۶</div>
+        </div>
+        <button class="btn-copy" onclick="copyCode()"><i class="ti ti-copy" style="font-size:12px"></i> <span id="copy-lbl">کپی</span></button>
+      </div>
+
+      <!-- SHIPPING DETAIL -->
+      <div class="ship-detail">
+        <div class="sd-item">
+          <div class="sd-label">روش ارسال</div>
+          <div class="sd-val">پست پیشتاز</div>
+        </div>
+        <div class="sd-item">
+          <div class="sd-label">تحویل تخمینی</div>
+          <div class="sd-val highlight">۱۸–۲۰ خرداد ۱۴۰۴</div>
+        </div>
+        <div class="sd-item">
+          <div class="sd-label">آدرس تحویل</div>
+          <div class="sd-val">تهران، ولیعصر، پلاک ۱۲</div>
+        </div>
+        <div class="sd-item">
+          <div class="sd-label">گیرنده</div>
+          <div class="sd-val">علی احمدی</div>
+        </div>
+      </div>
+
+      <!-- ITEMS -->
+      <div class="track-items">
+        <div style="font-size:11px;font-weight:700;color:var(--txt3);margin-bottom:8px">محصولات این سفارش</div>
+        <div class="track-item">
+          <div class="ti-img" style="background:#EAF3DE">🌿</div>
+          <div style="flex:1"><div class="ti-name">کود هیومیک اسید ۱ کیلوگرم</div><div class="ti-qty">× ۲ عدد</div></div>
+          <div class="ti-price">۳۷۰,۰۰۰</div>
+        </div>
+        <div class="track-item">
+          <div class="ti-img" style="background:#E6F1FB">💧</div>
+          <div style="flex:1"><div class="ti-name">قطره‌چکان تنظیم‌پذیر ۱۰۰ عددی</div><div class="ti-qty">× ۱ عدد</div></div>
+          <div class="ti-price">۲۴۰,۰۰۰</div>
+        </div>
+        <div class="track-item">
+          <div class="ti-img" style="background:#FEF3CD">🌱</div>
+          <div style="flex:1"><div class="ti-name">بذر گوجه‌فرنگی هیبرید ۵ گرم</div><div class="ti-qty">× ۳ عدد</div></div>
+          <div class="ti-price">۲۸۵,۰۰۰</div>
+        </div>
+      </div>
+
+      <div class="track-footer">
+        <div class="tf-total">مبلغ کل: <strong>۹۴۰,۵۰۰ تومان</strong></div>
+        <div class="tf-actions">
+          <button class="btn-sm"><i class="ti ti-headset" style="font-size:12px"></i> پشتیبانی</button>
+          <button class="btn-sm"><i class="ti ti-refresh" style="font-size:12px"></i> مرجوعی</button>
+          <button class="btn-sm danger"><i class="ti ti-x" style="font-size:12px"></i> لغو</button>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+</div>
+
+<script>
+function showPage(p){
+  document.querySelectorAll('.page').forEach(x=>x.classList.remove('on'));
+  document.getElementById('page-'+p).classList.add('on');
+  document.querySelectorAll('.ntab').forEach(t=>t.classList.remove('active-tab'));
+  event.target.classList.add('active-tab');
+  window.scrollTo(0,0);
+}
+
+function doTrack(){
+  document.getElementById('track-detail').scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+var orderData = {
+  sent:{
+    status:'ارسال شد', pill:'sp-sent', dot:'dot-sent',
+    steps:[true,true,true,false,false]
+  },
+  delivered:{
+    status:'تحویل داده شد', pill:'sp-delivered', dot:'dot-delivered',
+    steps:[true,true,true,true,true]
+  },
+  processing:{
+    status:'در حال پردازش', pill:'sp-processing', dot:'dot-processing',
+    steps:[true,true,false,false,false]
+  }
+};
+
+function selectOrder(el, type){
+  document.querySelectorAll('.order-mini').forEach(o=>o.classList.remove('active-order'));
+  el.classList.add('active-order');
+  var d = orderData[type];
+  // update status pill
+  var pill = document.getElementById('track-status-pill');
+  pill.className = 'status-pill '+d.pill;
+  pill.innerHTML = '<span class="status-dot '+d.dot+'"></span><span>'+d.status+'</span>';
+  // update timeline
+  var dots = document.querySelectorAll('#track-timeline .tl-dot');
+  dots.forEach(function(dot,i){
+    dot.className = 'tl-dot';
+    if(d.steps[i]===true){
+      if(i===d.steps.lastIndexOf(true)) dot.classList.add('active');
+      else dot.classList.add('done');
+    } else {
+      dot.classList.add('idle');
+    }
+  });
+  var titles = document.querySelectorAll('#track-timeline .tl-title');
+  titles.forEach(function(t,i){
+    if(d.steps[i]) t.classList.remove('idle');
+    else t.classList.add('idle');
+  });
+  document.getElementById('track-detail').scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+
+function copyCode(){
+  var code = document.getElementById('track-code').textContent;
+  navigator.clipboard.writeText(code).catch(()=>{});
+  var lbl = document.getElementById('copy-lbl');
+  lbl.textContent = 'کپی شد!';
+  setTimeout(()=>lbl.textContent='کپی',2000);
+}
+</script>
+</body>
+</html>

@@ -1,13 +1,15 @@
-
-
+import os
 from pathlib import Path
+from dotenv import load_dotenv
+from datetime import timedelta
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
+load_dotenv(BASE_DIR / ".env")
 
 # --------------------- SECURITY WARNING --------------------- #
-SECRET_KEY = 'django-insecure--u19x)c!3av(*lk35e%zqu9z^^&@x^cxy)*81%vs!id-_7lah0'
+SECRET_KEY = os.getenv('SECRET_KEY')
 
 DEBUG = False
 
@@ -24,12 +26,16 @@ DJANGO_APPS = [
     'django.contrib.staticfiles',
 ]
 
+# Local apps
 LOCAL_APPS = [
-    "api",
+    # "api",
 ]
 
+# Third party apps
 THIRD_PARTY_APPS = [
     "rest_framework",
+    "corsheaders",
+    "django_filters",
 ]
 
 INSTALLED_APPS = (
@@ -40,6 +46,8 @@ INSTALLED_APPS = (
 
 # --------------------- MIDDLEWARE definition --------------------- #
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware', # Always above of CommonMiddleware
+
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -93,8 +101,7 @@ DATABASES = {
 # }
 
 # --------------------- STATIC_URL definition --------------------- #
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/6.0/howto/static-files/
+
 STATIC_URL = "static/"
 
 STATIC_ROOT = BASE_DIR / "staticfiles"
@@ -116,7 +123,6 @@ REST_FRAMEWORK = {
 }
 
 # --------------------- Password validation --------------------- #
-# https://docs.djangoproject.com/en/6.0/ref/settings/#auth-password-validators
 
 AUTH_PASSWORD_VALIDATORS = [
     {
@@ -135,7 +141,6 @@ AUTH_PASSWORD_VALIDATORS = [
 
 
 # --------------------- Internationalization --------------------- #
-# https://docs.djangoproject.com/en/6.0/topics/i18n/
 
 LANGUAGE_CODE = 'en-us'
 
@@ -146,5 +151,33 @@ USE_I18N = True
 USE_TZ = True
 
 
+# --------------------- rest framework --------------------- #
+
+REST_FRAMEWORK = {
+    "DEFAULT_AUTHENTICATION_CLASSES": [
+        "rest_framework_simplejwt.authentication.JWTAuthentication",
+    ],
+
+    "DEFAULT_PERMISSION_CLASSES": [
+        "rest_framework.permissions.IsAuthenticated",
+    ],
+
+    "DEFAULT_FILTER_BACKENDS": [
+        "django_filters.rest_framework.DjangoFilterBackend",
+        "rest_framework.filters.SearchFilter",
+        "rest_framework.filters.OrderingFilter",
+    ],
+}
+
+SIMPLE_JWT = {
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=30),
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=7),
+
+    "ROTATE_REFRESH_TOKENS": True,
+    "BLACKLIST_AFTER_ROTATION": False,
+
+    "AUTH_HEADER_TYPES": ("Bearer",),
+}
 
 
+# --------------------- cors allowed headers--------------------- #

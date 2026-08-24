@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>سبزینه — گزارش‌ها و آمار</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;600;700;900&display=swap');
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#0F1A14;--bg2:#131E11;--bg3:#192318;
+  --surf:#1C2B1A;--surf2:#223021;
+  --bdr:rgba(255,255,255,0.06);--bdr2:rgba(255,255,255,0.11);
+  --fg:#52936B;--fg2:#6BAD83;
+  --gold:#C8A84B;--gold-l:#F0DFA0;
+  --txt:#E8F0E9;--txt2:rgba(232,240,233,0.6);--txt3:rgba(232,240,233,0.32);
+  --red:#E05454;--red-l:rgba(224,84,84,0.12);
+  --blue:#4A9EDB;--blue-l:rgba(74,158,219,0.12);
+  --amber:#D4925A;--amber-l:rgba(212,146,90,0.12);
+  --purple:#8B6BD4;--purple-l:rgba(139,107,212,0.12);
+}
+body{font-family:'Vazirmatn',sans-serif;background:var(--bg);color:var(--txt);direction:rtl;min-height:100vh;display:flex}
+
+.sidebar{width:220px;min-height:100vh;background:var(--bg2);border-left:1px solid var(--bdr);display:flex;flex-direction:column;position:fixed;right:0;top:0;bottom:0;z-index:100}
+.sb-logo{padding:18px 16px 14px;border-bottom:1px solid var(--bdr);display:flex;align-items:center;gap:9px}
+.sb-lm{width:31px;height:31px;background:var(--gold);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:900;color:#1a1a0a}
+.sb-lt{font-size:13px;font-weight:800;color:var(--txt)}
+.sb-lt small{display:block;font-size:10px;font-weight:400;color:var(--txt3)}
+.sb-sec{padding:14px 14px 5px;font-size:9px;font-weight:700;color:var(--txt3);letter-spacing:1.2px;text-transform:uppercase}
+.sb-item{display:flex;align-items:center;gap:9px;padding:8px 11px;margin:1px 7px;border-radius:8px;cursor:pointer;font-size:12px;font-weight:600;color:var(--txt2);transition:all .15s;border:1px solid transparent}
+.sb-item:hover{background:var(--surf);color:var(--txt)}
+.sb-item.on{background:rgba(82,147,107,0.12);color:var(--fg2);border-color:rgba(82,147,107,0.18)}
+.sb-item i{font-size:16px;flex-shrink:0}
+.sb-bottom{margin-top:auto;border-top:1px solid var(--bdr);padding:10px 7px}
+.sb-user{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:8px;cursor:pointer}
+.sb-av{width:28px;height:28px;border-radius:50%;background:rgba(82,147,107,0.15);border:1px solid rgba(82,147,107,0.25);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:var(--fg2)}
+.sb-uname{font-size:11px;font-weight:700;color:var(--txt)}
+.sb-urole{font-size:10px;color:var(--txt3)}
+.sb-out{margin-right:auto;color:var(--txt3);font-size:14px;cursor:pointer}
+
+.main{margin-right:220px;flex:1;display:flex;flex-direction:column;min-height:100vh}
+.topbar{background:var(--bg2);border-bottom:1px solid var(--bdr);height:50px;padding:0 20px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50}
+.tb-title{font-size:14px;font-weight:800;color:var(--txt)}
+.tb-sub{font-size:10px;color:var(--txt3)}
+.tb-right{display:flex;align-items:center;gap:8px}
+.fsel{height:32px;background:var(--surf);border:1px solid var(--bdr2);border-radius:7px;padding:0 10px;font-size:11px;font-family:'Vazirmatn',sans-serif;color:var(--txt2);outline:none;cursor:pointer}
+.btn-xs{height:30px;background:rgba(82,147,107,0.1);border:1px solid rgba(82,147,107,0.2);border-radius:7px;padding:0 12px;font-size:11px;font-weight:700;color:var(--fg2);cursor:pointer;font-family:'Vazirmatn',sans-serif;display:flex;align-items:center;gap:5px}
+
+.content{padding:18px 20px 40px;flex:1}
+
+.kpi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:16px}
+.kpi{background:var(--surf);border:1px solid var(--bdr);border-radius:11px;padding:14px;position:relative;overflow:hidden}
+.kpi::after{content:'';position:absolute;top:0;left:0;right:0;height:2px}
+.kpi.gr::after{background:linear-gradient(90deg,transparent,var(--fg))}
+.kpi.go::after{background:linear-gradient(90deg,transparent,var(--gold))}
+.kpi.bl::after{background:linear-gradient(90deg,transparent,var(--blue))}
+.kpi.pu::after{background:linear-gradient(90deg,transparent,var(--purple))}
+.kpi-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:10px}
+.kpi-lbl{font-size:10px;color:var(--txt3);font-weight:600}
+.kpi-ico{width:28px;height:28px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:14px}
+.kpi-num{font-size:24px;font-weight:900;color:var(--txt);line-height:1;margin-bottom:7px}
+.kpi-num sup{font-size:11px;font-weight:400;color:var(--txt3)}
+.kpi-chg{font-size:10px;display:flex;align-items:center;gap:4px}
+.kpi-chg.up{color:#52C97A}.kpi-chg.dn{color:var(--red)}
+.kpi-chg .per{color:var(--txt3)}
+
+.tab-bar{display:flex;border-bottom:1px solid var(--bdr);margin-bottom:16px;gap:4px}
+.rtab{padding:10px 16px;font-size:12px;font-weight:700;color:var(--txt3);cursor:pointer;border-bottom:2px solid transparent;transition:all .15s}
+.rtab.on{color:var(--fg2);border-bottom-color:var(--fg)}
+.rview{display:none}.rview.active{display:block}
+
+.row2{display:grid;grid-template-columns:1.5fr 1fr;gap:10px;margin-bottom:14px}
+.row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:14px}
+
+.card{background:var(--surf);border:1px solid var(--bdr);border-radius:11px;overflow:hidden}
+.card-h{padding:12px 14px;border-bottom:1px solid var(--bdr);display:flex;align-items:center;justify-content:space-between}
+.card-ht{font-size:12px;font-weight:800;color:var(--txt);display:flex;align-items:center;gap:6px}
+.card-ht i{color:var(--fg);font-size:15px}
+.card-b{padding:14px}
+
+.bar-chart{display:flex;align-items:flex-end;gap:6px;height:140px;margin-bottom:6px}
+.bc-col{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px}
+.bc-bar{width:100%;border-radius:3px 3px 0 0;transition:opacity .15s;min-width:8px}
+.bc-bar:hover{opacity:.75}
+.bc-lbl{font-size:9px;color:var(--txt3);white-space:nowrap}
+.bc-val{font-size:9px;color:var(--txt2);font-weight:600}
+
+.donut-section{display:flex;align-items:center;gap:14px;padding:6px 0}
+.donut-svg{width:90px;height:90px;flex-shrink:0}
+.donut-leg{flex:1;display:flex;flex-direction:column;gap:6px}
+.dl{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--txt2)}
+.dl-dot{width:7px;height:7px;border-radius:2px;flex-shrink:0}
+.dl-pct{margin-right:auto;font-size:11px;font-weight:700;color:var(--txt)}
+
+.rtable{width:100%;border-collapse:collapse}
+.rtable th{font-size:9px;font-weight:700;color:var(--txt3);text-align:right;padding:9px 14px;border-bottom:1px solid var(--bdr);text-transform:uppercase;letter-spacing:.5px}
+.rtable td{font-size:11px;color:var(--txt2);padding:10px 14px;border-bottom:1px solid var(--bdr)}
+.rtable tr:last-child td{border-bottom:none}
+.rtable tr:hover td{background:var(--surf2)}
+
+.geo-bar{display:flex;align-items:center;gap:10px;padding:8px 14px;border-bottom:1px solid var(--bdr)}
+.geo-bar:last-child{border-bottom:none}
+.geo-name{font-size:11px;color:var(--txt);font-weight:600;min-width:70px}
+.geo-track{flex:1;height:8px;background:var(--bg3);border-radius:4px;overflow:hidden}
+.geo-fill{height:100%;border-radius:4px;background:var(--fg)}
+.geo-val{font-size:10px;color:var(--txt3);min-width:50px;text-align:left}
+
+.funnel-step{display:flex;align-items:center;gap:10px;padding:10px 14px;border-bottom:1px solid var(--bdr)}
+.funnel-step:last-child{border-bottom:none}
+.funnel-bar-wrap{flex:1;background:var(--bg3);border-radius:6px;height:30px;position:relative;overflow:hidden}
+.funnel-bar-fill{height:100%;display:flex;align-items:center;padding:0 10px;font-size:10px;font-weight:700;color:#fff;border-radius:6px}
+.funnel-label{font-size:11px;color:var(--txt2);min-width:90px}
+.funnel-pct{font-size:11px;font-weight:700;color:var(--txt);min-width:40px;text-align:left}
+
+.export-row{display:flex;gap:8px;margin-top:14px}
+.export-btn{flex:1;height:36px;background:var(--bg3);border:1px solid var(--bdr2);border-radius:8px;font-size:11px;font-weight:700;color:var(--txt2);cursor:pointer;font-family:'Vazirmatn',sans-serif;display:flex;align-items:center;justify-content:center;gap:6px}
+.export-btn:hover{border-color:var(--fg);color:var(--fg2)}
+</style>
+</head>
+<body>
+
+<div class="sidebar">
+  <div class="sb-logo"><div class="sb-lm">س</div><div class="sb-lt">سبزینه <small>پنل مدیریت</small></div></div>
+  <div class="sb-sec">اصلی</div>
+  <div class="sb-item" onclick="nav(this)"><i class="ti ti-layout-dashboard"></i> داشبورد</div>
+  <div class="sb-item on" onclick="nav(this)"><i class="ti ti-chart-bar"></i> گزارش‌ها</div>
+  <div class="sb-sec">فروشگاه</div>
+  <div class="sb-item" onclick="nav(this)"><i class="ti ti-receipt"></i> سفارش‌ها</div>
+  <div class="sb-item" onclick="nav(this)"><i class="ti ti-shopping-bag"></i> محصولات</div>
+  <div class="sb-item" onclick="nav(this)"><i class="ti ti-category"></i> دسته‌بندی‌ها</div>
+  <div class="sb-item" onclick="nav(this)"><i class="ti ti-tag"></i> کوپن‌ها</div>
+  <div class="sb-sec">کاربران</div>
+  <div class="sb-item" onclick="nav(this)"><i class="ti ti-users"></i> کاربران</div>
+  <div class="sb-item" onclick="nav(this)"><i class="ti ti-message-dots"></i> نظرات</div>
+  <div class="sb-sec">محتوا</div>
+  <div class="sb-item" onclick="nav(this)"><i class="ti ti-article"></i> مقالات</div>
+  <div class="sb-sec">سیستم</div>
+  <div class="sb-item" onclick="nav(this)"><i class="ti ti-settings"></i> تنظیمات</div>
+  <div class="sb-bottom">
+    <div class="sb-user"><div class="sb-av">مر</div><div><div class="sb-uname">محمد رضایی</div><div class="sb-urole">مدیر ارشد</div></div><i class="ti ti-logout sb-out"></i></div>
+  </div>
+</div>
+
+<div class="main">
+  <div class="topbar">
+    <div><div class="tb-title">گزارش‌ها و آمار</div><div class="tb-sub">گزارش تحلیلی عملکرد فروشگاه</div></div>
+    <div class="tb-right">
+      <select class="fsel"><option>۷ روز اخیر</option><option selected>۳۰ روز اخیر</option><option>۳ ماه اخیر</option><option>سال جاری</option></select>
+      <button class="btn-xs"><i class="ti ti-download" style="font-size:11px"></i> خروجی PDF</button>
+    </div>
+  </div>
+
+  <div class="content">
+
+    <div class="kpi-grid">
+      <div class="kpi gr">
+        <div class="kpi-top"><div class="kpi-lbl">فروش کل (۳۰ روز)</div><div class="kpi-ico" style="background:rgba(82,147,107,0.15)"><i class="ti ti-coin" style="color:var(--fg2);font-size:14px"></i></div></div>
+        <div class="kpi-num">۳۸۴<sup>میلیون تومان</sup></div>
+        <div class="kpi-chg up"><i class="ti ti-arrow-up-right" style="font-size:11px"></i> ۲۲.۴٪ <span class="per">نسبت به ماه قبل</span></div>
+      </div>
+      <div class="kpi go">
+        <div class="kpi-top"><div class="kpi-lbl">تعداد سفارش</div><div class="kpi-ico" style="background:var(--amber-l)"><i class="ti ti-shopping-cart" style="color:var(--amber);font-size:14px"></i></div></div>
+        <div class="kpi-num">۱,۲۰۴<sup>سفارش</sup></div>
+        <div class="kpi-chg up"><i class="ti ti-arrow-up-right" style="font-size:11px"></i> ۱۴.۸٪ <span class="per">نسبت به ماه قبل</span></div>
+      </div>
+      <div class="kpi bl">
+        <div class="kpi-top"><div class="kpi-lbl">مشتری جدید</div><div class="kpi-ico" style="background:var(--blue-l)"><i class="ti ti-user-plus" style="color:var(--blue);font-size:14px"></i></div></div>
+        <div class="kpi-num">۳۴۰<sup>نفر</sup></div>
+        <div class="kpi-chg up"><i class="ti ti-arrow-up-right" style="font-size:11px"></i> ۸.۲٪ <span class="per">نسبت به ماه قبل</span></div>
+      </div>
+      <div class="kpi pu">
+        <div class="kpi-top"><div class="kpi-lbl">نرخ تبدیل</div><div class="kpi-ico" style="background:rgba(139,107,212,0.15)"><i class="ti ti-target-arrow" style="color:var(--purple);font-size:14px"></i></div></div>
+        <div class="kpi-num">۳.۸<sup>٪</sup></div>
+        <div class="kpi-chg dn"><i class="ti ti-arrow-down-right" style="font-size:11px"></i> ۰.۴٪ <span class="per">نسبت به ماه قبل</span></div>
+      </div>
+    </div>
+
+    <div class="tab-bar">
+      <div class="rtab on" onclick="setTab(this,'sales')">گزارش فروش</div>
+      <div class="rtab" onclick="setTab(this,'products')">گزارش محصولات</div>
+      <div class="rtab" onclick="setTab(this,'customers')">گزارش مشتریان</div>
+      <div class="rtab" onclick="setTab(this,'traffic')">ترافیک و قیف فروش</div>
+    </div>
+
+    <!-- SALES TAB -->
+    <div class="rview active" id="rv-sales">
+      <div class="row2">
+        <div class="card">
+          <div class="card-h"><div class="card-ht"><i class="ti ti-chart-bar"></i> روند فروش ماهانه</div></div>
+          <div class="card-b">
+            <div class="bar-chart" id="sales-chart"></div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-h"><div class="card-ht"><i class="ti ti-chart-donut"></i> فروش بر دسته</div></div>
+          <div class="card-b">
+            <div class="donut-section">
+              <svg class="donut-svg" viewBox="0 0 36 36">
+                <circle cx="18" cy="18" r="14" fill="none" stroke="var(--bg3)" stroke-width="4"/>
+                <circle cx="18" cy="18" r="14" fill="none" stroke="var(--fg)" stroke-width="4" stroke-dasharray="34 66" stroke-dashoffset="25" transform="rotate(-90 18 18)"/>
+                <circle cx="18" cy="18" r="14" fill="none" stroke="var(--gold)" stroke-width="4" stroke-dasharray="22 78" stroke-dashoffset="-9" transform="rotate(-90 18 18)"/>
+                <circle cx="18" cy="18" r="14" fill="none" stroke="var(--blue)" stroke-width="4" stroke-dasharray="18 82" stroke-dashoffset="-31" transform="rotate(-90 18 18)"/>
+                <circle cx="18" cy="18" r="14" fill="none" stroke="var(--amber)" stroke-width="4" stroke-dasharray="14 86" stroke-dashoffset="-49" transform="rotate(-90 18 18)"/>
+                <circle cx="18" cy="18" r="14" fill="none" stroke="var(--purple)" stroke-width="4" stroke-dasharray="12 88" stroke-dashoffset="-63" transform="rotate(-90 18 18)"/>
+              </svg>
+              <div class="donut-leg">
+                <div class="dl"><div class="dl-dot" style="background:var(--fg)"></div> آبیاری <span class="dl-pct">۳۴٪</span></div>
+                <div class="dl"><div class="dl-dot" style="background:var(--gold)"></div> کود <span class="dl-pct">۲۲٪</span></div>
+                <div class="dl"><div class="dl-dot" style="background:var(--blue)"></div> ابزار <span class="dl-pct">۱۸٪</span></div>
+                <div class="dl"><div class="dl-dot" style="background:var(--amber)"></div> بذر <span class="dl-pct">۱۴٪</span></div>
+                <div class="dl"><div class="dl-dot" style="background:var(--purple)"></div> سموم <span class="dl-pct">۱۲٪</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-h"><div class="card-ht"><i class="ti ti-receipt"></i> جزئیات فروش روزانه</div></div>
+        <table class="rtable">
+          <thead><tr><th>تاریخ</th><th>تعداد سفارش</th><th>فروش ناخالص</th><th>تخفیف</th><th>فروش خالص</th><th>میانگین سفارش</th></tr></thead>
+          <tbody>
+            <tr><td>۱۶ خرداد ۱۴۰۴</td><td>۴۷</td><td>۱۴.۲ م</td><td>۱.۸ م</td><td style="font-weight:700;color:var(--txt)">۱۲.۴ م</td><td>۲۶۴ هزار</td></tr>
+            <tr><td>۱۵ خرداد ۱۴۰۴</td><td>۳۸</td><td>۱۲.۱ م</td><td>۱.۲ م</td><td style="font-weight:700;color:var(--txt)">۱۰.۹ م</td><td>۲۸۷ هزار</td></tr>
+            <tr><td>۱۴ خرداد ۱۴۰۴</td><td>۵۲</td><td>۱۶.۸ م</td><td>۲.۱ م</td><td style="font-weight:700;color:var(--txt)">۱۴.۷ م</td><td>۲۸۲ هزار</td></tr>
+            <tr><td>۱۳ خرداد ۱۴۰۴</td><td>۴۱</td><td>۱۱.۵ م</td><td>۱.۵ م</td><td style="font-weight:700;color:var(--txt)">۱۰.۰ م</td><td>۲۴۴ هزار</td></tr>
+          </tbody>
+        </table>
+        <div class="export-row" style="padding:0 14px 14px">
+          <button class="export-btn"><i class="ti ti-file-spreadsheet" style="font-size:13px"></i> دانلود Excel</button>
+          <button class="export-btn"><i class="ti ti-file-text" style="font-size:13px"></i> دانلود PDF</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- PRODUCTS TAB -->
+    <div class="rview" id="rv-products">
+      <div class="row3">
+        <div class="card"><div class="card-h"><div class="card-ht"><i class="ti ti-trophy"></i> پرفروش‌ترین</div></div>
+          <div class="card-b" style="padding-top:0">
+            <table class="rtable" style="margin-top:8px"><tbody>
+              <tr><td style="font-weight:700;color:var(--txt)">کود هیومیک اسید</td><td style="text-align:left">۲۳۶ فروش</td></tr>
+              <tr><td style="font-weight:700;color:var(--txt)">قطره‌چکان ۱۰۰ عددی</td><td style="text-align:left">۱۸۴ فروش</td></tr>
+              <tr><td style="font-weight:700;color:var(--txt)">بذر گوجه هیبرید</td><td style="text-align:left">۱۶۱ فروش</td></tr>
+            </tbody></table>
+          </div>
+        </div>
+        <div class="card"><div class="card-h"><div class="card-ht" style="color:var(--red)"><i class="ti ti-trending-down" style="color:var(--red)"></i> کم‌فروش‌ترین</div></div>
+          <div class="card-b" style="padding-top:0">
+            <table class="rtable" style="margin-top:8px"><tbody>
+              <tr><td>سمپاش دستی ۵ لیتری</td><td style="text-align:left;color:var(--txt3)">۳ فروش</td></tr>
+              <tr><td>کود ورمی‌کمپوست ویژه</td><td style="text-align:left;color:var(--txt3)">۵ فروش</td></tr>
+              <tr><td>دستکش باغبانی چرمی</td><td style="text-align:left;color:var(--txt3)">۷ فروش</td></tr>
+            </tbody></table>
+          </div>
+        </div>
+        <div class="card"><div class="card-h"><div class="card-ht" style="color:var(--amber)"><i class="ti ti-alert-triangle" style="color:var(--amber)"></i> رو به اتمام</div></div>
+          <div class="card-b" style="padding-top:0">
+            <table class="rtable" style="margin-top:8px"><tbody>
+              <tr><td>قارچ‌کش مانکوزب</td><td style="text-align:left;color:var(--red);font-weight:700">۳ عدد</td></tr>
+              <tr><td>کود هیومیک اسید</td><td style="text-align:left;color:var(--red);font-weight:700">۴ عدد</td></tr>
+              <tr><td>کاتر باغبانی SS</td><td style="text-align:left;color:var(--amber);font-weight:700">۵ عدد</td></tr>
+            </tbody></table>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-h"><div class="card-ht"><i class="ti ti-category"></i> عملکرد دسته‌بندی‌ها</div></div>
+        <table class="rtable">
+          <thead><tr><th>دسته‌بندی</th><th>تعداد محصول</th><th>فروش (تعداد)</th><th>درآمد</th><th>سهم از کل</th></tr></thead>
+          <tbody>
+            <tr><td style="font-weight:700;color:var(--txt)">آبیاری</td><td>۲۸۴</td><td>۴۸۲</td><td style="font-weight:700">۱۳۰.۸ م</td><td>۳۴٪</td></tr>
+            <tr><td style="font-weight:700;color:var(--txt)">کود و تغذیه</td><td>۲۱۸</td><td>۶۲۰</td><td style="font-weight:700">۸۴.۵ م</td><td>۲۲٪</td></tr>
+            <tr><td style="font-weight:700;color:var(--txt)">ابزار باغبانی</td><td>۴۱۰</td><td>۳۵۶</td><td style="font-weight:700">۶۹.۱ م</td><td>۱۸٪</td></tr>
+            <tr><td style="font-weight:700;color:var(--txt)">بذر</td><td>۳۴۰</td><td>۷۸۴</td><td style="font-weight:700">۵۳.۸ م</td><td>۱۴٪</td></tr>
+            <tr><td style="font-weight:700;color:var(--txt)">سموم</td><td>۱۵۶</td><td>۱۹۸</td><td style="font-weight:700">۴۶.۱ م</td><td>۱۲٪</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- CUSTOMERS TAB -->
+    <div class="rview" id="rv-customers">
+      <div class="row2">
+        <div class="card">
+          <div class="card-h"><div class="card-ht"><i class="ti ti-map-pin"></i> توزیع جغرافیایی مشتریان</div></div>
+          <div class="card-b" style="padding:8px 0">
+            <div class="geo-bar"><span class="geo-name">تهران</span><div class="geo-track"><div class="geo-fill" style="width:42%"></div></div><span class="geo-val">۴۲٪</span></div>
+            <div class="geo-bar"><span class="geo-name">اصفهان</span><div class="geo-track"><div class="geo-fill" style="width:18%;background:var(--gold)"></div></div><span class="geo-val">۱۸٪</span></div>
+            <div class="geo-bar"><span class="geo-name">خراسان رضوی</span><div class="geo-track"><div class="geo-fill" style="width:14%;background:var(--blue)"></div></div><span class="geo-val">۱۴٪</span></div>
+            <div class="geo-bar"><span class="geo-name">البرز</span><div class="geo-track"><div class="geo-fill" style="width:11%;background:var(--amber)"></div></div><span class="geo-val">۱۱٪</span></div>
+            <div class="geo-bar"><span class="geo-name">مازندران</span><div class="geo-track"><div class="geo-fill" style="width:9%;background:var(--purple)"></div></div><span class="geo-val">۹٪</span></div>
+            <div class="geo-bar"><span class="geo-name">سایر استان‌ها</span><div class="geo-track"><div class="geo-fill" style="width:6%;background:var(--txt3)"></div></div><span class="geo-val">۶٪</span></div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-h"><div class="card-ht"><i class="ti ti-crown"></i> ارزش مشتری</div></div>
+          <div class="card-b">
+            <table class="rtable" style="margin-top:0">
+              <tbody>
+                <tr><td>میانگین ارزش طول عمر مشتری (LTV)</td><td style="text-align:left;font-weight:700;color:var(--txt)">۱.۸ م ت</td></tr>
+                <tr><td>میانگین تعداد خرید هر مشتری</td><td style="text-align:left;font-weight:700;color:var(--txt)">۳.۲ بار</td></tr>
+                <tr><td>نرخ بازگشت مشتری (Retention)</td><td style="text-align:left;font-weight:700;color:var(--fg2)">۴۶٪</td></tr>
+                <tr><td>نرخ ریزش مشتری (Churn)</td><td style="text-align:left;font-weight:700;color:var(--red)">۸٪</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-h"><div class="card-ht"><i class="ti ti-star"></i> برترین مشتریان (۳۰ روز)</div></div>
+        <table class="rtable">
+          <thead><tr><th>مشتری</th><th>تعداد سفارش</th><th>مجموع خرید</th><th>آخرین خرید</th></tr></thead>
+          <tbody>
+            <tr><td style="font-weight:700;color:var(--txt)">رضا اکبری</td><td>۸</td><td style="font-weight:700">۹.۴ م ت</td><td style="color:var(--txt3)">۲ روز پیش</td></tr>
+            <tr><td style="font-weight:700;color:var(--txt)">سارا موسوی</td><td>۶</td><td style="font-weight:700">۶.۲ م ت</td><td style="color:var(--txt3)">۴ روز پیش</td></tr>
+            <tr><td style="font-weight:700;color:var(--txt)">علی احمدی</td><td>۱۲</td><td style="font-weight:700">۴.۸ م ت</td><td style="color:var(--txt3)">۱ روز پیش</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- TRAFFIC TAB -->
+    <div class="rview" id="rv-traffic">
+      <div class="row2">
+        <div class="card">
+          <div class="card-h"><div class="card-ht"><i class="ti ti-filter"></i> قیف فروش (Funnel)</div></div>
+          <div class="card-b">
+            <div class="funnel-step">
+              <span class="funnel-label">بازدید سایت</span>
+              <div class="funnel-bar-wrap"><div class="funnel-bar-fill" style="width:100%;background:var(--fg)">۴۲,۰۰۰</div></div>
+              <span class="funnel-pct">۱۰۰٪</span>
+            </div>
+            <div class="funnel-step">
+              <span class="funnel-label">مشاهده محصول</span>
+              <div class="funnel-bar-wrap"><div class="funnel-bar-fill" style="width:62%;background:var(--blue)">۲۶,۰۰۰</div></div>
+              <span class="funnel-pct">۶۲٪</span>
+            </div>
+            <div class="funnel-step">
+              <span class="funnel-label">افزودن به سبد</span>
+              <div class="funnel-bar-wrap"><div class="funnel-bar-fill" style="width:28%;background:var(--amber)">۱۱,۸۰۰</div></div>
+              <span class="funnel-pct">۲۸٪</span>
+            </div>
+            <div class="funnel-step">
+              <span class="funnel-label">شروع تکمیل خرید</span>
+              <div class="funnel-bar-wrap"><div class="funnel-bar-fill" style="width:12%;background:var(--purple)">۵,۰۴۰</div></div>
+              <span class="funnel-pct">۱۲٪</span>
+            </div>
+            <div class="funnel-step">
+              <span class="funnel-label">پرداخت موفق</span>
+              <div class="funnel-bar-wrap"><div class="funnel-bar-fill" style="width:3.8%;background:var(--gold)">۱,۲۰۴</div></div>
+              <span class="funnel-pct">۳.۸٪</span>
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-h"><div class="card-ht"><i class="ti ti-device-mobile"></i> منبع ترافیک</div></div>
+          <div class="card-b" style="padding:6px 0">
+            <div class="geo-bar"><span class="geo-name">جستجوی گوگل</span><div class="geo-track"><div class="geo-fill" style="width:48%"></div></div><span class="geo-val">۴۸٪</span></div>
+            <div class="geo-bar"><span class="geo-name">مستقیم</span><div class="geo-track"><div class="geo-fill" style="width:24%;background:var(--blue)"></div></div><span class="geo-val">۲۴٪</span></div>
+            <div class="geo-bar"><span class="geo-name">اینستاگرام</span><div class="geo-track"><div class="geo-fill" style="width:16%;background:var(--purple)"></div></div><span class="geo-val">۱۶٪</span></div>
+            <div class="geo-bar"><span class="geo-name">تلگرام</span><div class="geo-track"><div class="geo-fill" style="width:8%;background:var(--amber)"></div></div><span class="geo-val">۸٪</span></div>
+            <div class="geo-bar"><span class="geo-name">سایر</span><div class="geo-track"><div class="geo-fill" style="width:4%;background:var(--txt3)"></div></div><span class="geo-val">۴٪</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+var salesData = [28,34,31,42,38,52,47];
+var salesDays = ['۱۰ خرداد','۱۱ خرداد','۱۲ خرداد','۱۳ خرداد','۱۴ خرداد','۱۵ خرداد','۱۶ خرداد'];
+function buildSalesChart(){
+  var max = Math.max(...salesData)*1.15;
+  document.getElementById('sales-chart').innerHTML = salesData.map((v,i)=>`
+    <div class="bc-col">
+      <div class="bc-val">${v} م</div>
+      <div class="bc-bar" style="background:var(--fg);height:${(v/max)*110}px"></div>
+      <div class="bc-lbl">${salesDays[i]}</div>
+    </div>
+  `).join('');
+}
+buildSalesChart();
+
+function setTab(el, view){
+  document.querySelectorAll('.rtab').forEach(t=>t.classList.remove('on'));
+  el.classList.add('on');
+  document.querySelectorAll('.rview').forEach(v=>v.classList.remove('active'));
+  document.getElementById('rv-'+view).classList.add('active');
+}
+function nav(el){ document.querySelectorAll('.sb-item').forEach(i=>i.classList.remove('on')); el.classList.add('on'); }
+</script>
+</body>
+</html>

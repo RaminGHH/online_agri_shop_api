@@ -1,0 +1,800 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>سبزینه — صفحات مکمل</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;600;700;900&display=swap');
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --fg:#1C3829;--fm:#2D5A3D;--fa:#52936B;--fl:#A8D5B5;
+  --gold:#C8A84B;--gold-l:#F0DFA0;
+  --cream:#F2EDE4;--white:#fff;
+  --txt:#1a2e1f;--txt2:#4a6b52;--txt3:#8a9e8d;
+  --bdr:#D8E8D4;--red:#C0392B;--red-l:#FDECEA;
+}
+body{font-family:'Vazirmatn',sans-serif;background:var(--cream);color:var(--txt);direction:rtl;min-height:100vh}
+.page{display:none}.page.active{display:block}
+
+/* ─── NAV ─── */
+nav{background:var(--fg);height:54px;padding:0 16px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:200}
+.nlogo{display:flex;align-items:center;gap:8px}
+.nlm{width:30px;height:30px;background:var(--gold);border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:900;color:var(--fg)}
+.nlt{color:#fff;font-size:13px;font-weight:700}
+.nlt span{color:rgba(255,255,255,0.4);font-weight:300}
+.page-switcher{display:flex;gap:3px;overflow-x:auto;padding:4px 0}
+.page-switcher::-webkit-scrollbar{display:none}
+.psw{padding:5px 12px;border-radius:6px;font-size:11px;font-weight:600;cursor:pointer;border:none;font-family:'Vazirmatn',sans-serif;white-space:nowrap;transition:all .15s;color:rgba(255,255,255,.6);background:transparent}
+.psw:hover{background:rgba(255,255,255,.08);color:#fff}
+.psw.on{background:var(--gold);color:var(--fg)}
+
+/* ─── COMMON ─── */
+.bc{background:var(--white);border-bottom:0.5px solid var(--bdr);padding:9px 20px;display:flex;align-items:center;gap:5px}
+.bc a{font-size:11px;color:var(--txt2);text-decoration:none;cursor:pointer}
+.bc i{font-size:10px;color:var(--txt3)}
+.bc span{font-size:11px;color:var(--fa);font-weight:600}
+.wrap{max-width:900px;margin:0 auto;padding:24px 20px 56px}
+.section-title{font-size:16px;font-weight:800;color:var(--txt);display:flex;align-items:center;gap:8px;margin-bottom:16px}
+.section-title::before{content:'';width:3px;height:17px;background:var(--fm);border-radius:2px;display:block}
+.card{background:var(--white);border:0.5px solid var(--bdr);border-radius:14px;overflow:hidden;margin-bottom:14px}
+.card-head{padding:14px 18px;border-bottom:0.5px solid var(--bdr);display:flex;align-items:center;justify-content:space-between}
+.card-head h3{font-size:14px;font-weight:800;color:var(--txt);display:flex;align-items:center;gap:8px}
+.card-head h3 i{color:var(--fa)}
+.card-body{padding:18px}
+
+/* ══════════════════════════════
+   PAGE 1: CATEGORIES
+══════════════════════════════ */
+.cat-hero{
+  background:linear-gradient(135deg,var(--fg),#2D5A3D);
+  padding:32px 20px;text-align:center;position:relative;overflow:hidden;
+  margin-bottom:24px;
+}
+.cat-hero::before{content:'';position:absolute;top:-60px;right:-60px;width:200px;height:200px;background:rgba(200,168,75,0.07);border-radius:50%}
+.cat-hero::after{content:'';position:absolute;bottom:-50px;left:-50px;width:160px;height:160px;background:rgba(82,147,107,0.07);border-radius:50%}
+.cat-hero h1{font-size:26px;font-weight:900;color:#fff;margin-bottom:6px;position:relative;z-index:1}
+.cat-hero p{font-size:13px;color:rgba(255,255,255,.5);font-weight:300;position:relative;z-index:1}
+
+.main-cats{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:28px}
+.main-cat-card{
+  background:var(--white);border:0.5px solid var(--bdr);border-radius:16px;
+  overflow:hidden;cursor:pointer;transition:all .2s;
+}
+.main-cat-card:hover{border-color:var(--fa);transform:translateY(-3px);box-shadow:0 8px 24px rgba(28,56,41,0.08)}
+.mcc-img{height:110px;display:flex;align-items:center;justify-content:center;font-size:52px;position:relative}
+.mcc-count{position:absolute;bottom:8px;left:8px;background:rgba(28,56,41,0.7);color:#fff;font-size:10px;font-weight:700;padding:2px 8px;border-radius:10px}
+.mcc-body{padding:13px 14px}
+.mcc-name{font-size:14px;font-weight:800;color:var(--txt);margin-bottom:4px}
+.mcc-desc{font-size:11px;color:var(--txt3);line-height:1.6}
+.mcc-arrow{display:flex;align-items:center;gap:4px;color:var(--fa);font-size:11px;font-weight:600;margin-top:8px}
+
+.sub-cats-title{font-size:14px;font-weight:800;color:var(--txt);margin-bottom:12px;display:flex;align-items:center;gap:7px}
+.sub-cats-title i{color:var(--fa)}
+.sub-cats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.sub-cat{
+  background:var(--white);border:0.5px solid var(--bdr);border-radius:10px;
+  padding:12px 10px;text-align:center;cursor:pointer;transition:all .15s;
+}
+.sub-cat:hover{border-color:var(--fa);background:#EAF3DE}
+.sub-cat .sci{font-size:26px;margin-bottom:6px}
+.sub-cat .scn{font-size:11px;font-weight:700;color:var(--txt);margin-bottom:3px}
+.sub-cat .scc{font-size:10px;color:var(--txt3)}
+
+/* ══════════════════════════════
+   PAGE 2: BLOG
+══════════════════════════════ */
+.blog-hero{
+  background:var(--fg);padding:28px 20px;
+  display:flex;align-items:center;gap:20px;margin-bottom:24px;
+}
+.bh-content{flex:1}
+.bh-badge{display:inline-flex;align-items:center;gap:5px;background:rgba(200,168,75,0.15);border:1px solid rgba(200,168,75,0.25);color:var(--gold-l);font-size:10px;font-weight:700;padding:4px 11px;border-radius:20px;margin-bottom:10px}
+.bh-content h1{font-size:22px;font-weight:900;color:#fff;line-height:1.4;margin-bottom:8px}
+.bh-content p{font-size:12px;color:rgba(255,255,255,.5);font-weight:300;line-height:1.9}
+.bh-icon{font-size:72px;opacity:.2}
+
+.blog-cats{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:20px}
+.btag{padding:6px 14px;border-radius:20px;font-size:11px;font-weight:700;cursor:pointer;border:0.5px solid var(--bdr);background:var(--white);color:var(--txt2);transition:all .15s}
+.btag:hover{border-color:var(--fa);color:var(--fa)}
+.btag.on{background:var(--fg);color:#fff;border-color:var(--fg)}
+
+.blog-featured{display:grid;grid-template-columns:1.6fr 1fr;gap:14px;margin-bottom:20px}
+.blog-feat-card{
+  background:var(--white);border:0.5px solid var(--bdr);border-radius:14px;
+  overflow:hidden;cursor:pointer;transition:all .2s;
+}
+.blog-feat-card:hover{border-color:var(--fa);box-shadow:0 6px 20px rgba(28,56,41,0.07)}
+.bfc-img{height:170px;display:flex;align-items:center;justify-content:center;font-size:60px}
+.bfc-body{padding:14px}
+.bfc-tag{display:inline-block;background:#EAF3DE;color:#27500A;font-size:10px;font-weight:700;padding:2px 8px;border-radius:4px;margin-bottom:7px}
+.bfc-title{font-size:14px;font-weight:800;color:var(--txt);line-height:1.5;margin-bottom:8px}
+.bfc-meta{display:flex;align-items:center;gap:10px;font-size:10px;color:var(--txt3)}
+.bfc-meta span{display:flex;align-items:center;gap:3px}
+.bfc-excerpt{font-size:12px;color:var(--txt2);line-height:1.8;margin-top:7px}
+
+.blog-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.blog-card{background:var(--white);border:0.5px solid var(--bdr);border-radius:12px;overflow:hidden;cursor:pointer;transition:all .2s}
+.blog-card:hover{border-color:var(--fa);transform:translateY(-2px)}
+.bc-img{height:100px;display:flex;align-items:center;justify-content:center;font-size:40px}
+.bc-body{padding:12px}
+.bc-tag{display:inline-block;background:#EAF3DE;color:#27500A;font-size:9px;font-weight:700;padding:2px 7px;border-radius:3px;margin-bottom:6px}
+.bc-title{font-size:12px;font-weight:700;color:var(--txt);line-height:1.5;margin-bottom:6px}
+.bc-meta{font-size:10px;color:var(--txt3);display:flex;gap:8px}
+
+/* ══════════════════════════════
+   PAGE 3: SEARCH
+══════════════════════════════ */
+.search-hero{background:var(--white);border-bottom:0.5px solid var(--bdr);padding:24px 20px}
+.sh-inner{max-width:600px;margin:0 auto;text-align:center}
+.sh-inner h2{font-size:20px;font-weight:900;color:var(--fg);margin-bottom:14px}
+.search-big{display:flex;gap:8px}
+.sb-input{
+  flex:1;height:46px;background:var(--cream);border:1.5px solid var(--bdr);
+  border-radius:12px;padding:0 16px 0 14px;font-size:14px;
+  font-family:'Vazirmatn',sans-serif;color:var(--txt);outline:none;
+  transition:border .18s,background .18s;direction:rtl;
+}
+.sb-input:focus{border-color:var(--fa);background:#fff}
+.sb-input::placeholder{color:var(--txt3)}
+.sb-btn{height:46px;background:var(--fg);color:#fff;border:none;border-radius:12px;padding:0 20px;font-size:13px;font-weight:700;cursor:pointer;font-family:'Vazirmatn',sans-serif;display:flex;align-items:center;gap:7px;white-space:nowrap}
+
+.search-suggestions{display:flex;gap:7px;flex-wrap:wrap;margin-top:12px;justify-content:center}
+.sugg{padding:5px 13px;border-radius:20px;font-size:11px;background:var(--cream);border:0.5px solid var(--bdr);color:var(--txt2);cursor:pointer;transition:all .15s}
+.sugg:hover{border-color:var(--fa);color:var(--fa);background:var(--white)}
+
+.search-results-wrap{max-width:900px;margin:0 auto;padding:20px 20px 56px;display:grid;grid-template-columns:220px 1fr;gap:16px}
+
+.search-filter-sidebar{background:var(--white);border:0.5px solid var(--bdr);border-radius:12px;padding:16px;position:sticky;top:72px}
+.sfs-title{font-size:13px;font-weight:800;color:var(--txt);margin-bottom:12px;display:flex;align-items:center;justify-content:space-between}
+.sfs-reset{font-size:11px;color:var(--fa);cursor:pointer}
+.filter-item{display:flex;align-items:center;gap:7px;padding:6px 0;cursor:pointer}
+.filter-item input{accent-color:var(--fa)}
+.filter-item label{font-size:12px;color:var(--txt2);cursor:pointer;display:flex;justify-content:space-between;flex:1}
+.filter-item label span{font-size:10px;color:var(--txt3)}
+.filter-divider{height:0.5px;background:var(--bdr);margin:10px 0}
+.filter-sub-title{font-size:11px;font-weight:700;color:var(--txt3);margin-bottom:6px;text-transform:uppercase;letter-spacing:.5px}
+
+.search-results-area{}
+.search-meta{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.sm-count{font-size:13px;color:var(--txt2)}
+.sm-count strong{color:var(--txt);font-weight:800}
+.sm-sort{height:34px;background:var(--white);border:0.5px solid var(--bdr);border-radius:8px;padding:0 10px;font-size:12px;font-family:'Vazirmatn',sans-serif;color:var(--txt);outline:none}
+
+.result-card{background:var(--white);border:0.5px solid var(--bdr);border-radius:12px;display:flex;gap:0;overflow:hidden;margin-bottom:10px;cursor:pointer;transition:all .2s}
+.result-card:hover{border-color:var(--fa);box-shadow:0 4px 16px rgba(28,56,41,0.06)}
+.rc-img{width:100px;height:100px;display:flex;align-items:center;justify-content:center;font-size:44px;flex-shrink:0}
+.rc-body{flex:1;padding:13px 16px;display:flex;align-items:center;gap:14px}
+.rc-info{flex:1}
+.rc-cat{font-size:10px;font-weight:700;color:var(--txt3);margin-bottom:3px}
+.rc-name{font-size:13px;font-weight:700;color:var(--txt);margin-bottom:4px;line-height:1.4}
+.rc-name mark{background:#FEF3CD;color:var(--txt);border-radius:3px;padding:0 2px}
+.rc-rate{display:flex;align-items:center;gap:5px;font-size:11px}
+.rc-stars{color:var(--gold)}
+.rc-right{text-align:center;flex-shrink:0;min-width:110px}
+.rc-price{font-size:15px;font-weight:900;color:var(--fg);display:block;margin-bottom:3px}
+.rc-old{font-size:11px;color:var(--txt3);text-decoration:line-through;display:block;margin-bottom:7px}
+.rc-add{background:var(--fg);color:#fff;border:none;border-radius:7px;padding:7px 14px;font-size:11px;font-weight:700;cursor:pointer;font-family:'Vazirmatn',sans-serif;width:100%}
+
+.no-result-box{text-align:center;padding:40px 20px;background:var(--white);border-radius:12px;border:0.5px solid var(--bdr)}
+.no-result-box i{font-size:48px;color:var(--bdr);display:block;margin-bottom:12px}
+.no-result-box h3{font-size:15px;font-weight:700;color:var(--txt);margin-bottom:6px}
+.no-result-box p{font-size:12px;color:var(--txt3);line-height:1.8}
+
+/* ══════════════════════════════
+   PAGE 4: ABOUT / CONTACT
+══════════════════════════════ */
+.about-hero{
+  background:linear-gradient(135deg,var(--fg),#2D5A3D);
+  padding:48px 20px;text-align:center;position:relative;overflow:hidden;
+}
+.about-hero::before{content:'🌿';font-size:180px;position:absolute;right:-20px;top:-20px;opacity:.06;line-height:1}
+.about-hero h1{font-size:28px;font-weight:900;color:#fff;margin-bottom:8px;position:relative;z-index:1}
+.about-hero p{font-size:13px;color:rgba(255,255,255,.55);font-weight:300;line-height:1.9;max-width:480px;margin:0 auto;position:relative;z-index:1}
+
+.about-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:24px 0}
+.astat{background:var(--white);border:0.5px solid var(--bdr);border-radius:12px;padding:18px;text-align:center}
+.astat .num{font-size:26px;font-weight:900;color:var(--fg);display:block;margin-bottom:4px}
+.astat .num span{color:var(--gold)}
+.astat p{font-size:11px;color:var(--txt3)}
+
+.about-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:20px}
+.about-card{background:var(--white);border:0.5px solid var(--bdr);border-radius:14px;padding:20px}
+.ac-icon{width:44px;height:44px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:22px;margin-bottom:12px}
+.ac-title{font-size:14px;font-weight:800;color:var(--txt);margin-bottom:6px}
+.ac-text{font-size:12px;color:var(--txt2);line-height:1.9}
+
+.team-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:24px}
+.team-card{background:var(--white);border:0.5px solid var(--bdr);border-radius:12px;padding:16px;text-align:center}
+.team-avatar{width:56px;height:56px;border-radius:50%;margin:0 auto 10px;display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:900;color:#fff}
+.team-name{font-size:13px;font-weight:800;color:var(--txt);margin-bottom:3px}
+.team-role{font-size:11px;color:var(--txt3)}
+
+/* CONTACT */
+.contact-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.contact-info{display:flex;flex-direction:column;gap:10px}
+.ci-item{background:var(--white);border:0.5px solid var(--bdr);border-radius:12px;padding:16px;display:flex;align-items:flex-start;gap:12px}
+.ci-icon{width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:18px}
+.ci-title{font-size:12px;font-weight:700;color:var(--txt);margin-bottom:3px}
+.ci-val{font-size:12px;color:var(--txt2);line-height:1.8}
+
+.contact-form{background:var(--white);border:0.5px solid var(--bdr);border-radius:14px;padding:20px}
+.cf-title{font-size:14px;font-weight:800;color:var(--txt);margin-bottom:16px;display:flex;align-items:center;gap:7px}
+.cf-title i{color:var(--fa)}
+.field{margin-bottom:12px}
+.field label{display:block;font-size:11px;font-weight:700;color:var(--txt2);margin-bottom:6px}
+.finput{width:100%;height:38px;background:var(--cream);border:0.5px solid var(--bdr);border-radius:8px;padding:0 12px;font-size:12px;font-family:'Vazirmatn',sans-serif;color:var(--txt);outline:none;transition:border .18s}
+.finput:focus{border-color:var(--fa);background:#fff}
+.finput::placeholder{color:var(--txt3)}
+.ftarea{width:100%;min-height:100px;background:var(--cream);border:0.5px solid var(--bdr);border-radius:8px;padding:10px 12px;font-size:12px;font-family:'Vazirmatn',sans-serif;color:var(--txt);outline:none;resize:vertical;direction:rtl;transition:border .18s}
+.ftarea:focus{border-color:var(--fa);background:#fff}
+.ftarea::placeholder{color:var(--txt3)}
+.fselect{width:100%;height:38px;background:var(--cream);border:0.5px solid var(--bdr);border-radius:8px;padding:0 12px;font-size:12px;font-family:'Vazirmatn',sans-serif;color:var(--txt);outline:none;cursor:pointer}
+.btn-submit{width:100%;height:42px;background:var(--fg);color:#fff;border:none;border-radius:9px;font-size:13px;font-weight:700;cursor:pointer;font-family:'Vazirmatn',sans-serif;display:flex;align-items:center;justify-content:center;gap:7px;margin-top:4px}
+
+/* map placeholder */
+.map-placeholder{background:var(--cream);border:0.5px solid var(--bdr);border-radius:12px;height:160px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;margin-top:12px;color:var(--txt3)}
+.map-placeholder i{font-size:32px;color:var(--fa)}
+.map-placeholder p{font-size:12px;font-weight:600}
+.map-placeholder small{font-size:11px}
+
+/* ══════════════════════════════
+   PAGE 5: FORGOT PASSWORD
+══════════════════════════════ */
+.forgot-wrap{min-height:calc(100vh - 54px);display:flex;align-items:center;justify-content:center;padding:32px 20px}
+.forgot-card{background:var(--white);border:0.5px solid var(--bdr);border-radius:20px;overflow:hidden;width:100%;max-width:400px;box-shadow:0 4px 40px rgba(28,56,41,0.08)}
+
+.forgot-steps{display:flex;margin-bottom:0}
+.fstep{flex:1;height:3px;background:var(--bdr);transition:background .3s}
+.fstep.on{background:var(--fa)}
+
+.fp-header{background:var(--fg);padding:26px 28px 22px;text-align:center;position:relative;overflow:hidden}
+.fp-header::before{content:'';position:absolute;top:-40px;left:-40px;width:140px;height:140px;background:rgba(200,168,75,0.07);border-radius:50%}
+.fp-icon{width:50px;height:50px;background:rgba(200,168,75,0.15);border:1px solid rgba(200,168,75,0.25);border-radius:13px;display:flex;align-items:center;justify-content:center;margin:0 auto 12px;color:var(--gold-l);font-size:22px;position:relative;z-index:1}
+.fp-header h2{font-size:17px;font-weight:900;color:#fff;margin-bottom:4px;position:relative;z-index:1}
+.fp-header p{font-size:11px;color:rgba(255,255,255,.5);font-weight:300;position:relative;z-index:1;line-height:1.7}
+
+.fp-body{padding:24px 28px}
+
+/* step indicators */
+.step-dots{display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:20px}
+.sdot{width:8px;height:8px;border-radius:50%;background:var(--bdr);transition:all .3s}
+.sdot.on{background:var(--fa);width:24px;border-radius:4px}
+
+.fp-step{display:none}.fp-step.on{display:block}
+
+.field-label{display:block;font-size:11px;font-weight:700;color:var(--txt2);margin-bottom:6px}
+.fp-input{width:100%;height:42px;background:var(--cream);border:0.5px solid var(--bdr);border-radius:10px;padding:0 40px 0 14px;font-size:13px;font-family:'Vazirmatn',sans-serif;color:var(--txt);outline:none;transition:border .18s;direction:rtl}
+.fp-input:focus{border-color:var(--fa);background:#fff}
+.fp-input::placeholder{color:var(--txt3)}
+.fp-input-wrap{position:relative;margin-bottom:6px}
+.fp-input-wrap i{position:absolute;top:50%;transform:translateY(-50%);right:12px;font-size:16px;color:var(--txt3);pointer-events:none}
+.field-hint{font-size:11px;color:var(--txt3);line-height:1.7;margin-bottom:16px}
+
+/* OTP inputs */
+.otp-row{display:flex;gap:8px;justify-content:center;margin-bottom:8px;direction:ltr}
+.otp-inp{width:46px;height:52px;border:1.5px solid var(--bdr);border-radius:10px;text-align:center;font-size:20px;font-weight:900;color:var(--fg);font-family:'Vazirmatn',sans-serif;background:var(--cream);outline:none;transition:all .18s}
+.otp-inp:focus{border-color:var(--fa);background:#fff;box-shadow:0 0 0 3px rgba(82,147,107,0.12)}
+.otp-inp.filled{border-color:var(--fa);background:#EAF3DE}
+
+.resend-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+.resend-timer{font-size:12px;color:var(--txt3)}
+.resend-btn{font-size:12px;color:var(--fa);font-weight:700;cursor:pointer;background:none;border:none;font-family:'Vazirmatn',sans-serif}
+.resend-btn:disabled{color:var(--txt3);cursor:not-allowed}
+
+/* password strength */
+.strength-bar{display:flex;gap:4px;margin-bottom:4px}
+.sb{height:4px;flex:1;border-radius:2px;background:var(--bdr);transition:background .3s}
+.strength-lbl{font-size:10px;color:var(--txt3);margin-bottom:12px}
+
+.btn-fp{width:100%;height:44px;background:var(--fg);color:#fff;border:none;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;font-family:'Vazirmatn',sans-serif;display:flex;align-items:center;justify-content:center;gap:7px;transition:background .18s;margin-bottom:12px}
+.btn-fp:hover{background:var(--fm)}
+.btn-back{width:100%;height:40px;background:transparent;color:var(--txt2);border:0.5px solid var(--bdr);border-radius:10px;font-size:12px;font-weight:600;cursor:pointer;font-family:'Vazirmatn',sans-serif;display:flex;align-items:center;justify-content:center;gap:6px;transition:all .18s}
+.btn-back:hover{border-color:var(--fa);color:var(--fa)}
+
+/* success state */
+.success-state{text-align:center;padding:20px 0}
+.success-state .si{width:68px;height:68px;border-radius:50%;background:#EAF3DE;border:2px solid var(--fa);display:flex;align-items:center;justify-content:center;margin:0 auto 16px;animation:popIn .5s cubic-bezier(.175,.885,.32,1.275) both}
+@keyframes popIn{from{transform:scale(0);opacity:0}to{transform:scale(1);opacity:1}}
+.success-state h3{font-size:17px;font-weight:800;color:var(--fg);margin-bottom:7px}
+.success-state p{font-size:12px;color:var(--txt3);line-height:1.8;margin-bottom:20px}
+
+.fp-footer{padding:14px 28px 20px;text-align:center;border-top:0.5px solid var(--bdr);font-size:12px;color:var(--txt3)}
+.fp-footer a{color:var(--fa);font-weight:700;text-decoration:none;cursor:pointer}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nlogo">
+    <div class="nlm">س</div>
+    <div class="nlt">سبزینه <span>/ صفحات مکمل</span></div>
+  </div>
+  <div class="page-switcher">
+    <button class="psw on" onclick="sp('categories',this)">📂 دسته‌بندی</button>
+    <button class="psw" onclick="sp('blog',this)">📝 بلاگ</button>
+    <button class="psw" onclick="sp('search',this)">🔍 جستجو</button>
+    <button class="psw" onclick="sp('about',this)">🌿 درباره ما</button>
+    <button class="psw" onclick="sp('forgot',this)">🔑 فراموشی رمز</button>
+  </div>
+</nav>
+
+<!-- ══════════════════════════════
+     PAGE: CATEGORIES
+══════════════════════════════ -->
+<div class="page active" id="page-categories">
+  <div class="cat-hero">
+    <h1>دسته‌بندی محصولات</h1>
+    <p>بیش از ۱,۴۰۰ محصول در ۶ دسته اصلی کشاورزی و باغبانی</p>
+  </div>
+
+  <div class="wrap" style="padding-top:0">
+    <div class="section-title">دسته‌های اصلی</div>
+    <div class="main-cats">
+      <div class="main-cat-card">
+        <div class="mcc-img" style="background:#EAF3DE">🌱<div class="mcc-count">۳۴۰ محصول</div></div>
+        <div class="mcc-body">
+          <div class="mcc-name">بذر و نشاء</div>
+          <div class="mcc-desc">انواع بذر سبزیجات، صیفی‌جات، گل و محصولات زراعی</div>
+          <div class="mcc-arrow"><i class="ti ti-arrow-left" style="font-size:12px"></i> مشاهده محصولات</div>
+        </div>
+      </div>
+      <div class="main-cat-card">
+        <div class="mcc-img" style="background:#FEF3CD">🌾<div class="mcc-count">۲۱۸ محصول</div></div>
+        <div class="mcc-body">
+          <div class="mcc-name">کود و تغذیه گیاه</div>
+          <div class="mcc-desc">کودهای آلی، شیمیایی، میکروالمنت و محرک رشد</div>
+          <div class="mcc-arrow"><i class="ti ti-arrow-left" style="font-size:12px"></i> مشاهده محصولات</div>
+        </div>
+      </div>
+      <div class="main-cat-card">
+        <div class="mcc-img" style="background:#FDECEA">🧪<div class="mcc-count">۱۵۶ محصول</div></div>
+        <div class="mcc-body">
+          <div class="mcc-name">سموم و آفت‌کش</div>
+          <div class="mcc-desc">قارچ‌کش، حشره‌کش، علف‌کش و بیولوژیک</div>
+          <div class="mcc-arrow"><i class="ti ti-arrow-left" style="font-size:12px"></i> مشاهده محصولات</div>
+        </div>
+      </div>
+      <div class="main-cat-card">
+        <div class="mcc-img" style="background:#E6F1FB">💧<div class="mcc-count">۲۸۴ محصول</div></div>
+        <div class="mcc-body">
+          <div class="mcc-name">آبیاری و آبرسانی</div>
+          <div class="mcc-desc">سیستم‌های قطره‌ای، بارانی، لوله و اتصالات</div>
+          <div class="mcc-arrow"><i class="ti ti-arrow-left" style="font-size:12px"></i> مشاهده محصولات</div>
+        </div>
+      </div>
+      <div class="main-cat-card">
+        <div class="mcc-img" style="background:#F3EEF8">🔧<div class="mcc-count">۴۱۰ محصول</div></div>
+        <div class="mcc-body">
+          <div class="mcc-name">ابزار باغبانی</div>
+          <div class="mcc-desc">کاتر، بیل، کلنگ، دستکش و ابزار دستی</div>
+          <div class="mcc-arrow"><i class="ti ti-arrow-left" style="font-size:12px"></i> مشاهده محصولات</div>
+        </div>
+      </div>
+      <div class="main-cat-card">
+        <div class="mcc-img" style="background:#FFF0E8">🚜<div class="mcc-count">۹۸ محصول</div></div>
+        <div class="mcc-body">
+          <div class="mcc-name">ماشین‌آلات کشاورزی</div>
+          <div class="mcc-desc">موتور آب، پمپ، سمپاش و تجهیزات مزرعه</div>
+          <div class="mcc-arrow"><i class="ti ti-arrow-left" style="font-size:12px"></i> مشاهده محصولات</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sub-cats-title"><i class="ti ti-layout-grid"></i> زیردسته‌های پرطرفدار</div>
+    <div class="sub-cats-grid">
+      <div class="sub-cat"><div class="sci">🍅</div><div class="scn">بذر گوجه</div><div class="scc">۴۸ محصول</div></div>
+      <div class="sub-cat"><div class="sci">🥒</div><div class="scn">بذر خیار</div><div class="scc">۳۶ محصول</div></div>
+      <div class="sub-cat"><div class="sci">🌸</div><div class="scn">بذر گل</div><div class="scc">۸۸ محصول</div></div>
+      <div class="sub-cat"><div class="sci">💊</div><div class="scn">میکروالمنت</div><div class="scc">۲۴ محصول</div></div>
+      <div class="sub-cat"><div class="sci">🪣</div><div class="scn">سمپاش</div><div class="scc">۱۸ محصول</div></div>
+      <div class="sub-cat"><div class="sci">💦</div><div class="scn">قطره‌چکان</div><div class="scc">۵۶ محصول</div></div>
+      <div class="sub-cat"><div class="sci">✂️</div><div class="scn">کاتر باغبانی</div><div class="scc">۳۲ محصول</div></div>
+      <div class="sub-cat"><div class="sci">🌿</div><div class="scn">کود هیومیک</div><div class="scc">۱۴ محصول</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════
+     PAGE: BLOG
+══════════════════════════════ -->
+<div class="page" id="page-blog">
+  <div class="blog-hero">
+    <div class="bh-content">
+      <div class="bh-badge"><i class="ti ti-book" style="font-size:11px"></i> مقالات آموزشی کشاورزی</div>
+      <h1>بلاگ سبزینه</h1>
+      <p>راهنماها و آموزش‌های تخصصی کشاورزی، باغبانی و پرورش گیاه از متخصصان ما</p>
+    </div>
+    <div class="bh-icon">📖</div>
+  </div>
+
+  <div class="wrap" style="padding-top:20px">
+    <div class="blog-cats">
+      <div class="btag on" onclick="setBlogCat(this)">همه مقالات</div>
+      <div class="btag" onclick="setBlogCat(this)">🌱 کود و تغذیه</div>
+      <div class="btag" onclick="setBlogCat(this)">💧 آبیاری</div>
+      <div class="btag" onclick="setBlogCat(this)">🐛 آفات و بیماری</div>
+      <div class="btag" onclick="setBlogCat(this)">🌾 زراعت</div>
+      <div class="btag" onclick="setBlogCat(this)">🌳 باغبانی</div>
+      <div class="btag" onclick="setBlogCat(this)">🏡 گلخانه</div>
+    </div>
+
+    <div class="blog-featured">
+      <div class="blog-feat-card">
+        <div class="bfc-img" style="background:#EAF3DE">🌿</div>
+        <div class="bfc-body">
+          <span class="bfc-tag">کود و تغذیه</span>
+          <div class="bfc-title">راهنمای کامل تغذیه گیاهی در فصل رشد — از کاشت تا برداشت</div>
+          <div class="bfc-meta">
+            <span><i class="ti ti-user" style="font-size:11px"></i> دکتر علی رضایی</span>
+            <span><i class="ti ti-clock" style="font-size:11px"></i> ۸ دقیقه</span>
+            <span><i class="ti ti-eye" style="font-size:11px"></i> ۴.۲ هزار</span>
+          </div>
+          <div class="bfc-excerpt">در این مقاله به‌طور کامل بررسی می‌کنیم که گیاهان در هر مرحله از رشد به چه عناصر غذایی نیاز دارند و چگونه کمبودها را شناسایی و رفع کنیم...</div>
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <div class="blog-feat-card">
+          <div class="bfc-body" style="flex-direction:row;display:flex;gap:10px;padding:12px">
+            <div style="width:60px;height:60px;border-radius:8px;background:#E6F1FB;display:flex;align-items:center;justify-content:center;font-size:28px;flex-shrink:0">💧</div>
+            <div>
+              <span class="bfc-tag">آبیاری</span>
+              <div class="bfc-title" style="font-size:12px;height:auto">نصب آبیاری قطره‌ای برای باغ ۵۰۰ متری</div>
+              <div class="bfc-meta" style="margin-top:5px"><span><i class="ti ti-clock" style="font-size:10px"></i> ۶ دقیقه</span><span><i class="ti ti-eye" style="font-size:10px"></i> ۱.۸ هزار</span></div>
+            </div>
+          </div>
+        </div>
+        <div class="blog-feat-card">
+          <div class="bfc-body" style="flex-direction:row;display:flex;gap:10px;padding:12px">
+            <div style="width:60px;height:60px;border-radius:8px;background:#FDECEA;display:flex;align-items:center;justify-content:center;font-size:28px;flex-shrink:0">🐛</div>
+            <div>
+              <span class="bfc-tag">آفات</span>
+              <div class="bfc-title" style="font-size:12px;height:auto">شناسایی و کنترل آفات رایج در گلخانه</div>
+              <div class="bfc-meta" style="margin-top:5px"><span><i class="ti ti-clock" style="font-size:10px"></i> ۵ دقیقه</span><span><i class="ti ti-eye" style="font-size:10px"></i> ۳.۱ هزار</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-title">آخرین مقالات</div>
+    <div class="blog-grid">
+      <div class="blog-card"><div class="bc-img" style="background:#FEF3CD">🌻</div><div class="bc-body"><span class="bc-tag">زراعت</span><div class="bc-title">بهترین زمان کاشت گوجه‌فرنگی در ایران</div><div class="bc-meta"><span><i class="ti ti-clock" style="font-size:10px"></i> ۵ دقیقه</span><span><i class="ti ti-eye" style="font-size:10px"></i> ۲.۴ هزار</span></div></div></div>
+      <div class="blog-card"><div class="bc-img" style="background:#F3EEF8">🌸</div><div class="bc-body"><span class="bc-tag">باغبانی</span><div class="bc-title">هرس درختان میوه در فصل پاییز</div><div class="bc-meta"><span><i class="ti ti-clock" style="font-size:10px"></i> ۷ دقیقه</span><span><i class="ti ti-eye" style="font-size:10px"></i> ۱.۶ هزار</span></div></div></div>
+      <div class="blog-card"><div class="bc-img" style="background:#EAF3DE">🏡</div><div class="bc-body"><span class="bc-tag">گلخانه</span><div class="bc-title">راه‌اندازی گلخانه خانگی با هزینه کم</div><div class="bc-meta"><span><i class="ti ti-clock" style="font-size:10px"></i> ۱۰ دقیقه</span><span><i class="ti ti-eye" style="font-size:10px"></i> ۵.۸ هزار</span></div></div></div>
+      <div class="blog-card"><div class="bc-img" style="background:#FFF0E8">🌾</div><div class="bc-body"><span class="bc-tag">زراعت</span><div class="bc-title">کشت گندم دیم در شرایط کم‌آبی</div><div class="bc-meta"><span><i class="ti ti-clock" style="font-size:10px"></i> ۸ دقیقه</span><span><i class="ti ti-eye" style="font-size:10px"></i> ۹۸۰</span></div></div></div>
+      <div class="blog-card"><div class="bc-img" style="background:#FDECEA">🧪</div><div class="bc-body"><span class="bc-tag">آفات</span><div class="bc-title">کنترل بیولوژیک سفیدبالک گلخانه</div><div class="bc-meta"><span><i class="ti ti-clock" style="font-size:10px"></i> ۶ دقیقه</span><span><i class="ti ti-eye" style="font-size:10px"></i> ۱.۳ هزار</span></div></div></div>
+      <div class="blog-card"><div class="bc-img" style="background:#E6F1FB">💧</div><div class="bc-body"><span class="bc-tag">آبیاری</span><div class="bc-title">صرفه‌جویی در آب با آبیاری هوشمند</div><div class="bc-meta"><span><i class="ti ti-clock" style="font-size:10px"></i> ۹ دقیقه</span><span><i class="ti ti-eye" style="font-size:10px"></i> ۲.۱ هزار</span></div></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════
+     PAGE: SEARCH
+══════════════════════════════ -->
+<div class="page" id="page-search">
+  <div class="search-hero">
+    <div class="sh-inner">
+      <h2>جستجو در محصولات سبزینه</h2>
+      <div class="search-big">
+        <input class="sb-input" placeholder="نام محصول، برند یا دسته‌بندی..." id="search-inp" value="کود هیومیک" oninput="liveSearch(this.value)">
+        <button class="sb-btn"><i class="ti ti-search" style="font-size:14px"></i> جستجو</button>
+      </div>
+      <div class="search-suggestions">
+        <span class="sugg" onclick="setSearch('کود NPK')">کود NPK</span>
+        <span class="sugg" onclick="setSearch('قطره‌چکان')">قطره‌چکان</span>
+        <span class="sugg" onclick="setSearch('بذر گوجه')">بذر گوجه</span>
+        <span class="sugg" onclick="setSearch('سمپاش')">سمپاش</span>
+        <span class="sugg" onclick="setSearch('کاتر باغبانی')">کاتر باغبانی</span>
+        <span class="sugg" onclick="setSearch('هیومیک اسید')">هیومیک اسید</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="search-results-wrap">
+    <div class="search-filter-sidebar">
+      <div class="sfs-title">فیلترها <span class="sfs-reset">پاک کردن</span></div>
+      <div class="filter-sub-title">دسته‌بندی</div>
+      <div class="filter-item"><input type="checkbox" checked><label>کود آلی <span>۸۴</span></label></div>
+      <div class="filter-item"><input type="checkbox"><label>کود شیمیایی <span>۶۲</span></label></div>
+      <div class="filter-item"><input type="checkbox"><label>تقویت‌کننده <span>۳۸</span></label></div>
+      <div class="filter-divider"></div>
+      <div class="filter-sub-title">برند</div>
+      <div class="filter-item"><input type="checkbox" checked><label>آرتامیس <span>۴۸</span></label></div>
+      <div class="filter-item"><input type="checkbox"><label>گرین‌لند <span>۳۶</span></label></div>
+      <div class="filter-item"><input type="checkbox"><label>نوین‌گرین <span>۲۴</span></label></div>
+      <div class="filter-divider"></div>
+      <div class="filter-sub-title">قیمت</div>
+      <div class="filter-item"><input type="radio" name="price"><label>زیر ۱۰۰ هزار تومان</label></div>
+      <div class="filter-item"><input type="radio" name="price" checked><label>۱۰۰ تا ۵۰۰ هزار</label></div>
+      <div class="filter-item"><input type="radio" name="price"><label>بالای ۵۰۰ هزار</label></div>
+    </div>
+
+    <div class="search-results-area">
+      <div class="search-meta">
+        <div class="sm-count"><strong id="result-count">۱۲</strong> نتیجه برای «<strong id="search-term">کود هیومیک</strong>»</div>
+        <select class="sm-sort"><option>مرتبط‌ترین</option><option>ارزان‌ترین</option><option>گران‌ترین</option><option>پرفروش‌ترین</option></select>
+      </div>
+
+      <div class="result-card">
+        <div class="rc-img" style="background:#EAF3DE">🌿</div>
+        <div class="rc-body">
+          <div class="rc-info">
+            <div class="rc-cat">کود آلی — آرتامیس</div>
+            <div class="rc-name"><mark>کود هیومیک</mark> اسید پتاسیم‌دار ۱ کیلوگرم</div>
+            <div class="rc-rate"><span class="rc-stars">★★★★★</span><span style="font-size:10px;color:var(--txt3)">(۱۲۴ نظر)</span></div>
+          </div>
+          <div class="rc-right">
+            <span class="rc-price">۱۸۵,۰۰۰</span>
+            <span class="rc-old">۲۱۸,۰۰۰ تومان</span>
+            <button class="rc-add">+ افزودن</button>
+          </div>
+        </div>
+      </div>
+      <div class="result-card">
+        <div class="rc-img" style="background:#FEF3CD">🌾</div>
+        <div class="rc-body">
+          <div class="rc-info">
+            <div class="rc-cat">کود شیمیایی — گرین‌لند</div>
+            <div class="rc-name"><mark>کود هیومیک</mark> فولویک اسید ۵۰۰ گرم</div>
+            <div class="rc-rate"><span class="rc-stars">★★★★☆</span><span style="font-size:10px;color:var(--txt3)">(۵۸ نظر)</span></div>
+          </div>
+          <div class="rc-right">
+            <span class="rc-price">۱۲۵,۰۰۰</span>
+            <span class="rc-old" style="visibility:hidden">-</span>
+            <button class="rc-add">+ افزودن</button>
+          </div>
+        </div>
+      </div>
+      <div class="result-card">
+        <div class="rc-img" style="background:#EAF3DE">💊</div>
+        <div class="rc-body">
+          <div class="rc-info">
+            <div class="rc-cat">تقویت‌کننده — نوین‌گرین</div>
+            <div class="rc-name">محرک رشد <mark>هیومیک</mark> + جلبک دریایی ۲۵۰ گرم</div>
+            <div class="rc-rate"><span class="rc-stars">★★★★★</span><span style="font-size:10px;color:var(--txt3)">(۸۷ نظر)</span></div>
+          </div>
+          <div class="rc-right">
+            <span class="rc-price">۹۸,۰۰۰</span>
+            <span class="rc-old" style="visibility:hidden">-</span>
+            <button class="rc-add">+ افزودن</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════
+     PAGE: ABOUT / CONTACT
+══════════════════════════════ -->
+<div class="page" id="page-about">
+  <div class="about-hero">
+    <h1>درباره سبزینه</h1>
+    <p>از سال ۱۳۸۵ در کنار کشاورزان و باغداران ایران هستیم. ما را به تامین بهترین تجهیزات کشاورزی می‌شناسند.</p>
+  </div>
+
+  <div class="wrap">
+    <div class="about-stats">
+      <div class="astat"><span class="num">+۱۸<span>هزار</span></span><p>مشتری راضی</p></div>
+      <div class="astat"><span class="num">+۱۴۰۰<span></span></span><p>محصول موجود</p></div>
+      <div class="astat"><span class="num">۱۹<span>سال</span></span><p>سابقه فعالیت</p></div>
+      <div class="astat"><span class="num">۳۱<span>استان</span></span><p>پوشش ارسال</p></div>
+    </div>
+
+    <div class="section-title">چرا سبزینه؟</div>
+    <div class="about-grid">
+      <div class="about-card">
+        <div class="ac-icon" style="background:#EAF3DE">🏆</div>
+        <div class="ac-title">ضمانت اصالت کالا</div>
+        <div class="ac-text">تمام محصولات از توزیع‌کنندگان رسمی و دارای مجوز سازمان حفظ نباتات و وزارت جهاد کشاورزی تهیه می‌شوند.</div>
+      </div>
+      <div class="about-card">
+        <div class="ac-icon" style="background:#E6F1FB">🚚</div>
+        <div class="ac-title">ارسال سریع سراسری</div>
+        <div class="ac-text">با شبکه لجستیک گسترده، سفارش‌ها در کمتر از ۴۸ ساعت به سراسر کشور ارسال می‌شوند.</div>
+      </div>
+      <div class="about-card">
+        <div class="ac-icon" style="background:#FEF3CD">👨‍🌾</div>
+        <div class="ac-title">مشاوره تخصصی</div>
+        <div class="ac-text">تیم کارشناسان کشاورزی ما آماده پاسخ به سوالات فنی و راهنمایی در انتخاب بهترین محصول هستند.</div>
+      </div>
+      <div class="about-card">
+        <div class="ac-icon" style="background:#FDECEA">↩️</div>
+        <div class="ac-title">بازگشت آسان ۷ روزه</div>
+        <div class="ac-text">در صورت عدم رضایت از محصول، بدون سوال و دردسر، هزینه به حساب شما برگردانده می‌شود.</div>
+      </div>
+    </div>
+
+    <div class="section-title">تیم ما</div>
+    <div class="team-grid">
+      <div class="team-card"><div class="team-avatar" style="background:#1C3829">مر</div><div class="team-name">محمد رضایی</div><div class="team-role">مدیرعامل</div></div>
+      <div class="team-card"><div class="team-avatar" style="background:#2D5A3D">زا</div><div class="team-name">زهرا احمدی</div><div class="team-role">مدیر فروش</div></div>
+      <div class="team-card"><div class="team-avatar" style="background:#52936B">عم</div><div class="team-name">علی محمدی</div><div class="team-role">کارشناس کشاورزی</div></div>
+    </div>
+
+    <div class="section-title">تماس با ما</div>
+    <div class="contact-grid">
+      <div class="contact-info">
+        <div class="ci-item"><div class="ci-icon" style="background:#EAF3DE">📞</div><div><div class="ci-title">تلفن پشتیبانی</div><div class="ci-val">۰۲۱-۴۴۵۵۶۶۷۷<br>شنبه تا چهارشنبه ۸ تا ۱۷</div></div></div>
+        <div class="ci-item"><div class="ci-icon" style="background:#E6F1FB">📧</div><div><div class="ci-title">ایمیل</div><div class="ci-val">support@sabzineh.ir<br>پاسخ در کمتر از ۲۴ ساعت</div></div></div>
+        <div class="ci-item"><div class="ci-icon" style="background:#FEF3CD">📍</div><div><div class="ci-title">آدرس دفتر مرکزی</div><div class="ci-val">تهران، بلوار کشاورز<br>خیابان ۱۶ آذر، پلاک ۴۸</div></div></div>
+        <div class="ci-item"><div class="ci-icon" style="background:#F3EEF8">💬</div><div><div class="ci-title">پشتیبانی آنلاین</div><div class="ci-val">واتساپ: ۰۹۱۲-۱۲۳-۴۵۶۷<br>تلگرام: @sabzineh_support</div></div></div>
+        <div class="map-placeholder"><i class="ti ti-map-pin"></i><p>نقشه موقعیت دفتر</p><small>تهران، بلوار کشاورز</small></div>
+      </div>
+      <div class="contact-form">
+        <div class="cf-title"><i class="ti ti-message-dots"></i> ارسال پیام</div>
+        <div class="field"><label>نام و نام خانوادگی</label><input class="finput" placeholder="علی احمدی"></div>
+        <div class="field"><label>ایمیل یا موبایل</label><input class="finput" placeholder="09121234567"></div>
+        <div class="field"><label>موضوع</label>
+          <select class="fselect"><option>انتخاب موضوع</option><option>سوال فنی</option><option>پیگیری سفارش</option><option>شکایت</option><option>پیشنهاد</option></select>
+        </div>
+        <div class="field"><label>پیام شما</label><textarea class="ftarea" placeholder="پیام خود را بنویسید..."></textarea></div>
+        <button class="btn-submit"><i class="ti ti-send" style="font-size:13px"></i> ارسال پیام</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════
+     PAGE: FORGOT PASSWORD
+══════════════════════════════ -->
+<div class="page" id="page-forgot">
+  <div class="forgot-wrap">
+    <div class="forgot-card">
+      <div class="forgot-steps">
+        <div class="fstep on" id="fstep-1"></div>
+        <div class="fstep" id="fstep-2"></div>
+        <div class="fstep" id="fstep-3"></div>
+      </div>
+
+      <div class="fp-header">
+        <div class="fp-icon" id="fp-icon"><i class="ti ti-lock-open" style="font-size:22px"></i></div>
+        <h2 id="fp-title">فراموشی رمز عبور</h2>
+        <p id="fp-sub">شماره موبایل خود را وارد کنید<br>کد تأیید برایتان ارسال می‌شود</p>
+      </div>
+
+      <div class="fp-body">
+        <div class="step-dots">
+          <div class="sdot on" id="dot-1"></div>
+          <div class="sdot" id="dot-2"></div>
+          <div class="sdot" id="dot-3"></div>
+        </div>
+
+        <!-- STEP 1: MOBILE -->
+        <div class="fp-step on" id="fpstep-1">
+          <label class="field-label">شماره موبایل <span style="color:var(--red);font-size:10px">*</span></label>
+          <div class="fp-input-wrap">
+            <i class="ti ti-phone"></i>
+            <input class="fp-input" type="tel" placeholder="09121234567" id="mobile-inp" value="09121234567">
+          </div>
+          <p class="field-hint">کد ۶ رقمی به این شماره ارسال خواهد شد.</p>
+          <button class="btn-fp" onclick="goStep(2)"><i class="ti ti-send" style="font-size:13px"></i> ارسال کد تأیید</button>
+          <button class="btn-back" onclick="sp('login_hint',null)"><i class="ti ti-arrow-right" style="font-size:12px"></i> بازگشت به ورود</button>
+        </div>
+
+        <!-- STEP 2: OTP -->
+        <div class="fp-step" id="fpstep-2">
+          <label class="field-label" style="text-align:center;display:block;margin-bottom:12px">کد ارسال‌شده به <strong style="color:var(--fg)" id="mobile-lbl">09121234567</strong></label>
+          <div class="otp-row">
+            <input class="otp-inp" maxlength="1" id="o1" oninput="nextOtp(this,'o2')">
+            <input class="otp-inp" maxlength="1" id="o2" oninput="nextOtp(this,'o3')">
+            <input class="otp-inp" maxlength="1" id="o3" oninput="nextOtp(this,'o4')">
+            <input class="otp-inp" maxlength="1" id="o4" oninput="nextOtp(this,'o5')">
+            <input class="otp-inp" maxlength="1" id="o5" oninput="nextOtp(this,'o6')">
+            <input class="otp-inp" maxlength="1" id="o6" oninput="checkOtp()">
+          </div>
+          <div class="resend-row">
+            <span class="resend-timer" id="timer-lbl">ارسال مجدد: <strong id="timer">01:30</strong></span>
+            <button class="resend-btn" id="resend-btn" disabled onclick="resendOtp()">ارسال مجدد</button>
+          </div>
+          <button class="btn-fp" onclick="goStep(3)"><i class="ti ti-check" style="font-size:13px"></i> تأیید کد</button>
+          <button class="btn-back" onclick="goStep(1)"><i class="ti ti-arrow-right" style="font-size:12px"></i> تغییر شماره</button>
+        </div>
+
+        <!-- STEP 3: NEW PASSWORD -->
+        <div class="fp-step" id="fpstep-3">
+          <div class="success-state" id="success-box" style="display:none">
+            <div class="si"><i class="ti ti-check" style="font-size:32px;color:var(--fa)"></i></div>
+            <h3>رمز عبور تغییر کرد!</h3>
+            <p>رمز عبور جدید شما با موفقیت ذخیره شد.<br>اکنون می‌توانید وارد حساب خود شوید.</p>
+            <button class="btn-fp" onclick="sp('categories',document.querySelector('.psw'))"><i class="ti ti-login" style="font-size:13px"></i> ورود به حساب</button>
+          </div>
+          <div id="new-pass-form">
+            <label class="field-label">رمز عبور جدید <span style="color:var(--red);font-size:10px">*</span></label>
+            <div class="fp-input-wrap" style="margin-bottom:4px">
+              <i class="ti ti-lock"></i>
+              <input class="fp-input" type="password" placeholder="حداقل ۸ کاراکتر" id="np1" oninput="checkStr(this.value)">
+            </div>
+            <div class="strength-bar"><div class="sb" id="ns1"></div><div class="sb" id="ns2"></div><div class="sb" id="ns3"></div><div class="sb" id="ns4"></div></div>
+            <div class="strength-lbl" id="nlbl" style="margin-bottom:12px">رمز عبور باید حداقل ۸ کاراکتر باشد</div>
+            <label class="field-label">تکرار رمز عبور <span style="color:var(--red);font-size:10px">*</span></label>
+            <div class="fp-input-wrap">
+              <i class="ti ti-lock-check"></i>
+              <input class="fp-input" type="password" placeholder="رمز عبور را تکرار کنید" id="np2">
+            </div>
+            <p class="field-hint" style="margin-top:6px">رمز قوی شامل حرف بزرگ، عدد و نماد باشد.</p>
+            <button class="btn-fp" onclick="savePass()"><i class="ti ti-check" style="font-size:13px"></i> ذخیره رمز عبور جدید</button>
+            <button class="btn-back" onclick="goStep(2)"><i class="ti ti-arrow-right" style="font-size:12px"></i> برگشت</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="fp-footer">
+        رمزتان یادتان آمد؟ <a onclick="sp('categories',document.querySelector('.psw'))">وارد شوید</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// page switcher
+function sp(page, el){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById('page-'+page).classList.add('active');
+  if(el){ document.querySelectorAll('.psw').forEach(b=>b.classList.remove('on')); el.classList.add('on'); }
+  window.scrollTo(0,0);
+}
+
+// blog cats
+function setBlogCat(el){ document.querySelectorAll('.btag').forEach(t=>t.classList.remove('on')); el.classList.add('on'); }
+
+// search
+function liveSearch(v){
+  document.getElementById('search-term').textContent = v||'...';
+  document.getElementById('result-count').textContent = v ? Math.floor(Math.random()*20+3) : '۰';
+}
+function setSearch(v){ document.getElementById('search-inp').value=v; liveSearch(v); }
+
+// forgot password steps
+function goStep(n){
+  [1,2,3].forEach(i=>{
+    document.getElementById('fpstep-'+i).classList.toggle('on', i===n);
+    document.getElementById('dot-'+i).classList.toggle('on', i===n);
+    document.getElementById('fstep-'+i).classList.toggle('on', i<=n);
+  });
+  var titles=['','فراموشی رمز عبور','تأیید شماره موبایل','رمز عبور جدید'];
+  var subs=['','شماره موبایل خود را وارد کنید<br>کد تأیید برایتان ارسال می‌شود','کد ۶ رقمی ارسال‌شده را وارد کنید','رمز عبور جدید خود را تعیین کنید'];
+  document.getElementById('fp-title').textContent=titles[n];
+  document.getElementById('fp-sub').innerHTML=subs[n];
+  if(n===2){ document.getElementById('mobile-lbl').textContent=document.getElementById('mobile-inp').value||'09121234567'; startTimer(); }
+}
+
+function nextOtp(inp,nextId){
+  if(inp.value){ inp.classList.add('filled'); document.getElementById(nextId)&&document.getElementById(nextId).focus(); }
+  else inp.classList.remove('filled');
+}
+function checkOtp(){ /* auto verify on complete */ }
+
+var timerInt;
+function startTimer(){
+  clearInterval(timerInt);
+  var s=90;
+  document.getElementById('resend-btn').disabled=true;
+  timerInt=setInterval(function(){
+    s--;
+    var m=Math.floor(s/60), sec=s%60;
+    document.getElementById('timer').textContent=(m<10?'0':'')+m+':'+(sec<10?'0':'')+sec;
+    if(s<=0){ clearInterval(timerInt); document.getElementById('resend-btn').disabled=false; document.getElementById('timer-lbl').style.display='none'; }
+  },1000);
+}
+function resendOtp(){ startTimer(); document.getElementById('timer-lbl').style.display=''; }
+
+function checkStr(v){
+  var score=(v.length>=8?1:0)+(/[A-Z]/.test(v)?1:0)+(/[0-9]/.test(v)?1:0)+(/[^A-Za-z0-9]/.test(v)?1:0);
+  var cls=['','w','m','s','s'],bgs={w:'var(--red)',m:'var(--gold)',s:'var(--fa)'};
+  var lbls=['','ضعیف','متوسط','خوب','قوی'];
+  [1,2,3,4].forEach(i=>{ var el=document.getElementById('ns'+i); el.style.background=i<=score?bgs[cls[score]]:'var(--bdr)'; });
+  document.getElementById('nlbl').textContent=lbls[score]||'رمز عبور باید حداقل ۸ کاراکتر باشد';
+}
+function savePass(){
+  document.getElementById('new-pass-form').style.display='none';
+  document.getElementById('success-box').style.display='block';
+  document.getElementById('fp-icon').innerHTML='<i class="ti ti-circle-check" style="font-size:22px"></i>';
+  document.getElementById('fp-title').textContent='رمز تغییر کرد!';
+  document.getElementById('fp-sub').textContent='';
+}
+</script>
+</body>
+</html>

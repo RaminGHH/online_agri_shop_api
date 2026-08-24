@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>سبزینه — مدیریت کوپن‌ها</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;600;700;900&display=swap');
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#0F1A14;--bg2:#131E11;--bg3:#192318;
+  --surf:#1C2B1A;--surf2:#223021;
+  --bdr:rgba(255,255,255,0.06);--bdr2:rgba(255,255,255,0.11);
+  --fg:#52936B;--fg2:#6BAD83;
+  --gold:#C8A84B;--gold-l:#F0DFA0;
+  --txt:#E8F0E9;--txt2:rgba(232,240,233,0.6);--txt3:rgba(232,240,233,0.32);
+  --red:#E05454;--red-l:rgba(224,84,84,0.12);
+  --blue:#4A9EDB;--blue-l:rgba(74,158,219,0.12);
+  --amber:#D4925A;--amber-l:rgba(212,146,90,0.12);
+  --purple:#8B6BD4;--purple-l:rgba(139,107,212,0.12);
+}
+body{font-family:'Vazirmatn',sans-serif;background:var(--bg);color:var(--txt);direction:rtl;min-height:100vh;display:flex}
+
+.sidebar{width:220px;min-height:100vh;background:var(--bg2);border-left:1px solid var(--bdr);display:flex;flex-direction:column;position:fixed;right:0;top:0;bottom:0;z-index:100}
+.sb-logo{padding:18px 16px 14px;border-bottom:1px solid var(--bdr);display:flex;align-items:center;gap:9px}
+.sb-lm{width:31px;height:31px;background:var(--gold);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:900;color:#1a1a0a}
+.sb-lt{font-size:13px;font-weight:800;color:var(--txt)}
+.sb-lt small{display:block;font-size:10px;font-weight:400;color:var(--txt3)}
+.sb-sec{padding:14px 14px 5px;font-size:9px;font-weight:700;color:var(--txt3);letter-spacing:1.2px;text-transform:uppercase}
+.sb-item{display:flex;align-items:center;gap:9px;padding:8px 11px;margin:1px 7px;border-radius:8px;cursor:pointer;font-size:12px;font-weight:600;color:var(--txt2);transition:all .15s;border:1px solid transparent}
+.sb-item:hover{background:var(--surf);color:var(--txt)}
+.sb-item.on{background:rgba(82,147,107,0.12);color:var(--fg2);border-color:rgba(82,147,107,0.18)}
+.sb-item i{font-size:16px;flex-shrink:0}
+.sb-badge{margin-right:auto;font-size:9px;font-weight:700;padding:2px 6px;border-radius:7px;background:var(--gold);color:#1a1a0a}
+.sb-bottom{margin-top:auto;border-top:1px solid var(--bdr);padding:10px 7px}
+.sb-user{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:8px;cursor:pointer}
+.sb-av{width:28px;height:28px;border-radius:50%;background:rgba(82,147,107,0.15);border:1px solid rgba(82,147,107,0.25);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:var(--fg2)}
+.sb-uname{font-size:11px;font-weight:700;color:var(--txt)}
+.sb-urole{font-size:10px;color:var(--txt3)}
+.sb-out{margin-right:auto;color:var(--txt3);font-size:14px;cursor:pointer}
+
+.main{margin-right:220px;flex:1;display:flex;flex-direction:column;min-height:100vh}
+.topbar{background:var(--bg2);border-bottom:1px solid var(--bdr);height:50px;padding:0 20px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50}
+.tb-title{font-size:14px;font-weight:800;color:var(--txt)}
+.tb-sub{font-size:10px;color:var(--txt3)}
+.tb-right{display:flex;align-items:center;gap:8px}
+.tb-search{background:var(--surf);border:1px solid var(--bdr2);border-radius:8px;display:flex;align-items:center;gap:6px;padding:0 10px;height:30px;width:200px}
+.tb-search input{background:transparent;border:none;outline:none;color:var(--txt);font-size:11px;font-family:'Vazirmatn',sans-serif;flex:1;direction:rtl}
+.tb-search input::placeholder{color:var(--txt3)}
+.tb-icon{width:30px;height:30px;background:var(--surf);border:1px solid var(--bdr2);border-radius:7px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--txt2)}
+.btn-primary{height:32px;background:var(--fg);color:#fff;border:none;border-radius:7px;padding:0 14px;font-size:11px;font-weight:700;cursor:pointer;font-family:'Vazirmatn',sans-serif;display:flex;align-items:center;gap:5px}
+
+.content{padding:18px 20px 40px;flex:1}
+
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:16px}
+.stat-mini{background:var(--surf);border:1px solid var(--bdr);border-radius:9px;padding:12px 14px;display:flex;align-items:center;gap:10px}
+.sm-icon{width:34px;height:34px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+.sm-num{font-size:18px;font-weight:900;color:var(--txt)}
+.sm-lbl{font-size:10px;color:var(--txt3);margin-top:1px}
+
+.coupon-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:16px}
+.coupon-card{background:var(--surf);border:1px solid var(--bdr);border-radius:13px;overflow:hidden;position:relative;transition:all .15s}
+.coupon-card:hover{border-color:var(--bdr2)}
+.coupon-card.expired{opacity:.55}
+.cc-head{padding:14px 16px;display:flex;align-items:flex-start;justify-content:space-between;border-bottom:1px dashed var(--bdr2);position:relative}
+.cc-head::before,.cc-head::after{content:'';width:18px;height:18px;background:var(--bg);border-radius:50%;position:absolute;bottom:-9px}
+.cc-head::before{right:-9px}
+.cc-head::after{left:-9px}
+.cc-code{font-size:16px;font-weight:900;color:var(--gold-l);letter-spacing:2px;direction:ltr;display:block}
+.cc-type{font-size:10px;color:var(--txt3);margin-top:3px}
+.cc-status{font-size:9px;font-weight:700;padding:3px 8px;border-radius:5px;white-space:nowrap}
+.cc-active{background:rgba(82,147,107,0.15);color:var(--fg2)}
+.cc-expired{background:var(--red-l);color:var(--red)}
+.cc-scheduled{background:var(--blue-l);color:var(--blue)}
+.cc-body{padding:14px 16px}
+.cc-value{font-size:24px;font-weight:900;color:var(--txt);margin-bottom:10px}
+.cc-value span{font-size:12px;color:var(--txt3);font-weight:400}
+.cc-row{display:flex;justify-content:space-between;padding:5px 0;font-size:11px;border-bottom:1px solid var(--bdr)}
+.cc-row:last-of-type{border-bottom:none}
+.cc-row span:first-child{color:var(--txt3)}
+.cc-row span:last-child{color:var(--txt);font-weight:600}
+.cc-progress{margin-top:10px}
+.cc-progress-bar{height:5px;background:var(--bg3);border-radius:3px;overflow:hidden;margin-bottom:5px}
+.cc-progress-fill{height:100%;border-radius:3px;background:var(--fg)}
+.cc-progress-lbl{font-size:10px;color:var(--txt3);display:flex;justify-content:space-between}
+.cc-actions{display:flex;gap:6px;padding:0 16px 14px}
+.btn-xs{height:26px;background:var(--surf2);border:1px solid var(--bdr2);border-radius:6px;padding:0 9px;font-size:10px;font-weight:700;color:var(--txt2);cursor:pointer;font-family:'Vazirmatn',sans-serif;display:inline-flex;align-items:center;gap:3px;transition:all .15s;flex:1;justify-content:center}
+.btn-xs:hover{color:var(--txt);border-color:var(--fg)}
+.btn-xs.danger:hover{border-color:var(--red);color:var(--red)}
+
+.table-card{background:var(--surf);border:1px solid var(--bdr);border-radius:11px;overflow:hidden}
+.table-head{padding:11px 16px;border-bottom:1px solid var(--bdr);display:flex;align-items:center;justify-content:space-between}
+.table-ht{font-size:12px;font-weight:800;color:var(--txt);display:flex;align-items:center;gap:7px}
+.table-ht i{color:var(--fg)}
+.ctable{width:100%;border-collapse:collapse}
+.ctable th{font-size:9px;font-weight:700;color:var(--txt3);text-align:right;padding:9px 14px;border-bottom:1px solid var(--bdr);letter-spacing:.5px;text-transform:uppercase}
+.ctable td{font-size:11px;color:var(--txt2);padding:9px 14px;border-bottom:1px solid var(--bdr)}
+.ctable tr:last-child td{border-bottom:none}
+.ctable tr:hover td{background:var(--surf2)}
+
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:300;display:none;align-items:center;justify-content:center;padding:20px}
+.modal-overlay.show{display:flex}
+.modal{background:var(--bg2);border:1px solid var(--bdr2);border-radius:14px;width:100%;max-width:480px;overflow:hidden}
+.modal-head{padding:16px 20px;border-bottom:1px solid var(--bdr);display:flex;align-items:center;justify-content:space-between}
+.modal-title{font-size:14px;font-weight:800;color:var(--txt);display:flex;align-items:center;gap:8px}
+.modal-title i{color:var(--fg)}
+.modal-close{width:28px;height:28px;background:var(--surf);border:1px solid var(--bdr2);border-radius:7px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--txt3)}
+.modal-body{padding:20px;max-height:60vh;overflow-y:auto}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.field.full{grid-column:1/-1}
+.field label{display:block;font-size:11px;font-weight:700;color:var(--txt3);margin-bottom:6px}
+.finput{width:100%;height:36px;background:var(--bg3);border:1px solid var(--bdr2);border-radius:8px;padding:0 12px;font-size:12px;font-family:'Vazirmatn',sans-serif;color:var(--txt);outline:none}
+.finput:focus{border-color:var(--fg)}
+.fselect{width:100%;height:36px;background:var(--bg3);border:1px solid var(--bdr2);border-radius:8px;padding:0 12px;font-size:12px;font-family:'Vazirmatn',sans-serif;color:var(--txt);outline:none;cursor:pointer}
+.type-toggle{display:flex;gap:8px;grid-column:1/-1}
+.type-opt{flex:1;padding:10px;border:1px solid var(--bdr2);border-radius:8px;text-align:center;cursor:pointer;font-size:11px;font-weight:700;color:var(--txt2)}
+.type-opt.on{border-color:var(--fg);background:rgba(82,147,107,0.08);color:var(--fg2)}
+.modal-foot{padding:14px 20px;border-top:1px solid var(--bdr);display:flex;gap:8px;justify-content:flex-end;background:var(--bg3)}
+.btn-cancel{height:34px;background:transparent;border:1px solid var(--bdr2);border-radius:8px;padding:0 16px;font-size:12px;font-weight:700;color:var(--txt2);cursor:pointer;font-family:'Vazirmatn',sans-serif}
+.btn-save{height:34px;background:var(--fg);color:#fff;border:none;border-radius:8px;padding:0 20px;font-size:12px;font-weight:700;cursor:pointer;font-family:'Vazirmatn',sans-serif}
+
+.toast{position:fixed;bottom:20px;left:20px;background:var(--surf2);border:1px solid var(--bdr2);border-radius:10px;padding:10px 14px;display:flex;align-items:center;gap:8px;font-size:12px;color:var(--txt);z-index:500;transform:translateY(70px);opacity:0;transition:all .3s}
+.toast.show{transform:translateY(0);opacity:1}
+.toast i{color:#52C97A;font-size:15px}
+</style>
+</head>
+<body>
+
+<div class="sidebar">
+  <div class="sb-logo"><div class="sb-lm">س</div><div class="sb-lt">سبزینه <small>پنل مدیریت</small></div></div>
+  <div class="sb-sec">اصلی</div>
+  <div class="sb-item" onclick="nav(this)"><i class="ti ti-layout-dashboard"></i> داشبورد</div>
+  <div class="sb-sec">فروشگاه</div>
+  <div class="sb-item" onclick="nav(this)"><i class="ti ti-receipt"></i> سفارش‌ها</div>
+  <div class="sb-item" onclick="nav(this)"><i class="ti ti-shopping-bag"></i> محصولات</div>
+  <div class="sb-item" onclick="nav(this)"><i class="ti ti-category"></i> دسته‌بندی‌ها</div>
+  <div class="sb-item on" onclick="nav(this)"><i class="ti ti-tag"></i> کوپن‌ها <span class="sb-badge">۳</span></div>
+  <div class="sb-sec">کاربران</div>
+  <div class="sb-item" onclick="nav(this)"><i class="ti ti-users"></i> کاربران</div>
+  <div class="sb-item" onclick="nav(this)"><i class="ti ti-message-dots"></i> نظرات</div>
+  <div class="sb-sec">محتوا</div>
+  <div class="sb-item" onclick="nav(this)"><i class="ti ti-article"></i> مقالات</div>
+  <div class="sb-sec">سیستم</div>
+  <div class="sb-item" onclick="nav(this)"><i class="ti ti-settings"></i> تنظیمات</div>
+  <div class="sb-bottom">
+    <div class="sb-user"><div class="sb-av">مر</div><div><div class="sb-uname">محمد رضایی</div><div class="sb-urole">مدیر ارشد</div></div><i class="ti ti-logout sb-out"></i></div>
+  </div>
+</div>
+
+<div class="main">
+  <div class="topbar">
+    <div><div class="tb-title">مدیریت کوپن‌های تخفیف</div><div class="tb-sub">۲۴ کوپن در سیستم</div></div>
+    <div class="tb-right">
+      <div class="tb-search"><i class="ti ti-search" style="font-size:13px;color:var(--txt3)"></i><input placeholder="جستجوی کد..."></div>
+      <button class="btn-primary" onclick="openModal()"><i class="ti ti-plus" style="font-size:13px"></i> کوپن جدید</button>
+    </div>
+  </div>
+
+  <div class="content">
+    <div class="stats-row">
+      <div class="stat-mini"><div class="sm-icon" style="background:rgba(82,147,107,0.15)"><i class="ti ti-tag" style="color:var(--fg2);font-size:16px"></i></div><div><div class="sm-num">۲۴</div><div class="sm-lbl">کل کوپن‌ها</div></div></div>
+      <div class="stat-mini"><div class="sm-icon" style="background:rgba(82,199,122,0.15)"><i class="ti ti-circle-check" style="color:#52C97A;font-size:16px"></i></div><div><div class="sm-num">۳</div><div class="sm-lbl">فعال</div></div></div>
+      <div class="stat-mini"><div class="sm-icon" style="background:var(--blue-l)"><i class="ti ti-shopping-cart" style="color:var(--blue);font-size:16px"></i></div><div><div class="sm-num">۱,۲۴۰</div><div class="sm-lbl">دفعات استفاده</div></div></div>
+      <div class="stat-mini"><div class="sm-icon" style="background:var(--amber-l)"><i class="ti ti-coin" style="color:var(--amber);font-size:16px"></i></div><div><div class="sm-num">۸۴ م</div><div class="sm-lbl">مجموع تخفیف داده‌شده</div></div></div>
+    </div>
+
+    <div class="coupon-grid">
+
+      <div class="coupon-card">
+        <div class="cc-head">
+          <div><span class="cc-code">SABZ10</span><div class="cc-type">تخفیف درصدی همگانی</div></div>
+          <span class="cc-status cc-active">فعال</span>
+        </div>
+        <div class="cc-body">
+          <div class="cc-value">۱۰٪<span> تخفیف</span></div>
+          <div class="cc-row"><span>حداقل خرید</span><span>۲۰۰,۰۰۰ ت</span></div>
+          <div class="cc-row"><span>سقف تخفیف</span><span>۱۰۰,۰۰۰ ت</span></div>
+          <div class="cc-row"><span>انقضا</span><span>۳۰ تیر ۱۴۰۴</span></div>
+          <div class="cc-progress">
+            <div class="cc-progress-bar"><div class="cc-progress-fill" style="width:62%"></div></div>
+            <div class="cc-progress-lbl"><span>۶۲۰ / ۱۰۰۰ استفاده</span><span>۶۲٪</span></div>
+          </div>
+        </div>
+        <div class="cc-actions">
+          <button class="btn-xs"><i class="ti ti-edit" style="font-size:10px"></i> ویرایش</button>
+          <button class="btn-xs"><i class="ti ti-copy" style="font-size:10px"></i> کپی کد</button>
+          <button class="btn-xs danger"><i class="ti ti-trash" style="font-size:10px"></i></button>
+        </div>
+      </div>
+
+      <div class="coupon-card">
+        <div class="cc-head">
+          <div><span class="cc-code">SPRING30</span><div class="cc-type">تخفیف فصلی — بذر</div></div>
+          <span class="cc-status cc-active">فعال</span>
+        </div>
+        <div class="cc-body">
+          <div class="cc-value">۳۰٪<span> تخفیف</span></div>
+          <div class="cc-row"><span>حداقل خرید</span><span>بدون حداقل</span></div>
+          <div class="cc-row"><span>سقف تخفیف</span><span>۲۰۰,۰۰۰ ت</span></div>
+          <div class="cc-row"><span>انقضا</span><span>۱۵ تیر ۱۴۰۴</span></div>
+          <div class="cc-progress">
+            <div class="cc-progress-bar"><div class="cc-progress-fill" style="width:88%;background:var(--amber)"></div></div>
+            <div class="cc-progress-lbl"><span>۴۴۰ / ۵۰۰ استفاده</span><span>۸۸٪</span></div>
+          </div>
+        </div>
+        <div class="cc-actions">
+          <button class="btn-xs"><i class="ti ti-edit" style="font-size:10px"></i> ویرایش</button>
+          <button class="btn-xs"><i class="ti ti-copy" style="font-size:10px"></i> کپی کد</button>
+          <button class="btn-xs danger"><i class="ti ti-trash" style="font-size:10px"></i></button>
+        </div>
+      </div>
+
+      <div class="coupon-card">
+        <div class="cc-head">
+          <div><span class="cc-code">WELCOME50</span><div class="cc-type">تخفیف ثابت — اولین خرید</div></div>
+          <span class="cc-status cc-active">فعال</span>
+        </div>
+        <div class="cc-body">
+          <div class="cc-value">۵۰,۰۰۰<span> تومان</span></div>
+          <div class="cc-row"><span>حداقل خرید</span><span>۳۰۰,۰۰۰ ت</span></div>
+          <div class="cc-row"><span>محدودیت کاربر</span><span>۱ بار</span></div>
+          <div class="cc-row"><span>انقضا</span><span>بدون انقضا</span></div>
+          <div class="cc-progress">
+            <div class="cc-progress-bar"><div class="cc-progress-fill" style="width:24%;background:var(--blue)"></div></div>
+            <div class="cc-progress-lbl"><span>۱۸۰ / بدون سقف</span><span>فعال دائم</span></div>
+          </div>
+        </div>
+        <div class="cc-actions">
+          <button class="btn-xs"><i class="ti ti-edit" style="font-size:10px"></i> ویرایش</button>
+          <button class="btn-xs"><i class="ti ti-copy" style="font-size:10px"></i> کپی کد</button>
+          <button class="btn-xs danger"><i class="ti ti-trash" style="font-size:10px"></i></button>
+        </div>
+      </div>
+
+      <div class="coupon-card expired">
+        <div class="cc-head">
+          <div><span class="cc-code" style="color:var(--txt3)">NOWRUZ1404</span><div class="cc-type">جشن نوروز</div></div>
+          <span class="cc-status cc-expired">منقضی</span>
+        </div>
+        <div class="cc-body">
+          <div class="cc-value" style="color:var(--txt3)">۲۵٪<span> تخفیف</span></div>
+          <div class="cc-row"><span>حداقل خرید</span><span>۱۵۰,۰۰۰ ت</span></div>
+          <div class="cc-row"><span>انقضا</span><span>۱۳ فروردین ۱۴۰۴</span></div>
+          <div class="cc-progress">
+            <div class="cc-progress-bar"><div class="cc-progress-fill" style="width:100%;background:var(--txt3)"></div></div>
+            <div class="cc-progress-lbl"><span>۸۰۰ / ۸۰۰ استفاده</span><span>تکمیل شده</span></div>
+          </div>
+        </div>
+        <div class="cc-actions">
+          <button class="btn-xs"><i class="ti ti-refresh" style="font-size:10px"></i> تمدید</button>
+          <button class="btn-xs danger"><i class="ti ti-trash" style="font-size:10px"></i> حذف</button>
+        </div>
+      </div>
+
+      <div class="coupon-card">
+        <div class="cc-head">
+          <div><span class="cc-code">VIP15</span><div class="cc-type">ویژه کاربران طلایی</div></div>
+          <span class="cc-status cc-scheduled">زمان‌بندی شده</span>
+        </div>
+        <div class="cc-body">
+          <div class="cc-value">۱۵٪<span> تخفیف</span></div>
+          <div class="cc-row"><span>شروع</span><span>۱ تیر ۱۴۰۴</span></div>
+          <div class="cc-row"><span>گروه هدف</span><span>کاربران طلایی</span></div>
+          <div class="cc-row"><span>انقضا</span><span>۳۱ تیر ۱۴۰۴</span></div>
+          <div class="cc-progress">
+            <div class="cc-progress-bar"><div class="cc-progress-fill" style="width:0%"></div></div>
+            <div class="cc-progress-lbl"><span>۰ / نامحدود</span><span>هنوز شروع نشده</span></div>
+          </div>
+        </div>
+        <div class="cc-actions">
+          <button class="btn-xs"><i class="ti ti-edit" style="font-size:10px"></i> ویرایش</button>
+          <button class="btn-xs danger"><i class="ti ti-trash" style="font-size:10px"></i> حذف</button>
+        </div>
+      </div>
+
+      <div class="coupon-card expired">
+        <div class="cc-head">
+          <div><span class="cc-code" style="color:var(--txt3)">FREESHIP</span><div class="cc-type">ارسال رایگان</div></div>
+          <span class="cc-status cc-expired">منقضی</span>
+        </div>
+        <div class="cc-body">
+          <div class="cc-value" style="color:var(--txt3)">ارسال<span> رایگان</span></div>
+          <div class="cc-row"><span>حداقل خرید</span><span>۵۰۰,۰۰۰ ت</span></div>
+          <div class="cc-row"><span>انقضا</span><span>۲۰ اردیبهشت ۱۴۰۴</span></div>
+          <div class="cc-progress">
+            <div class="cc-progress-bar"><div class="cc-progress-fill" style="width:100%;background:var(--txt3)"></div></div>
+            <div class="cc-progress-lbl"><span>۳۲۰ / ۳۰۰ استفاده</span><span>تکمیل شده</span></div>
+          </div>
+        </div>
+        <div class="cc-actions">
+          <button class="btn-xs"><i class="ti ti-refresh" style="font-size:10px"></i> تمدید</button>
+          <button class="btn-xs danger"><i class="ti ti-trash" style="font-size:10px"></i> حذف</button>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="table-card">
+      <div class="table-head"><div class="table-ht"><i class="ti ti-history"></i> آخرین استفاده‌ها</div></div>
+      <table class="ctable">
+        <thead><tr><th>کد کوپن</th><th>کاربر</th><th>سفارش</th><th>مقدار تخفیف</th><th>تاریخ</th></tr></thead>
+        <tbody>
+          <tr><td style="direction:ltr;text-align:right;font-weight:700;color:var(--gold-l)">SABZ10</td><td>علی احمدی</td><td style="direction:ltr;text-align:right">#100064</td><td style="color:var(--fg2);font-weight:700">۸۹,۵۰۰ ت</td><td style="color:var(--txt3)">۱۶ خرداد ۱۴۰۴</td></tr>
+          <tr><td style="direction:ltr;text-align:right;font-weight:700;color:var(--gold-l)">SPRING30</td><td>فاطمه رضایی</td><td style="direction:ltr;text-align:right">#100063</td><td style="color:var(--fg2);font-weight:700">۱۲۰,۰۰۰ ت</td><td style="color:var(--txt3)">۱۵ خرداد ۱۴۰۴</td></tr>
+          <tr><td style="direction:ltr;text-align:right;font-weight:700;color:var(--gold-l)">WELCOME50</td><td>سارا موسوی</td><td style="direction:ltr;text-align:right">#100059</td><td style="color:var(--fg2);font-weight:700">۵۰,۰۰۰ ت</td><td style="color:var(--txt3)">۱۲ خرداد ۱۴۰۴</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="coupon-modal" onclick="if(event.target===this)closeModal()">
+  <div class="modal">
+    <div class="modal-head">
+      <div class="modal-title"><i class="ti ti-tag"></i> ایجاد کوپن جدید</div>
+      <div class="modal-close" onclick="closeModal()"><i class="ti ti-x" style="font-size:13px"></i></div>
+    </div>
+    <div class="modal-body">
+      <div class="form-grid">
+        <div class="field full"><label>کد کوپن</label><input class="finput" placeholder="مثال: SUMMER20" style="direction:ltr"></div>
+        <div class="type-toggle">
+          <div class="type-opt on" onclick="setType(this)">درصدی</div>
+          <div class="type-opt" onclick="setType(this)">مقدار ثابت</div>
+        </div>
+        <div class="field"><label>مقدار تخفیف</label><input class="finput" type="number" placeholder="20"></div>
+        <div class="field"><label>سقف تخفیف (تومان)</label><input class="finput" type="number" placeholder="100000"></div>
+        <div class="field"><label>حداقل خرید (تومان)</label><input class="finput" type="number" placeholder="200000"></div>
+        <div class="field"><label>محدودیت کل استفاده</label><input class="finput" type="number" placeholder="1000"></div>
+        <div class="field"><label>محدودیت هر کاربر</label><input class="finput" type="number" placeholder="1"></div>
+        <div class="field"><label>تاریخ انقضا</label><input class="finput" type="date" style="direction:ltr"></div>
+        <div class="field full"><label>گروه هدف</label><select class="fselect"><option>همه کاربران</option><option>کاربران طلایی</option><option>کاربران جدید</option></select></div>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn-cancel" onclick="closeModal()">انصراف</button>
+      <button class="btn-save" onclick="saveCoupon()"><i class="ti ti-check" style="font-size:12px"></i> ایجاد کوپن</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"><i class="ti ti-circle-check"></i><span id="toast-msg"></span></div>
+
+<script>
+function nav(el){ document.querySelectorAll('.sb-item').forEach(i=>i.classList.remove('on')); el.classList.add('on'); }
+function openModal(){ document.getElementById('coupon-modal').classList.add('show'); }
+function closeModal(){ document.getElementById('coupon-modal').classList.remove('show'); }
+function setType(el){ document.querySelectorAll('.type-opt').forEach(o=>o.classList.remove('on')); el.classList.add('on'); }
+function saveCoupon(){ closeModal(); showToast('کوپن جدید با موفقیت ایجاد شد'); }
+function showToast(msg){ var t=document.getElementById('toast'); t.querySelector('span').textContent=msg; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),3000); }
+</script>
+</body>
+</html>

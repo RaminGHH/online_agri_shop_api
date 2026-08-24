@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>سبزینه — لیست محصولات</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;600;700;900&display=swap');
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --fg:#1C3829;--fm:#2D5A3D;--fa:#52936B;--fl:#A8D5B5;
+  --gold:#C8A84B;--gold-l:#F0DFA0;
+  --cream:#F2EDE4;--white:#fff;
+  --txt:#1a2e1f;--txt2:#4a6b52;--txt3:#8a9e8d;
+  --bdr:#D8E8D4;--red:#C0392B;
+}
+body{font-family:'Vazirmatn',sans-serif;background:var(--cream);color:var(--txt);direction:rtl;min-height:100vh}
+
+/* NAV */
+nav{background:var(--fg);height:54px;padding:0 20px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:200}
+.nlogo{display:flex;align-items:center;gap:8px;cursor:pointer}
+.nlm{width:30px;height:30px;background:var(--gold);border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:900;color:var(--fg)}
+.nlt{color:#fff;font-size:13px;font-weight:700}
+.nlt span{color:rgba(255,255,255,0.4);font-weight:300}
+.nav-search{background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.15);border-radius:8px;display:flex;align-items:center;padding:0 12px;gap:8px;height:34px;width:260px}
+.nav-search input{background:transparent;border:none;outline:none;color:#fff;font-size:12px;font-family:'Vazirmatn',sans-serif;flex:1;direction:rtl}
+.nav-search input::placeholder{color:rgba(255,255,255,0.4)}
+.nav-r{display:flex;align-items:center;gap:8px}
+.cart-btn{background:var(--gold);color:var(--fg);border:none;padding:6px 14px;border-radius:6px;font-size:11px;font-weight:700;cursor:pointer;font-family:'Vazirmatn',sans-serif;display:flex;align-items:center;gap:5px}
+
+/* BC */
+.bc{background:var(--white);border-bottom:0.5px solid var(--bdr);padding:9px 20px;display:flex;align-items:center;gap:5px}
+.bc a{font-size:11px;color:var(--txt2);text-decoration:none;cursor:pointer}
+.bc i{font-size:10px;color:var(--txt3)}
+.bc span{font-size:11px;color:var(--fa);font-weight:600}
+
+/* CATEGORY TABS */
+.cat-tabs{background:var(--white);border-bottom:0.5px solid var(--bdr);padding:0 20px;display:flex;align-items:center;gap:0;overflow-x:auto}
+.cat-tabs::-webkit-scrollbar{display:none}
+.ctab{padding:12px 16px;font-size:12px;font-weight:600;color:var(--txt3);cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;transition:all .15s;display:flex;align-items:center;gap:6px}
+.ctab:hover{color:var(--txt)}
+.ctab.on{color:var(--fg);border-bottom-color:var(--fg)}
+.ctab .cnt{font-size:10px;background:var(--cream);color:var(--txt3);padding:1px 6px;border-radius:10px}
+.ctab.on .cnt{background:#EAF3DE;color:var(--fa)}
+
+/* LAYOUT */
+.layout{max-width:1040px;margin:0 auto;padding:18px 20px 48px;display:grid;grid-template-columns:220px 1fr;gap:16px;align-items:start}
+
+/* FILTER SIDEBAR */
+.filter-sidebar{background:var(--white);border:0.5px solid var(--bdr);border-radius:14px;overflow:hidden;position:sticky;top:72px}
+.fs-head{background:var(--fg);padding:13px 16px;display:flex;align-items:center;justify-content:space-between}
+.fs-head h3{font-size:13px;font-weight:700;color:#fff;display:flex;align-items:center;gap:7px}
+.fs-reset{font-size:11px;color:rgba(255,255,255,0.5);cursor:pointer;background:none;border:none;font-family:'Vazirmatn',sans-serif}
+.fs-reset:hover{color:#fff}
+
+.filter-group{border-bottom:0.5px solid var(--bdr)}
+.filter-group:last-child{border-bottom:none}
+.fg-head{padding:12px 16px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;user-select:none}
+.fg-head h4{font-size:12px;font-weight:700;color:var(--txt);display:flex;align-items:center;gap:6px}
+.fg-head h4 i{color:var(--fa);font-size:14px}
+.fg-arrow{font-size:13px;color:var(--txt3);transition:transform .2s}
+.fg-arrow.open{transform:rotate(180deg)}
+.fg-body{padding:4px 16px 12px;display:none}
+.fg-body.open{display:block}
+
+/* checkbox filter */
+.fcheck{display:flex;align-items:center;gap:8px;padding:5px 0;cursor:pointer}
+.fcheck input[type=checkbox]{accent-color:var(--fa);width:14px;height:14px;flex-shrink:0;cursor:pointer}
+.fcheck label{font-size:12px;color:var(--txt2);cursor:pointer;flex:1;display:flex;align-items:center;justify-content:space-between}
+.fcheck label span{font-size:10px;color:var(--txt3)}
+
+/* price range */
+.price-range{padding:4px 0 8px}
+.range-vals{display:flex;justify-content:space-between;margin-bottom:10px}
+.range-vals span{font-size:11px;color:var(--txt2);font-weight:600}
+.range-input{-webkit-appearance:none;width:100%;height:4px;border-radius:2px;background:linear-gradient(to left, var(--bdr) 0%, var(--fa) 0%);outline:none;cursor:pointer}
+.range-input::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;border-radius:50%;background:var(--fg);cursor:pointer;box-shadow:0 1px 4px rgba(0,0,0,0.2)}
+.price-inputs{display:flex;gap:6px;margin-top:10px}
+.price-inp{flex:1;height:32px;background:var(--cream);border:0.5px solid var(--bdr);border-radius:7px;padding:0 8px;font-size:11px;font-family:'Vazirmatn',sans-serif;color:var(--txt);outline:none;text-align:center}
+.price-inp:focus{border-color:var(--fa)}
+
+/* star filter */
+.star-filter{display:flex;flex-direction:column;gap:4px}
+.srow{display:flex;align-items:center;gap:7px;padding:4px 0;cursor:pointer}
+.srow input{accent-color:var(--fa);flex-shrink:0}
+.srow .s{color:var(--gold);font-size:11px}
+.srow label{font-size:11px;color:var(--txt2);cursor:pointer;display:flex;align-items:center;gap:5px}
+
+/* color swatches */
+.swatches{display:flex;flex-wrap:wrap;gap:6px;padding:4px 0 8px}
+.swatch{width:24px;height:24px;border-radius:50%;border:2px solid transparent;cursor:pointer;transition:all .15s}
+.swatch.on{border-color:var(--fg);box-shadow:0 0 0 2px rgba(28,56,41,0.2)}
+
+/* PRODUCTS AREA */
+.products-area{}
+.toolbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;gap:10px}
+.result-info{font-size:13px;color:var(--txt2)}
+.result-info strong{color:var(--txt);font-weight:700}
+.toolbar-r{display:flex;align-items:center;gap:8px}
+.sort-sel{height:34px;background:var(--white);border:0.5px solid var(--bdr);border-radius:8px;padding:0 10px;font-size:12px;font-family:'Vazirmatn',sans-serif;color:var(--txt);outline:none;cursor:pointer}
+.view-btns{display:flex;border:0.5px solid var(--bdr);border-radius:8px;overflow:hidden}
+.vbtn{width:32px;height:34px;background:var(--white);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--txt3);transition:all .15s}
+.vbtn.on{background:var(--fg);color:#fff}
+.vbtn:not(:last-child){border-left:0.5px solid var(--bdr)}
+
+/* ACTIVE FILTERS */
+.active-filters{display:flex;align-items:center;gap:7px;flex-wrap:wrap;margin-bottom:12px}
+.af-chip{display:flex;align-items:center;gap:5px;background:var(--white);border:0.5px solid var(--bdr);border-radius:20px;padding:4px 11px;font-size:11px;color:var(--txt2);cursor:pointer}
+.af-chip:hover{border-color:var(--red);color:var(--red)}
+.af-chip i{font-size:11px}
+.af-clear{font-size:11px;color:var(--red);cursor:pointer;font-weight:600;padding:4px 8px}
+
+/* GRID VIEW */
+.prod-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.prod-card{background:var(--white);border:0.5px solid var(--bdr);border-radius:12px;overflow:hidden;cursor:pointer;transition:all .2s}
+.prod-card:hover{border-color:var(--fa);transform:translateY(-3px);box-shadow:0 8px 24px rgba(28,56,41,0.08)}
+.pc-img{height:140px;display:flex;align-items:center;justify-content:center;font-size:54px;position:relative}
+.pc-badges{position:absolute;top:8px;right:8px;display:flex;flex-direction:column;gap:4px}
+.pc-badge{font-size:9px;font-weight:700;padding:2px 7px;border-radius:4px}
+.b-new{background:#EAF3DE;color:#27500A}
+.b-off{background:#FAEEDA;color:#633806}
+.b-hot{background:#FDECEA;color:#9B1C1C}
+.pc-wish{position:absolute;top:8px;left:8px;width:26px;height:26px;background:rgba(255,255,255,0.9);border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--txt3);font-size:13px;cursor:pointer;transition:all .15s}
+.pc-wish:hover{color:var(--red);background:#fff}
+.pc-wish.on{color:var(--red)}
+.pc-body{padding:12px}
+.pc-cat{font-size:10px;font-weight:700;color:var(--txt3);letter-spacing:.5px;margin-bottom:4px}
+.pc-name{font-size:12px;font-weight:700;color:var(--txt);margin-bottom:6px;line-height:1.5;height:36px;overflow:hidden}
+.pc-rate{display:flex;align-items:center;gap:4px;margin-bottom:8px}
+.pc-stars{color:var(--gold);font-size:10px}
+.pc-rc{font-size:10px;color:var(--txt3)}
+.pc-price{display:flex;align-items:baseline;gap:5px;margin-bottom:8px}
+.pc-pm{font-size:14px;font-weight:900;color:var(--fg)}
+.pc-pu{font-size:10px;color:var(--txt3)}
+.pc-po{font-size:10px;color:var(--txt3);text-decoration:line-through}
+.pc-add{width:100%;height:32px;background:var(--cream);border:0.5px solid var(--bdr);border-radius:7px;font-size:11px;font-weight:700;color:var(--fg);cursor:pointer;font-family:'Vazirmatn',sans-serif;display:flex;align-items:center;justify-content:center;gap:5px;transition:all .15s}
+.pc-add:hover{background:var(--fg);color:#fff;border-color:var(--fg)}
+
+/* LIST VIEW */
+.prod-list{display:flex;flex-direction:column;gap:10px}
+.prod-list-item{background:var(--white);border:0.5px solid var(--bdr);border-radius:12px;overflow:hidden;display:flex;cursor:pointer;transition:all .2s}
+.prod-list-item:hover{border-color:var(--fa);box-shadow:0 4px 16px rgba(28,56,41,0.06)}
+.pli-img{width:120px;height:120px;display:flex;align-items:center;justify-content:center;font-size:48px;flex-shrink:0}
+.pli-body{flex:1;padding:14px 16px;display:flex;align-items:center;gap:16px}
+.pli-info{flex:1}
+.pli-cat{font-size:10px;font-weight:700;color:var(--txt3);margin-bottom:4px}
+.pli-name{font-size:13px;font-weight:700;color:var(--txt);margin-bottom:5px;line-height:1.4}
+.pli-desc{font-size:11px;color:var(--txt3);line-height:1.7;margin-bottom:6px}
+.pli-rate{display:flex;align-items:center;gap:5px}
+.pli-right{text-align:center;flex-shrink:0;min-width:120px}
+.pli-price{font-size:16px;font-weight:900;color:var(--fg);margin-bottom:3px}
+.pli-old{font-size:11px;color:var(--txt3);text-decoration:line-through;margin-bottom:8px}
+.pli-add{background:var(--fg);color:#fff;border:none;border-radius:8px;padding:7px 16px;font-size:11px;font-weight:700;cursor:pointer;font-family:'Vazirmatn',sans-serif;width:100%}
+
+/* PAGINATION */
+.pagination{display:flex;align-items:center;justify-content:center;gap:6px;margin-top:24px}
+.pg-btn{width:34px;height:34px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;cursor:pointer;border:0.5px solid var(--bdr);background:var(--white);color:var(--txt2);transition:all .15s;font-family:'Vazirmatn',sans-serif}
+.pg-btn:hover{border-color:var(--fa);color:var(--fa)}
+.pg-btn.on{background:var(--fg);color:#fff;border-color:var(--fg)}
+.pg-btn.arr{color:var(--txt3)}
+
+/* NO RESULT */
+.no-result{text-align:center;padding:48px 20px;display:none}
+.no-result i{font-size:48px;color:var(--bdr);display:block;margin-bottom:12px}
+.no-result h3{font-size:15px;font-weight:700;color:var(--txt);margin-bottom:6px}
+.no-result p{font-size:12px;color:var(--txt3)}
+
+/* mobile filter btn */
+.mobile-filter-btn{display:none}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nlogo">
+    <div class="nlm">س</div>
+    <div class="nlt">سبزینه <span>/ فروشگاه کشاورزی</span></div>
+  </div>
+  <div class="nav-search">
+    <i class="ti ti-search" style="color:rgba(255,255,255,0.4);font-size:14px"></i>
+    <input placeholder="جستجو در محصولات..." id="search-inp" oninput="doSearch()">
+  </div>
+  <div class="nav-r">
+    <button class="cart-btn"><i class="ti ti-shopping-cart" style="font-size:13px"></i> سبد خرید <span style="background:rgba(28,56,41,0.2);border-radius:3px;padding:1px 5px">۳</span></button>
+  </div>
+</nav>
+
+<div class="bc">
+  <a><i class="ti ti-home" style="font-size:11px;vertical-align:-1px"></i> خانه</a>
+  <i class="ti ti-chevron-left"></i>
+  <span>لیست محصولات</span>
+</div>
+
+<div class="cat-tabs">
+  <div class="ctab on" onclick="setCat(this,'همه')">همه محصولات <span class="cnt">۱,۴۰۸</span></div>
+  <div class="ctab" onclick="setCat(this,'بذر')">🌱 بذر و نشاء <span class="cnt">۳۴۰</span></div>
+  <div class="ctab" onclick="setCat(this,'کود')">🌾 کود و ارگانیک <span class="cnt">۲۱۸</span></div>
+  <div class="ctab" onclick="setCat(this,'سموم')">🧪 سموم <span class="cnt">۱۵۶</span></div>
+  <div class="ctab" onclick="setCat(this,'آبیاری')">💧 آبیاری <span class="cnt">۲۸۴</span></div>
+  <div class="ctab" onclick="setCat(this,'ابزار')">🔧 ابزار باغبانی <span class="cnt">۴۱۰</span></div>
+</div>
+
+<div class="layout">
+
+  <!-- FILTER SIDEBAR -->
+  <div class="filter-sidebar">
+    <div class="fs-head">
+      <h3><i class="ti ti-filter" style="font-size:15px"></i> فیلترها</h3>
+      <button class="fs-reset" onclick="resetFilters()">پاک کردن همه</button>
+    </div>
+
+    <!-- موجودی -->
+    <div class="filter-group">
+      <div class="fg-head" onclick="toggleFG(this)">
+        <h4><i class="ti ti-package"></i> موجودی</h4>
+        <i class="ti ti-chevron-down fg-arrow open"></i>
+      </div>
+      <div class="fg-body open">
+        <label class="fcheck"><input type="checkbox" checked onchange="filterProducts()"><label>فقط کالاهای موجود <span>۱,۲۰۴</span></label></label>
+        <label class="fcheck"><input type="checkbox" onchange="filterProducts()"><label>کالاهای فوری <span>۳۴۸</span></label></label>
+      </div>
+    </div>
+
+    <!-- دسته‌بندی -->
+    <div class="filter-group">
+      <div class="fg-head" onclick="toggleFG(this)">
+        <h4><i class="ti ti-category"></i> دسته‌بندی</h4>
+        <i class="ti ti-chevron-down fg-arrow open"></i>
+      </div>
+      <div class="fg-body open">
+        <label class="fcheck"><input type="checkbox" onchange="filterProducts()"><label>کود آلی <span>۸۴</span></label></label>
+        <label class="fcheck"><input type="checkbox" onchange="filterProducts()"><label>کود شیمیایی <span>۶۲</span></label></label>
+        <label class="fcheck"><input type="checkbox" onchange="filterProducts()"><label>بذر سبزیجات <span>۱۲۴</span></label></label>
+        <label class="fcheck"><input type="checkbox" onchange="filterProducts()"><label>بذر گل <span>۸۸</span></label></label>
+        <label class="fcheck"><input type="checkbox" onchange="filterProducts()"><label>آبیاری قطره‌ای <span>۱۶۸</span></label></label>
+        <label class="fcheck"><input type="checkbox" onchange="filterProducts()"><label>ابزار دستی <span>۲۱۴</span></label></label>
+        <label class="fcheck"><input type="checkbox" onchange="filterProducts()"><label>سموم قارچ‌کش <span>۴۸</span></label></label>
+      </div>
+    </div>
+
+    <!-- برند -->
+    <div class="filter-group">
+      <div class="fg-head" onclick="toggleFG(this)">
+        <h4><i class="ti ti-building"></i> برند</h4>
+        <i class="ti ti-chevron-down fg-arrow open"></i>
+      </div>
+      <div class="fg-body open">
+        <label class="fcheck"><input type="checkbox" onchange="filterProducts()"><label>آرتامیس <span>۱۲۴</span></label></label>
+        <label class="fcheck"><input type="checkbox" onchange="filterProducts()"><label>ایران بذر <span>۸۶</span></label></label>
+        <label class="fcheck"><input type="checkbox" onchange="filterProducts()"><label>گرین‌لند <span>۷۴</span></label></label>
+        <label class="fcheck"><input type="checkbox" onchange="filterProducts()"><label>نوین‌گرین <span>۵۸</span></label></label>
+        <label class="fcheck"><input type="checkbox" onchange="filterProducts()"><label>آکوادریپ <span>۴۴</span></label></label>
+      </div>
+    </div>
+
+    <!-- قیمت -->
+    <div class="filter-group">
+      <div class="fg-head" onclick="toggleFG(this)">
+        <h4><i class="ti ti-currency-dollar"></i> محدوده قیمت</h4>
+        <i class="ti ti-chevron-down fg-arrow open"></i>
+      </div>
+      <div class="fg-body open">
+        <div class="price-range">
+          <div class="range-vals">
+            <span id="pmin-lbl">۰ تومان</span>
+            <span id="pmax-lbl">۵,۰۰۰,۰۰۰ تومان</span>
+          </div>
+          <input class="range-input" type="range" min="0" max="5000000" value="2500000" id="price-slider" oninput="updatePriceRange(this.value)">
+          <div class="price-inputs">
+            <input class="price-inp" placeholder="از" id="pmin-inp" value="۰">
+            <input class="price-inp" placeholder="تا" id="pmax-inp" value="۲,۵۰۰,۰۰۰">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- امتیاز -->
+    <div class="filter-group">
+      <div class="fg-head" onclick="toggleFG(this)">
+        <h4><i class="ti ti-star"></i> امتیاز کاربران</h4>
+        <i class="ti ti-chevron-down fg-arrow open"></i>
+      </div>
+      <div class="fg-body open">
+        <div class="star-filter">
+          <label class="srow"><input type="radio" name="stars" onchange="filterProducts()"><label><span class="s">★★★★★</span> و بالاتر</label></label>
+          <label class="srow"><input type="radio" name="stars" onchange="filterProducts()"><label><span class="s">★★★★☆</span> و بالاتر</label></label>
+          <label class="srow"><input type="radio" name="stars" onchange="filterProducts()"><label><span class="s">★★★☆☆</span> و بالاتر</label></label>
+          <label class="srow"><input type="radio" name="stars" checked onchange="filterProducts()"><label>همه امتیازها</label></label>
+        </div>
+      </div>
+    </div>
+
+    <!-- تخفیف -->
+    <div class="filter-group">
+      <div class="fg-head" onclick="toggleFG(this)">
+        <h4><i class="ti ti-tag"></i> تخفیف</h4>
+        <i class="ti ti-chevron-down fg-arrow"></i>
+      </div>
+      <div class="fg-body">
+        <label class="fcheck"><input type="checkbox" onchange="filterProducts()"><label>فقط تخفیف‌دار <span>۲۸۶</span></label></label>
+        <label class="fcheck"><input type="checkbox" onchange="filterProducts()"><label>تخفیف بالای ۲۰٪ <span>۱۱۴</span></label></label>
+        <label class="fcheck"><input type="checkbox" onchange="filterProducts()"><label>تخفیف بالای ۴۰٪ <span>۴۸</span></label></label>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- PRODUCTS AREA -->
+  <div class="products-area">
+
+    <div class="toolbar">
+      <div class="result-info"><strong id="result-count">۱,۴۰۸</strong> محصول یافت شد</div>
+      <div class="toolbar-r">
+        <select class="sort-sel" onchange="sortProducts(this.value)">
+          <option value="popular">مرتب‌سازی: محبوب‌ترین</option>
+          <option value="newest">جدیدترین</option>
+          <option value="cheap">ارزان‌ترین</option>
+          <option value="expensive">گران‌ترین</option>
+          <option value="discount">بیشترین تخفیف</option>
+          <option value="rating">بیشترین امتیاز</option>
+        </select>
+        <div class="view-btns">
+          <button class="vbtn on" id="vbtn-grid" onclick="setView('grid')" aria-label="نمایش شبکه‌ای"><i class="ti ti-grid-dots" style="font-size:15px"></i></button>
+          <button class="vbtn" id="vbtn-list" onclick="setView('list')" aria-label="نمایش لیستی"><i class="ti ti-list" style="font-size:15px"></i></button>
+        </div>
+      </div>
+    </div>
+
+    <div class="active-filters" id="active-filters">
+      <span style="font-size:11px;color:var(--txt3)">فیلترهای فعال:</span>
+      <div class="af-chip" onclick="removeChip(this)"><i class="ti ti-x"></i> موجود در انبار</div>
+      <div class="af-chip" onclick="removeChip(this)"><i class="ti ti-x"></i> زیر ۲.۵ میلیون</div>
+      <span class="af-clear" onclick="resetFilters()">پاک کردن همه</span>
+    </div>
+
+    <!-- GRID VIEW -->
+    <div class="prod-grid" id="view-grid">
+
+      <div class="prod-card">
+        <div class="pc-img" style="background:#EAF3DE">🌿
+          <div class="pc-badges"><span class="pc-badge b-new">جدید</span><span class="pc-badge b-off">۱۵٪</span></div>
+          <div class="pc-wish on" onclick="toggleWish(this)"><i class="ti ti-heart-filled" style="font-size:12px"></i></div>
+        </div>
+        <div class="pc-body">
+          <div class="pc-cat">کود آلی</div>
+          <div class="pc-name">کود هیومیک اسید پتاسیم‌دار ۱ کیلوگرم</div>
+          <div class="pc-rate"><span class="pc-stars">★★★★★</span><span class="pc-rc">(۱۲۴)</span></div>
+          <div class="pc-price"><span class="pc-pm">۱۸۵,۰۰۰</span><span class="pc-pu">تومان</span><span class="pc-po">۲۱۸,۰۰۰</span></div>
+          <button class="pc-add"><i class="ti ti-plus" style="font-size:11px"></i> افزودن به سبد</button>
+        </div>
+      </div>
+
+      <div class="prod-card">
+        <div class="pc-img" style="background:#E6F1FB">💧
+          <div class="pc-badges"><span class="pc-badge b-hot">پرفروش</span></div>
+          <div class="pc-wish" onclick="toggleWish(this)"><i class="ti ti-heart" style="font-size:12px"></i></div>
+        </div>
+        <div class="pc-body">
+          <div class="pc-cat">آبیاری</div>
+          <div class="pc-name">قطره‌چکان تنظیم‌پذیر بسته ۱۰۰ عددی</div>
+          <div class="pc-rate"><span class="pc-stars">★★★★☆</span><span class="pc-rc">(۸۷)</span></div>
+          <div class="pc-price"><span class="pc-pm">۲۴۰,۰۰۰</span><span class="pc-pu">تومان</span></div>
+          <button class="pc-add"><i class="ti ti-plus" style="font-size:11px"></i> افزودن به سبد</button>
+        </div>
+      </div>
+
+      <div class="prod-card">
+        <div class="pc-img" style="background:#FEF3CD">🌻
+          <div class="pc-badges"><span class="pc-badge b-off">۱۰٪</span></div>
+          <div class="pc-wish" onclick="toggleWish(this)"><i class="ti ti-heart" style="font-size:12px"></i></div>
+        </div>
+        <div class="pc-body">
+          <div class="pc-cat">بذر</div>
+          <div class="pc-name">بذر گوجه‌فرنگی هیبرید پرمحصول ۵ گرم</div>
+          <div class="pc-rate"><span class="pc-stars">★★★★★</span><span class="pc-rc">(۲۳۱)</span></div>
+          <div class="pc-price"><span class="pc-pm">۹۵,۰۰۰</span><span class="pc-pu">تومان</span><span class="pc-po">۱۰۵,۰۰۰</span></div>
+          <button class="pc-add"><i class="ti ti-plus" style="font-size:11px"></i> افزودن به سبد</button>
+        </div>
+      </div>
+
+      <div class="prod-card">
+        <div class="pc-img" style="background:#FDECEA">🧪
+          <div class="pc-badges"><span class="pc-badge b-off">۲۰٪</span></div>
+          <div class="pc-wish" onclick="toggleWish(this)"><i class="ti ti-heart" style="font-size:12px"></i></div>
+        </div>
+        <div class="pc-body">
+          <div class="pc-cat">سموم</div>
+          <div class="pc-name">قارچ‌کش مانکوزب ۸۰٪ یک کیلوگرم</div>
+          <div class="pc-rate"><span class="pc-stars">★★★★☆</span><span class="pc-rc">(۵۶)</span></div>
+          <div class="pc-price"><span class="pc-pm">۳۱۰,۰۰۰</span><span class="pc-pu">تومان</span><span class="pc-po">۳۸۷,۰۰۰</span></div>
+          <button class="pc-add"><i class="ti ti-plus" style="font-size:11px"></i> افزودن به سبد</button>
+        </div>
+      </div>
+
+      <div class="prod-card">
+        <div class="pc-img" style="background:#F3EEF8">🔧
+          <div class="pc-badges"><span class="pc-badge b-new">جدید</span></div>
+          <div class="pc-wish" onclick="toggleWish(this)"><i class="ti ti-heart" style="font-size:12px"></i></div>
+        </div>
+        <div class="pc-body">
+          <div class="pc-cat">ابزار باغبانی</div>
+          <div class="pc-name">کاتر باغبانی حرفه‌ای ضدزنگ</div>
+          <div class="pc-rate"><span class="pc-stars">★★★★★</span><span class="pc-rc">(۴۳)</span></div>
+          <div class="pc-price"><span class="pc-pm">۱۸۵,۰۰۰</span><span class="pc-pu">تومان</span></div>
+          <button class="pc-add"><i class="ti ti-plus" style="font-size:11px"></i> افزودن به سبد</button>
+        </div>
+      </div>
+
+      <div class="prod-card">
+        <div class="pc-img" style="background:#EAF3DE">🌾
+          <div class="pc-wish" onclick="toggleWish(this)"><i class="ti ti-heart" style="font-size:12px"></i></div>
+        </div>
+        <div class="pc-body">
+          <div class="pc-cat">کود شیمیایی</div>
+          <div class="pc-name">کود NPK 20-20-20 کامل محلول ۱ کیلو</div>
+          <div class="pc-rate"><span class="pc-stars">★★★★☆</span><span class="pc-rc">(۱۸)</span></div>
+          <div class="pc-price"><span class="pc-pm">۱۴۵,۰۰۰</span><span class="pc-pu">تومان</span></div>
+          <button class="pc-add"><i class="ti ti-plus" style="font-size:11px"></i> افزودن به سبد</button>
+        </div>
+      </div>
+
+      <div class="prod-card">
+        <div class="pc-img" style="background:#E6F1FB">🚿
+          <div class="pc-badges"><span class="pc-badge b-off">۳۰٪</span></div>
+          <div class="pc-wish" onclick="toggleWish(this)"><i class="ti ti-heart" style="font-size:12px"></i></div>
+        </div>
+        <div class="pc-body">
+          <div class="pc-cat">آبیاری</div>
+          <div class="pc-name">شیر برقی تایمردار ۱ اینچ آبیاری خودکار</div>
+          <div class="pc-rate"><span class="pc-stars">★★★★★</span><span class="pc-rc">(۶۷)</span></div>
+          <div class="pc-price"><span class="pc-pm">۵۸۰,۰۰۰</span><span class="pc-pu">تومان</span><span class="pc-po">۸۲۸,۰۰۰</span></div>
+          <button class="pc-add"><i class="ti ti-plus" style="font-size:11px"></i> افزودن به سبد</button>
+        </div>
+      </div>
+
+      <div class="prod-card">
+        <div class="pc-img" style="background:#FFF0E8">🌱
+          <div class="pc-badges"><span class="pc-badge b-hot">پرفروش</span></div>
+          <div class="pc-wish" onclick="toggleWish(this)"><i class="ti ti-heart" style="font-size:12px"></i></div>
+        </div>
+        <div class="pc-body">
+          <div class="pc-cat">بذر</div>
+          <div class="pc-name">بذر خیار گلخانه‌ای هیبرید ۱۰ گرمی</div>
+          <div class="pc-rate"><span class="pc-stars">★★★★☆</span><span class="pc-rc">(۱۵۴)</span></div>
+          <div class="pc-price"><span class="pc-pm">۱۲۸,۰۰۰</span><span class="pc-pu">تومان</span></div>
+          <button class="pc-add"><i class="ti ti-plus" style="font-size:11px"></i> افزودن به سبد</button>
+        </div>
+      </div>
+
+      <div class="prod-card">
+        <div class="pc-img" style="background:#EAF3DE">💊
+          <div class="pc-wish" onclick="toggleWish(this)"><i class="ti ti-heart" style="font-size:12px"></i></div>
+        </div>
+        <div class="pc-body">
+          <div class="pc-cat">تغذیه گیاه</div>
+          <div class="pc-name">میکروالمنت کامل گیاهی محلول در آب</div>
+          <div class="pc-rate"><span class="pc-stars">★★★★★</span><span class="pc-rc">(۳۸)</span></div>
+          <div class="pc-price"><span class="pc-pm">۲۲۰,۰۰۰</span><span class="pc-pu">تومان</span></div>
+          <button class="pc-add"><i class="ti ti-plus" style="font-size:11px"></i> افزودن به سبد</button>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- LIST VIEW -->
+    <div class="prod-list" id="view-list" style="display:none">
+
+      <div class="prod-list-item">
+        <div class="pli-img" style="background:#EAF3DE">🌿</div>
+        <div class="pli-body">
+          <div class="pli-info">
+            <div class="pli-cat">کود آلی</div>
+            <div class="pli-name">کود هیومیک اسید پتاسیم‌دار ۱ کیلوگرم</div>
+            <div class="pli-desc">محرک رشد قوی با ۷۰٪ هیومیک اسید و ۱۲٪ پتاسیم — مناسب کلیه محصولات</div>
+            <div class="pli-rate"><span style="color:var(--gold);font-size:11px">★★★★★</span><span style="font-size:10px;color:var(--txt3);margin-right:4px">(۱۲۴ نظر)</span></div>
+          </div>
+          <div class="pli-right">
+            <div class="pli-price">۱۸۵,۰۰۰ <span style="font-size:10px;font-weight:400;color:var(--txt3)">تومان</span></div>
+            <div class="pli-old">۲۱۸,۰۰۰</div>
+            <button class="pli-add">+ افزودن به سبد</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="prod-list-item">
+        <div class="pli-img" style="background:#E6F1FB">💧</div>
+        <div class="pli-body">
+          <div class="pli-info">
+            <div class="pli-cat">آبیاری</div>
+            <div class="pli-name">قطره‌چکان تنظیم‌پذیر بسته ۱۰۰ عددی</div>
+            <div class="pli-desc">دبی تنظیم‌پذیر ۰ تا ۷۰ لیتر در ساعت — مناسب سیستم‌های آبیاری قطره‌ای</div>
+            <div class="pli-rate"><span style="color:var(--gold);font-size:11px">★★★★☆</span><span style="font-size:10px;color:var(--txt3);margin-right:4px">(۸۷ نظر)</span></div>
+          </div>
+          <div class="pli-right">
+            <div class="pli-price">۲۴۰,۰۰۰ <span style="font-size:10px;font-weight:400;color:var(--txt3)">تومان</span></div>
+            <div class="pli-old" style="visibility:hidden">-</div>
+            <button class="pli-add">+ افزودن به سبد</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="prod-list-item">
+        <div class="pli-img" style="background:#FEF3CD">🌻</div>
+        <div class="pli-body">
+          <div class="pli-info">
+            <div class="pli-cat">بذر</div>
+            <div class="pli-name">بذر گوجه‌فرنگی هیبرید پرمحصول ۵ گرم</div>
+            <div class="pli-desc">واریته زودرس با عملکرد بالا — مناسب گلخانه و فضای باز</div>
+            <div class="pli-rate"><span style="color:var(--gold);font-size:11px">★★★★★</span><span style="font-size:10px;color:var(--txt3);margin-right:4px">(۲۳۱ نظر)</span></div>
+          </div>
+          <div class="pli-right">
+            <div class="pli-price">۹۵,۰۰۰ <span style="font-size:10px;font-weight:400;color:var(--txt3)">تومان</span></div>
+            <div class="pli-old">۱۰۵,۰۰۰</div>
+            <button class="pli-add">+ افزودن به سبد</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- PAGINATION -->
+    <div class="pagination">
+      <button class="pg-btn arr"><i class="ti ti-chevron-right" style="font-size:13px"></i></button>
+      <button class="pg-btn on">۱</button>
+      <button class="pg-btn">۲</button>
+      <button class="pg-btn">۳</button>
+      <button class="pg-btn">۴</button>
+      <button class="pg-btn" style="pointer-events:none;border:none;background:transparent;color:var(--txt3)">...</button>
+      <button class="pg-btn">۴۸</button>
+      <button class="pg-btn arr"><i class="ti ti-chevron-left" style="font-size:13px"></i></button>
+    </div>
+
+  </div>
+</div>
+
+<script>
+function toggleFG(head){
+  var body=head.nextElementSibling;
+  var arrow=head.querySelector('.fg-arrow');
+  body.classList.toggle('open');
+  arrow.classList.toggle('open');
+}
+function setView(v){
+  if(v==='grid'){
+    document.getElementById('view-grid').style.display='grid';
+    document.getElementById('view-list').style.display='none';
+    document.getElementById('vbtn-grid').classList.add('on');
+    document.getElementById('vbtn-list').classList.remove('on');
+  } else {
+    document.getElementById('view-grid').style.display='none';
+    document.getElementById('view-list').style.display='flex';
+    document.getElementById('vbtn-list').classList.add('on');
+    document.getElementById('vbtn-grid').classList.remove('on');
+  }
+}
+function setCat(el,cat){
+  document.querySelectorAll('.ctab').forEach(t=>t.classList.remove('on'));
+  el.classList.add('on');
+  document.getElementById('result-count').textContent = el.querySelector('.cnt').textContent.replace(/[()]/g,'');
+}
+function toggleWish(el){
+  el.classList.toggle('on');
+  if(el.classList.contains('on')){
+    el.innerHTML='<i class="ti ti-heart-filled" style="font-size:12px"></i>';
+    el.style.color='var(--red)';
+  } else {
+    el.innerHTML='<i class="ti ti-heart" style="font-size:12px"></i>';
+    el.style.color='var(--txt3)';
+  }
+}
+function updatePriceRange(v){
+  var num = parseInt(v);
+  document.getElementById('pmax-lbl').textContent = num.toLocaleString('fa-IR')+' تومان';
+  document.getElementById('pmax-inp').value = num.toLocaleString('fa-IR');
+  var pct = (num/5000000)*100;
+  this.event&&(document.getElementById('price-slider').style.background=
+    `linear-gradient(to left, var(--bdr) ${100-pct}%, var(--fa) ${100-pct}%)`);
+}
+function removeChip(el){el.remove()}
+function resetFilters(){
+  document.querySelectorAll('.filter-group input[type=checkbox]').forEach(c=>c.checked=false);
+  document.getElementById('active-filters').innerHTML='<span style="font-size:11px;color:var(--txt3)">فیلتری فعال نیست</span>';
+}
+function filterProducts(){}
+function sortProducts(){}
+function doSearch(){
+  var v=document.getElementById('search-inp').value;
+  document.getElementById('result-count').textContent = v ? '۱۲' : '۱,۴۰۸';
+}
+
+// init price slider bg
+document.getElementById('price-slider').addEventListener('input',function(){
+  var pct=(this.value/5000000)*100;
+  this.style.background=`linear-gradient(to left, var(--bdr) ${100-pct}%, var(--fa) ${100-pct}%)`;
+  document.getElementById('pmax-lbl').textContent=parseInt(this.value).toLocaleString('fa-IR')+' تومان';
+  document.getElementById('pmax-inp').value=parseInt(this.value).toLocaleString('fa-IR');
+});
+document.getElementById('price-slider').style.background='linear-gradient(to left, var(--bdr) 50%, var(--fa) 50%)';
+
+document.querySelectorAll('.pg-btn:not(.arr)').forEach(b=>{
+  b.addEventListener('click',function(){
+    document.querySelectorAll('.pg-btn:not(.arr)').forEach(x=>x.classList.remove('on'));
+    this.classList.add('on');
+  });
+});
+</script>
+</body>
+</html>

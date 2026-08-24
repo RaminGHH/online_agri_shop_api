@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>سبزینه — مدیریت کاربران</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;600;700;900&display=swap');
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#0F1A14;--bg2:#131E11;--bg3:#192318;
+  --surf:#1C2B1A;--surf2:#223021;
+  --bdr:rgba(255,255,255,0.06);--bdr2:rgba(255,255,255,0.11);
+  --fg:#52936B;--fg2:#6BAD83;
+  --gold:#C8A84B;--gold-l:#F0DFA0;
+  --txt:#E8F0E9;--txt2:rgba(232,240,233,0.6);--txt3:rgba(232,240,233,0.32);
+  --red:#E05454;--red-l:rgba(224,84,84,0.12);
+  --blue:#4A9EDB;--blue-l:rgba(74,158,219,0.12);
+  --amber:#D4925A;--amber-l:rgba(212,146,90,0.12);
+  --purple:#8B6BD4;--purple-l:rgba(139,107,212,0.12);
+}
+body{font-family:'Vazirmatn',sans-serif;background:var(--bg);color:var(--txt);direction:rtl;min-height:100vh;display:flex}
+
+.sidebar{width:220px;min-height:100vh;background:var(--bg2);border-left:1px solid var(--bdr);display:flex;flex-direction:column;position:fixed;right:0;top:0;bottom:0;z-index:100}
+.sb-logo{padding:18px 16px 14px;border-bottom:1px solid var(--bdr);display:flex;align-items:center;gap:9px}
+.sb-lm{width:31px;height:31px;background:var(--gold);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:900;color:#1a1a0a}
+.sb-lt{font-size:13px;font-weight:800;color:var(--txt)}
+.sb-lt small{display:block;font-size:10px;font-weight:400;color:var(--txt3)}
+.sb-sec{padding:14px 14px 5px;font-size:9px;font-weight:700;color:var(--txt3);letter-spacing:1.2px;text-transform:uppercase}
+.sb-item{display:flex;align-items:center;gap:9px;padding:8px 11px;margin:1px 7px;border-radius:8px;cursor:pointer;font-size:12px;font-weight:600;color:var(--txt2);transition:all .15s;border:1px solid transparent}
+.sb-item:hover{background:var(--surf);color:var(--txt)}
+.sb-item.on{background:rgba(82,147,107,0.12);color:var(--fg2);border-color:rgba(82,147,107,0.18)}
+.sb-item i{font-size:16px;flex-shrink:0}
+.sb-badge{margin-right:auto;font-size:9px;font-weight:700;padding:2px 6px;border-radius:7px;background:var(--red);color:#fff}
+.sb-bottom{margin-top:auto;border-top:1px solid var(--bdr);padding:10px 7px}
+.sb-user{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:8px;cursor:pointer}
+.sb-av{width:28px;height:28px;border-radius:50%;background:rgba(82,147,107,0.15);border:1px solid rgba(82,147,107,0.25);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:var(--fg2)}
+.sb-uname{font-size:11px;font-weight:700;color:var(--txt)}
+.sb-urole{font-size:10px;color:var(--txt3)}
+.sb-out{margin-right:auto;color:var(--txt3);font-size:14px;cursor:pointer}
+
+.main{margin-right:220px;flex:1;display:flex;flex-direction:column;min-height:100vh}
+.topbar{background:var(--bg2);border-bottom:1px solid var(--bdr);height:50px;padding:0 20px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50}
+.tb-title{font-size:14px;font-weight:800;color:var(--txt)}
+.tb-sub{font-size:10px;color:var(--txt3)}
+.tb-right{display:flex;align-items:center;gap:8px}
+.tb-search{background:var(--surf);border:1px solid var(--bdr2);border-radius:8px;display:flex;align-items:center;gap:6px;padding:0 10px;height:30px;width:200px}
+.tb-search input{background:transparent;border:none;outline:none;color:var(--txt);font-size:11px;font-family:'Vazirmatn',sans-serif;flex:1;direction:rtl}
+.tb-search input::placeholder{color:var(--txt3)}
+.tb-icon{width:30px;height:30px;background:var(--surf);border:1px solid var(--bdr2);border-radius:7px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--txt2)}
+.btn-primary{height:32px;background:var(--fg);color:#fff;border:none;border-radius:7px;padding:0 14px;font-size:11px;font-weight:700;cursor:pointer;font-family:'Vazirmatn',sans-serif;display:flex;align-items:center;gap:5px}
+
+.content{padding:18px 20px 40px;flex:1}
+.view{display:none}.view.active{display:block}
+
+/* STATS */
+.stats-row{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:16px}
+.stat-card{background:var(--surf);border:1px solid var(--bdr);border-radius:10px;padding:13px 14px;cursor:pointer;transition:all .15s;position:relative;overflow:hidden}
+.stat-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2px}
+.stat-card.all::after{background:var(--txt3)}
+.stat-card.cust::after{background:var(--fg)}
+.stat-card.gold::after{background:var(--gold)}
+.stat-card.new::after{background:var(--blue)}
+.stat-card.blk::after{background:var(--red)}
+.stat-card:hover{border-color:var(--bdr2)}
+.stat-card.active-filter{border-color:var(--fg2);background:rgba(82,147,107,0.06)}
+.sc-num{font-size:22px;font-weight:900;color:var(--txt);margin-bottom:3px}
+.sc-lbl{font-size:10px;color:var(--txt3);display:flex;align-items:center;gap:5px}
+.sc-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+
+/* FILTERS */
+.filters-bar{background:var(--surf);border:1px solid var(--bdr);border-radius:10px;padding:11px 14px;margin-bottom:14px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.fb-search{background:var(--bg3);border:1px solid var(--bdr2);border-radius:7px;display:flex;align-items:center;gap:6px;padding:0 10px;height:32px;flex:1;min-width:200px}
+.fb-search input{background:transparent;border:none;outline:none;color:var(--txt);font-size:12px;font-family:'Vazirmatn',sans-serif;flex:1;direction:rtl}
+.fb-search input::placeholder{color:var(--txt3)}
+.fsel{height:32px;background:var(--bg3);border:1px solid var(--bdr2);border-radius:7px;padding:0 10px;font-size:11px;font-family:'Vazirmatn',sans-serif;color:var(--txt2);outline:none;cursor:pointer}
+.fdiv{width:1px;height:20px;background:var(--bdr2)}
+.btn-xs{height:26px;background:var(--surf2);border:1px solid var(--bdr2);border-radius:6px;padding:0 9px;font-size:10px;font-weight:700;color:var(--txt2);cursor:pointer;font-family:'Vazirmatn',sans-serif;display:inline-flex;align-items:center;gap:3px;transition:all .15s;white-space:nowrap}
+.btn-xs:hover{color:var(--txt);border-color:var(--fg)}
+.btn-xs.primary{background:rgba(82,147,107,0.1);border-color:rgba(82,147,107,0.2);color:var(--fg2)}
+.btn-xs.danger:hover{border-color:var(--red);color:var(--red)}
+
+/* TABLE */
+.table-card{background:var(--surf);border:1px solid var(--bdr);border-radius:11px;overflow:hidden}
+.table-head{padding:11px 16px;border-bottom:1px solid var(--bdr);display:flex;align-items:center;justify-content:space-between}
+.table-ht{font-size:12px;font-weight:800;color:var(--txt);display:flex;align-items:center;gap:7px}
+.table-ht i{color:var(--fg)}
+
+.utable{width:100%;border-collapse:collapse}
+.utable th{font-size:9px;font-weight:700;color:var(--txt3);text-align:right;padding:9px 14px;border-bottom:1px solid var(--bdr);letter-spacing:.5px;text-transform:uppercase;white-space:nowrap;cursor:pointer}
+.utable th:hover{color:var(--txt2)}
+.utable td{font-size:11px;color:var(--txt2);padding:10px 14px;border-bottom:1px solid var(--bdr);vertical-align:middle}
+.utable tr:last-child td{border-bottom:none}
+.utable tr:hover td{background:var(--surf2);cursor:pointer}
+
+.user-cell{display:flex;align-items:center;gap:9px}
+.user-av{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0}
+.user-name{font-size:11px;font-weight:700;color:var(--txt);margin-bottom:1px;display:flex;align-items:center;gap:5px}
+.user-phone{font-size:10px;color:var(--txt3);direction:ltr;display:inline-block}
+
+.role-pill{display:inline-flex;align-items:center;gap:3px;padding:2px 8px;border-radius:5px;font-size:9px;font-weight:700}
+.role-customer{background:var(--blue-l);color:var(--blue)}
+.role-gold{background:var(--gold-l);color:#8a6400}
+.role-admin{background:rgba(139,107,212,0.15);color:var(--purple)}
+.role-staff{background:rgba(82,147,107,0.15);color:var(--fg2)}
+
+.status-dot2{display:inline-flex;align-items:center;gap:5px;font-size:10px;font-weight:700}
+.dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+.dot-active{background:#52C97A}
+.dot-blocked{background:var(--red)}
+
+.verified-badge{color:var(--fg2);font-size:12px;display:inline-flex;vertical-align:-2px;margin-right:3px}
+.row-acts{display:flex;gap:3px;opacity:0;transition:opacity .15s}
+.utable tr:hover .row-acts{opacity:1}
+
+.pagination{display:flex;align-items:center;justify-content:space-between;padding:10px 16px;border-top:1px solid var(--bdr)}
+.pg-info{font-size:11px;color:var(--txt3)}
+.pg-btns{display:flex;gap:3px}
+.pg-btn{width:27px;height:27px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;cursor:pointer;border:1px solid var(--bdr2);background:var(--surf2);color:var(--txt2);transition:all .15s;font-family:'Vazirmatn',sans-serif}
+.pg-btn:hover{border-color:var(--fg);color:var(--fg2)}
+.pg-btn.on{background:var(--fg);color:#fff;border-color:var(--fg)}
+
+/* ══════ USER DETAIL ══════ */
+.detail-header{display:flex;align-items:center;gap:12px;margin-bottom:18px}
+.back-btn{width:32px;height:32px;background:var(--surf);border:1px solid var(--bdr2);border-radius:8px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--txt2);transition:all .15s;flex-shrink:0}
+.back-btn:hover{border-color:var(--fg);color:var(--fg2)}
+.dh-title{font-size:16px;font-weight:900;color:var(--txt)}
+.dh-sub{font-size:11px;color:var(--txt3);margin-top:2px}
+.dh-actions{margin-right:auto;display:flex;gap:8px}
+
+.detail-grid{display:grid;grid-template-columns:280px 1fr;gap:14px;align-items:start}
+
+/* PROFILE CARD */
+.profile-card{background:var(--surf);border:1px solid var(--bdr);border-radius:11px;overflow:hidden;margin-bottom:12px}
+.pc-hero{background:linear-gradient(135deg,#1C3829,#2D5A3D);padding:22px 16px;text-align:center;position:relative}
+.pc-avatar{width:64px;height:64px;border-radius:50%;background:rgba(200,168,75,0.2);border:2px solid rgba(200,168,75,0.4);display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:800;color:var(--gold-l);margin:0 auto 10px}
+.pc-name{font-size:14px;font-weight:800;color:#fff;margin-bottom:3px}
+.pc-phone{font-size:11px;color:rgba(255,255,255,.5);direction:ltr}
+.pc-role{display:inline-flex;align-items:center;gap:4px;margin-top:8px;background:rgba(200,168,75,0.15);border:1px solid rgba(200,168,75,0.25);color:var(--gold-l);font-size:10px;font-weight:700;padding:3px 10px;border-radius:12px}
+.pc-body{padding:14px}
+.pc-stat-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px}
+.pc-stat{background:var(--bg3);border-radius:8px;padding:10px;text-align:center}
+.pc-stat .n{font-size:16px;font-weight:900;color:var(--txt)}
+.pc-stat .l{font-size:9px;color:var(--txt3);margin-top:2px}
+.pc-info-row{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--bdr);font-size:11px}
+.pc-info-row:last-child{border-bottom:none}
+.pc-info-row span:first-child{color:var(--txt3)}
+.pc-info-row span:last-child{color:var(--txt);font-weight:600}
+
+/* ACTIONS CARD */
+.action-card{background:var(--surf);border:1px solid var(--bdr);border-radius:11px;padding:14px;margin-bottom:12px}
+.action-card-title{font-size:11px;font-weight:800;color:var(--txt);margin-bottom:10px;display:flex;align-items:center;gap:6px}
+.action-card-title i{color:var(--fg);font-size:14px}
+.toggle-row{display:flex;align-items:center;justify-content:space-between;padding:9px 0;border-bottom:1px solid var(--bdr)}
+.toggle-row:last-child{border-bottom:none}
+.tr-info .tl{font-size:11px;font-weight:700;color:var(--txt)}
+.tr-info .ts{font-size:9px;color:var(--txt3);margin-top:1px}
+.toggle{width:36px;height:21px;border-radius:11px;background:var(--bdr2);position:relative;cursor:pointer;transition:background .2s;flex-shrink:0}
+.toggle.on{background:var(--fg)}
+.toggle::after{content:'';width:15px;height:15px;border-radius:50%;background:#fff;position:absolute;top:3px;right:3px;transition:right .2s;box-shadow:0 1px 3px rgba(0,0,0,.3)}
+.toggle.on::after{right:calc(100% - 18px)}
+
+.btn-action-block{width:100%;height:34px;background:var(--red-l);border:1px solid rgba(224,84,84,0.25);border-radius:8px;font-size:11px;font-weight:700;color:var(--red);cursor:pointer;font-family:'Vazirmatn',sans-serif;display:flex;align-items:center;justify-content:center;gap:6px;margin-top:8px}
+.btn-action-role{width:100%;height:34px;background:var(--bg3);border:1px solid var(--bdr2);border-radius:8px;font-size:11px;font-weight:700;color:var(--txt2);cursor:pointer;font-family:'Vazirmatn',sans-serif;margin-top:8px}
+
+/* RIGHT SIDE TABS */
+.dtabs{display:flex;border-bottom:1px solid var(--bdr);background:var(--surf);border-radius:11px 11px 0 0;border:1px solid var(--bdr);border-bottom:none;overflow:hidden}
+.dtab{padding:11px 16px;font-size:12px;font-weight:600;color:var(--txt3);cursor:pointer;border-bottom:2px solid transparent;transition:all .15s}
+.dtab.on{color:var(--fg2);border-bottom-color:var(--fg);background:var(--bg3)}
+.dtab-panel{display:none;background:var(--surf);border:1px solid var(--bdr);border-top:none;border-radius:0 0 11px 11px;overflow:hidden}
+.dtab-panel.on{display:block}
+
+/* ORDERS LIST IN PROFILE */
+.uo-item{display:flex;align-items:center;gap:10px;padding:11px 16px;border-bottom:1px solid var(--bdr)}
+.uo-item:last-child{border-bottom:none}
+.uo-icon{width:34px;height:34px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+.uo-id{font-size:11px;font-weight:700;color:var(--txt);direction:ltr;display:inline-block}
+.uo-date{font-size:10px;color:var(--txt3)}
+.uo-right{text-align:left;margin-right:auto}
+.uo-amt{font-size:12px;font-weight:800;color:var(--txt)}
+.spill{display:inline-flex;align-items:center;gap:3px;padding:2px 7px;border-radius:4px;font-size:9px;font-weight:700;margin-top:3px}
+.sp-done{background:rgba(82,147,107,0.15);color:var(--fg2)}
+.sp-sent{background:rgba(139,107,212,0.15);color:var(--purple)}
+.sp-proc{background:var(--blue-l);color:var(--blue)}
+
+/* ADDRESSES */
+.addr-mini{padding:12px 16px;border-bottom:1px solid var(--bdr);font-size:11px;color:var(--txt2);line-height:1.8;display:flex;justify-content:space-between;align-items:flex-start}
+.addr-mini:last-child{border-bottom:none}
+.addr-mini strong{color:var(--txt);display:block;margin-bottom:3px;font-size:11px}
+
+/* ACTIVITY */
+.act-mini{display:flex;gap:9px;padding:10px 16px;border-bottom:1px solid var(--bdr)}
+.act-mini:last-child{border-bottom:none}
+.act-dot2{width:26px;height:26px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0}
+.act-txt2{font-size:11px;color:var(--txt2);line-height:1.6}
+.act-time2{font-size:10px;color:var(--txt3);margin-top:2px}
+
+/* MODAL */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:300;display:none;align-items:center;justify-content:center;padding:20px}
+.modal-overlay.show{display:flex}
+.confirm-modal{background:var(--bg2);border:1px solid var(--bdr2);border-radius:12px;width:100%;max-width:380px;padding:24px;text-align:center}
+.cm-icon{width:56px;height:56px;border-radius:50%;background:var(--red-l);border:2px solid rgba(224,84,84,0.2);display:flex;align-items:center;justify-content:center;margin:0 auto 14px;font-size:24px;color:var(--red)}
+.cm-title{font-size:15px;font-weight:800;color:var(--txt);margin-bottom:7px}
+.cm-sub{font-size:12px;color:var(--txt3);line-height:1.8;margin-bottom:20px}
+.cm-btns{display:flex;gap:8px}
+.btn-confirm-del{flex:1;height:38px;background:var(--red);color:#fff;border:none;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;font-family:'Vazirmatn',sans-serif}
+.btn-confirm-cancel{flex:1;height:38px;background:transparent;border:1px solid var(--bdr2);border-radius:8px;font-size:12px;font-weight:700;color:var(--txt2);cursor:pointer;font-family:'Vazirmatn',sans-serif}
+
+/* ROLE MODAL */
+.role-modal{background:var(--bg2);border:1px solid var(--bdr2);border-radius:12px;width:100%;max-width:340px;overflow:hidden}
+.rm-head{padding:14px 18px;border-bottom:1px solid var(--bdr);font-size:13px;font-weight:800;color:var(--txt)}
+.rm-body{padding:14px 18px}
+.role-opt{display:flex;align-items:center;gap:9px;padding:10px 12px;border:1px solid var(--bdr2);border-radius:8px;cursor:pointer;margin-bottom:7px;transition:all .15s}
+.role-opt.on{border-color:var(--fg);background:rgba(82,147,107,0.08)}
+.role-opt input{accent-color:var(--fg)}
+.ro-name{font-size:12px;font-weight:700;color:var(--txt)}
+.ro-desc{font-size:10px;color:var(--txt3)}
+.rm-foot{padding:12px 18px;border-top:1px solid var(--bdr);display:flex;gap:8px;justify-content:flex-end}
+.btn-cancel{height:32px;background:transparent;border:1px solid var(--bdr2);border-radius:7px;padding:0 14px;font-size:11px;font-weight:700;color:var(--txt2);cursor:pointer;font-family:'Vazirmatn',sans-serif}
+.btn-save{height:32px;background:var(--fg);color:#fff;border:none;border-radius:7px;padding:0 16px;font-size:11px;font-weight:700;cursor:pointer;font-family:'Vazirmatn',sans-serif}
+
+/* TOAST */
+.toast{position:fixed;bottom:20px;left:20px;background:var(--surf2);border:1px solid var(--bdr2);border-radius:10px;padding:10px 14px;display:flex;align-items:center;gap:8px;font-size:12px;color:var(--txt);z-index:500;transform:translateY(70px);opacity:0;transition:all .3s;max-width:260px}
+.toast.show{transform:translateY(0);opacity:1}
+.toast i{font-size:15px}
+.toast.success i{color:#52C97A}
+.toast.error i{color:var(--red)}
+</style>
+</head>
+<body>
+
+<div class="sidebar">
+  <div class="sb-logo"><div class="sb-lm">س</div><div class="sb-lt">سبزینه <small>پنل مدیریت</small></div></div>
+  <div class="sb-sec">اصلی</div>
+  <div class="sb-item" onclick="nav(this)"><i class="ti ti-layout-dashboard"></i> داشبورد</div>
+  <div class="sb-sec">فروشگاه</div>
+  <div class="sb-item" onclick="nav(this)"><i class="ti ti-receipt"></i> سفارش‌ها <span class="sb-badge">۱۲</span></div>
+  <div class="sb-item" onclick="nav(this)"><i class="ti ti-shopping-bag"></i> محصولات</div>
+  <div class="sb-item" onclick="nav(this)"><i class="ti ti-category"></i> دسته‌بندی‌ها</div>
+  <div class="sb-item" onclick="nav(this)"><i class="ti ti-tag"></i> کوپن‌ها</div>
+  <div class="sb-sec">کاربران</div>
+  <div class="sb-item on" onclick="nav(this)"><i class="ti ti-users"></i> کاربران</div>
+  <div class="sb-item" onclick="nav(this)"><i class="ti ti-message-dots"></i> نظرات</div>
+  <div class="sb-sec">محتوا</div>
+  <div class="sb-item" onclick="nav(this)"><i class="ti ti-article"></i> مقالات</div>
+  <div class="sb-sec">سیستم</div>
+  <div class="sb-item" onclick="nav(this)"><i class="ti ti-settings"></i> تنظیمات</div>
+  <div class="sb-bottom">
+    <div class="sb-user">
+      <div class="sb-av">مر</div>
+      <div><div class="sb-uname">محمد رضایی</div><div class="sb-urole">مدیر ارشد</div></div>
+      <i class="ti ti-logout sb-out"></i>
+    </div>
+  </div>
+</div>
+
+<div class="main">
+  <div class="topbar">
+    <div><div class="tb-title" id="page-title">مدیریت کاربران</div><div class="tb-sub" id="page-sub">۲,۸۴۰ کاربر در سیستم</div></div>
+    <div class="tb-right">
+      <div class="tb-search"><i class="ti ti-search" style="font-size:13px;color:var(--txt3)"></i><input placeholder="نام، موبایل، ایمیل..." oninput="filterUsers(this.value)"></div>
+      <div class="tb-icon"><i class="ti ti-bell" style="font-size:15px"></i></div>
+      <button class="btn-primary"><i class="ti ti-download" style="font-size:12px"></i> خروجی اکسل</button>
+    </div>
+  </div>
+
+  <div class="content">
+
+    <!-- LIST VIEW -->
+    <div class="view active" id="view-list">
+      <div class="stats-row">
+        <div class="stat-card all active-filter" onclick="filterByRole('all',this)">
+          <div class="sc-num">۲,۸۴۰</div><div class="sc-lbl"><span class="sc-dot" style="background:var(--txt3)"></span> همه کاربران</div>
+        </div>
+        <div class="stat-card cust" onclick="filterByRole('customer',this)">
+          <div class="sc-num" style="color:var(--blue)">۲,۷۶۴</div><div class="sc-lbl"><span class="sc-dot" style="background:var(--blue)"></span> مشتری عادی</div>
+        </div>
+        <div class="stat-card gold" onclick="filterByRole('gold',this)">
+          <div class="sc-num" style="color:var(--gold)">۵۸</div><div class="sc-lbl"><span class="sc-dot" style="background:var(--gold)"></span> کاربر طلایی</div>
+        </div>
+        <div class="stat-card new" onclick="filterByRole('new',this)">
+          <div class="sc-num" style="color:var(--blue)">۱۲۴</div><div class="sc-lbl"><span class="sc-dot" style="background:var(--blue)"></span> عضو این ماه</div>
+        </div>
+        <div class="stat-card blk" onclick="filterByRole('blocked',this)">
+          <div class="sc-num" style="color:var(--red)">۱۸</div><div class="sc-lbl"><span class="sc-dot" style="background:var(--red)"></span> مسدود شده</div>
+        </div>
+      </div>
+
+      <div class="filters-bar">
+        <div class="fb-search"><i class="ti ti-search" style="font-size:13px;color:var(--txt3)"></i><input placeholder="جستجو در کاربران..." oninput="filterUsers(this.value)"></div>
+        <select class="fsel"><option>همه نقش‌ها</option><option>مشتری</option><option>کاربر طلایی</option><option>ادمین</option><option>کارمند</option></select>
+        <select class="fsel"><option>وضعیت حساب</option><option>فعال</option><option>مسدود</option></select>
+        <select class="fsel"><option>وضعیت احراز هویت</option><option>تأیید شده</option><option>تأیید نشده</option></select>
+        <div class="fdiv"></div>
+        <button class="btn-xs"><i class="ti ti-filter-off" style="font-size:10px"></i> پاک کردن</button>
+      </div>
+
+      <div class="table-card">
+        <div class="table-head">
+          <div class="table-ht"><i class="ti ti-users"></i> لیست کاربران</div>
+          <select class="fsel" style="height:26px;font-size:10px"><option>۱۵ در صفحه</option><option>۳۰ در صفحه</option></select>
+        </div>
+        <table class="utable">
+          <thead>
+            <tr>
+              <th onclick="sortUsers('name')">کاربر</th>
+              <th>نقش</th>
+              <th onclick="sortUsers('orders')">تعداد سفارش</th>
+              <th onclick="sortUsers('spent')">مجموع خرید</th>
+              <th>وضعیت</th>
+              <th onclick="sortUsers('date')">تاریخ عضویت</th>
+              <th style="width:90px">عملیات</th>
+            </tr>
+          </thead>
+          <tbody id="users-tbody"></tbody>
+        </table>
+        <div class="pagination">
+          <div class="pg-info">نمایش ۱ تا ۱۵ از <strong style="color:var(--txt)">۲,۸۴۰</strong> کاربر</div>
+          <div class="pg-btns">
+            <button class="pg-btn"><i class="ti ti-chevron-right" style="font-size:11px"></i></button>
+            <button class="pg-btn on">۱</button><button class="pg-btn">۲</button><button class="pg-btn">۳</button>
+            <span style="color:var(--txt3);font-size:11px">...</span><button class="pg-btn">۱۸۹</button>
+            <button class="pg-btn"><i class="ti ti-chevron-left" style="font-size:11px"></i></button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- DETAIL VIEW -->
+    <div class="view" id="view-detail">
+      <div class="detail-header">
+        <div class="back-btn" onclick="showList()"><i class="ti ti-arrow-right" style="font-size:15px"></i></div>
+        <div><div class="dh-title" id="detail-title">پروفایل کاربر</div><div class="dh-sub" id="detail-sub">عضو از ۱۴۰۲</div></div>
+        <div class="dh-actions">
+          <button class="btn-xs"><i class="ti ti-message" style="font-size:10px"></i> ارسال پیام</button>
+          <button class="btn-xs danger" onclick="openBlockModal()"><i class="ti ti-ban" style="font-size:10px"></i> مسدودسازی</button>
+        </div>
+      </div>
+
+      <div class="detail-grid">
+        <!-- LEFT: PROFILE -->
+        <div>
+          <div class="profile-card">
+            <div class="pc-hero">
+              <div class="pc-avatar" id="detail-avatar">عا</div>
+              <div class="pc-name" id="detail-name">علی احمدی</div>
+              <div class="pc-phone" id="detail-phone">09121234567</div>
+              <div class="pc-role" id="detail-role"><i class="ti ti-star" style="font-size:10px"></i> کاربر طلایی</div>
+            </div>
+            <div class="pc-body">
+              <div class="pc-stat-row">
+                <div class="pc-stat"><div class="n">۱۲</div><div class="l">سفارش کل</div></div>
+                <div class="pc-stat"><div class="n" style="font-size:13px">۴.۸۵ م</div><div class="l">مجموع خرید</div></div>
+              </div>
+              <div class="pc-info-row"><span>ایمیل</span><span style="direction:ltr;font-size:10px">ali@example.com</span></div>
+              <div class="pc-info-row"><span>کد ملی</span><span style="direction:ltr">0123456789</span></div>
+              <div class="pc-info-row"><span>تاریخ تولد</span><span>۱۳۶۵/۰۴/۱۵</span></div>
+              <div class="pc-info-row"><span>تاریخ عضویت</span><span>۲۱ مرداد ۱۴۰۲</span></div>
+              <div class="pc-info-row"><span>آخرین ورود</span><span>۲ ساعت پیش</span></div>
+              <div class="pc-info-row"><span>احراز هویت</span><span style="color:var(--fg2)"><i class="ti ti-circle-check" style="font-size:11px"></i> تأیید شده</span></div>
+            </div>
+          </div>
+
+          <div class="action-card">
+            <div class="action-card-title"><i class="ti ti-settings"></i> تنظیمات حساب</div>
+            <div class="toggle-row">
+              <div class="tr-info"><div class="tl">حساب فعال</div><div class="ts">دسترسی کامل به سایت</div></div>
+              <div class="toggle on" onclick="this.classList.toggle('on')"></div>
+            </div>
+            <div class="toggle-row">
+              <div class="tr-info"><div class="tl">دریافت پیامک تبلیغاتی</div><div class="ts">کمپین‌ها و تخفیف‌ها</div></div>
+              <div class="toggle on" onclick="this.classList.toggle('on')"></div>
+            </div>
+            <div class="toggle-row">
+              <div class="tr-info"><div class="tl">دریافت خبرنامه ایمیلی</div><div class="ts">مقالات و اخبار</div></div>
+              <div class="toggle" onclick="this.classList.toggle('on')"></div>
+            </div>
+            <button class="btn-action-role" onclick="openRoleModal()"><i class="ti ti-user-edit" style="font-size:11px"></i> تغییر نقش کاربر</button>
+            <button class="btn-action-block" onclick="openBlockModal()"><i class="ti ti-ban" style="font-size:11px"></i> مسدود کردن کاربر</button>
+          </div>
+        </div>
+
+        <!-- RIGHT: TABS -->
+        <div>
+          <div class="dtabs">
+            <div class="dtab on" onclick="setDTab(this,0)">سفارش‌ها</div>
+            <div class="dtab" onclick="setDTab(this,1)">آدرس‌ها</div>
+            <div class="dtab" onclick="setDTab(this,2)">فعالیت‌ها</div>
+            <div class="dtab" onclick="setDTab(this,3)">یادداشت ادمین</div>
+          </div>
+
+          <div class="dtab-panel on" id="dp-0">
+            <div class="uo-item">
+              <div class="uo-icon" style="background:rgba(82,147,107,0.1)">🌿</div>
+              <div><div class="uo-id">#100064</div><div class="uo-date">۱۶ خرداد ۱۴۰۴</div></div>
+              <div class="uo-right"><div class="uo-amt">۹۴۰,۵۰۰ ت</div><span class="spill sp-sent">ارسال شده</span></div>
+            </div>
+            <div class="uo-item">
+              <div class="uo-icon" style="background:var(--blue-l)">💧</div>
+              <div><div class="uo-id">#100021</div><div class="uo-date">۲ خرداد ۱۴۰۴</div></div>
+              <div class="uo-right"><div class="uo-amt">۴۵۵,۰۰۰ ت</div><span class="spill sp-done">تحویل شده</span></div>
+            </div>
+            <div class="uo-item">
+              <div class="uo-icon" style="background:var(--amber-l)">🌻</div>
+              <div><div class="uo-id">#099876</div><div class="uo-date">۱۸ اردیبهشت ۱۴۰۴</div></div>
+              <div class="uo-right"><div class="uo-amt">۲۸۰,۰۰۰ ت</div><span class="spill sp-done">تحویل شده</span></div>
+            </div>
+            <div class="uo-item">
+              <div class="uo-icon" style="background:rgba(139,107,212,0.1)">🔧</div>
+              <div><div class="uo-id">#099654</div><div class="uo-date">۲ اردیبهشت ۱۴۰۴</div></div>
+              <div class="uo-right"><div class="uo-amt">۱۸۵,۰۰۰ ت</div><span class="spill sp-done">تحویل شده</span></div>
+            </div>
+          </div>
+
+          <div class="dtab-panel" id="dp-1">
+            <div class="addr-mini">
+              <div><strong>منزل (پیش‌فرض)</strong>تهران، خیابان ولیعصر، کوچه گلها، پلاک ۱۲، واحد ۳<br>کد پستی: ۱۴۵۶۸۷۳۲۱۰</div>
+            </div>
+            <div class="addr-mini">
+              <div><strong>محل کار</strong>کرج، بلوار ارم، شهرک صنعتی، سالن ۴<br>کد پستی: ۳۱۵۸۷۶۵۴۳۲</div>
+            </div>
+          </div>
+
+          <div class="dtab-panel" id="dp-2">
+            <div class="act-mini"><div class="act-dot2" style="background:rgba(82,147,107,0.15)">🛒</div><div><div class="act-txt2">سفارش <strong>#100064</strong> ثبت کرد</div><div class="act-time2">۲ ساعت پیش</div></div></div>
+            <div class="act-mini"><div class="act-dot2" style="background:var(--blue-l)">🔑</div><div><div class="act-txt2">وارد حساب کاربری شد</div><div class="act-time2">۲ ساعت پیش</div></div></div>
+            <div class="act-mini"><div class="act-dot2" style="background:var(--amber-l)">⭐</div><div><div class="act-txt2">نظر برای محصول «قطره‌چکان» ثبت کرد</div><div class="act-time2">۱ روز پیش</div></div></div>
+            <div class="act-mini"><div class="act-dot2" style="background:rgba(139,107,212,0.1)">📍</div><div><div class="act-txt2">آدرس جدید «محل کار» اضافه کرد</div><div class="act-time2">۵ روز پیش</div></div></div>
+          </div>
+
+          <div class="dtab-panel" id="dp-3">
+            <div style="padding:14px 16px">
+              <textarea style="width:100%;min-height:90px;background:var(--bg3);border:1px solid var(--bdr2);border-radius:8px;padding:10px 12px;font-size:12px;font-family:'Vazirmatn',sans-serif;color:var(--txt);outline:none;resize:vertical;direction:rtl" placeholder="یادداشت داخلی درباره این کاربر (فقط برای ادمین‌ها قابل مشاهده است)...">مشتری همیشگی و وفادار — در صورت مشکل با اولویت رسیدگی شود.</textarea>
+              <button class="btn-xs primary" style="margin-top:8px" onclick="showToast('یادداشت ذخیره شد','success')"><i class="ti ti-check" style="font-size:10px"></i> ذخیره یادداشت</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- BLOCK MODAL -->
+<div class="modal-overlay" id="block-modal" onclick="if(event.target===this)closeBlockModal()">
+  <div class="confirm-modal">
+    <div class="cm-icon"><i class="ti ti-ban"></i></div>
+    <div class="cm-title">مسدود کردن کاربر</div>
+    <div class="cm-sub">با مسدود کردن <strong style="color:var(--txt)">علی احمدی</strong>، این کاربر دیگر نمی‌تواند وارد حساب خود شود یا سفارش ثبت کند.</div>
+    <div class="cm-btns">
+      <button class="btn-confirm-cancel" onclick="closeBlockModal()">انصراف</button>
+      <button class="btn-confirm-del" onclick="confirmBlock()">بله، مسدود کن</button>
+    </div>
+  </div>
+</div>
+
+<!-- ROLE MODAL -->
+<div class="modal-overlay" id="role-modal" onclick="if(event.target===this)closeRoleModal()">
+  <div class="role-modal">
+    <div class="rm-head">تغییر نقش کاربر</div>
+    <div class="rm-body">
+      <label class="role-opt on"><input type="radio" name="role" checked><div><div class="ro-name">مشتری عادی</div><div class="ro-desc">دسترسی استاندارد خرید</div></div></label>
+      <label class="role-opt"><input type="radio" name="role"><div><div class="ro-name">کاربر طلایی</div><div class="ro-desc">تخفیف ویژه و اولویت پشتیبانی</div></div></label>
+      <label class="role-opt"><input type="radio" name="role"><div><div class="ro-name">کارمند فروشگاه</div><div class="ro-desc">دسترسی به مدیریت سفارش‌ها</div></div></label>
+      <label class="role-opt"><input type="radio" name="role"><div><div class="ro-name">مدیر ارشد</div><div class="ro-desc">دسترسی کامل به پنل مدیریت</div></div></label>
+    </div>
+    <div class="rm-foot">
+      <button class="btn-cancel" onclick="closeRoleModal()">انصراف</button>
+      <button class="btn-save" onclick="confirmRole()">ذخیره تغییرات</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"><i class="ti ti-circle-check"></i><span id="toast-msg"></span></div>
+
+<script>
+var users = [
+  {id:1,name:'علی احمدی',phone:'09121234567',email:'ali@example.com',avatar:'عا',bg:'#1C3829',role:'gold',orders:12,spent:4850000,active:true,verified:true,date:'۲۱ مرداد ۱۴۰۲'},
+  {id:2,name:'فاطمه رضایی',phone:'09361234567',email:'fateme@example.com',avatar:'فر',bg:'#1a3a5c',role:'customer',orders:5,spent:1280000,active:true,verified:true,date:'۱۲ دی ۱۴۰۲'},
+  {id:3,name:'حسین محمدی',phone:'09121111111',email:'hossein@example.com',avatar:'حم',bg:'#3a1c1c',role:'customer',orders:8,spent:2150000,active:true,verified:false,date:'۵ شهریور ۱۴۰۳'},
+  {id:4,name:'زهرا کریمی',phone:'09351234567',email:'zahra@example.com',avatar:'زک',bg:'#1c2a3a',role:'customer',orders:2,spent:455000,active:false,verified:true,date:'۱۸ فروردین ۱۴۰۴'},
+  {id:5,name:'محمدرضا نوری',phone:'09101234567',email:'mreza@example.com',avatar:'من',bg:'#2a1a2a',role:'staff',orders:0,spent:0,active:true,verified:true,date:'۳ مهر ۱۴۰۲'},
+  {id:6,name:'سارا موسوی',phone:'09121231234',email:'sara@example.com',avatar:'سم',bg:'#1c3a2a',role:'customer',orders:18,spent:6200000,active:true,verified:true,date:'۲۰ خرداد ۱۴۰۱'},
+  {id:7,name:'رضا اکبری',phone:'09191234567',email:'reza@example.com',avatar:'را',bg:'#2a2a1c',role:'gold',orders:24,spent:9400000,active:true,verified:true,date:'۱۴ تیر ۱۴۰۱'},
+  {id:8,name:'مریم صادقی',phone:'09301234567',email:'maryam@example.com',avatar:'مص',bg:'#1a1c3a',role:'customer',orders:3,spent:890000,active:true,verified:false,date:'۲ خرداد ۱۴۰۴'},
+];
+
+var roleMap = {
+  customer:{label:'مشتری',cls:'role-customer'},
+  gold:{label:'کاربر طلایی',cls:'role-gold'},
+  admin:{label:'ادمین',cls:'role-admin'},
+  staff:{label:'کارمند',cls:'role-staff'},
+};
+var currentUser=null;
+
+function renderUsers(data){
+  document.getElementById('users-tbody').innerHTML = data.map(u=>{
+    var rm = roleMap[u.role];
+    return `<tr onclick="showDetail(${u.id})">
+      <td><div class="user-cell"><div class="user-av" style="background:${u.bg}">${u.avatar}</div><div><div class="user-name">${u.name}${u.verified?'<i class="ti ti-rosette-discount-check verified-badge"></i>':''}</div><div class="user-phone">${u.phone}</div></div></div></td>
+      <td><span class="role-pill ${rm.cls}">${rm.label}</span></td>
+      <td style="font-weight:700;color:var(--txt)">${u.orders}</td>
+      <td style="font-weight:700;color:var(--txt)">${u.spent? (u.spent/1000000).toFixed(1)+' م':'—'}</td>
+      <td><span class="status-dot2"><span class="dot ${u.active?'dot-active':'dot-blocked'}"></span>${u.active?'فعال':'مسدود'}</span></td>
+      <td style="font-size:10px;color:var(--txt3)">${u.date}</td>
+      <td><div class="row-acts">
+        <button class="btn-xs" onclick="event.stopPropagation();showDetail(${u.id})"><i class="ti ti-eye" style="font-size:10px"></i></button>
+        <button class="btn-xs" onclick="event.stopPropagation();showToast('پیام ارسال شد','success')"><i class="ti ti-message" style="font-size:10px"></i></button>
+        <button class="btn-xs danger" onclick="event.stopPropagation();openBlockModal(${u.id})"><i class="ti ti-ban" style="font-size:10px"></i></button>
+      </div></td>
+    </tr>`;
+  }).join('');
+}
+renderUsers(users);
+
+function filterUsers(q){ if(!q){renderUsers(users);return;} renderUsers(users.filter(u=>u.name.includes(q)||u.phone.includes(q)||u.email.includes(q))); }
+function filterByRole(role,el){
+  document.querySelectorAll('.stat-card').forEach(c=>c.classList.remove('active-filter'));
+  el.classList.add('active-filter');
+  if(role==='all') renderUsers(users);
+  else if(role==='blocked') renderUsers(users.filter(u=>!u.active));
+  else if(role==='new') renderUsers(users.slice(0,3));
+  else renderUsers(users.filter(u=>u.role===role));
+}
+var sd={};
+function sortUsers(k){ sd[k]=sd[k]==='asc'?'desc':'asc'; var map={name:'name',orders:'orders',spent:'spent',date:'date'}; var key=map[k]; var sorted=[...users].sort((a,b)=>sd[k]==='asc'?(a[key]>b[key]?1:-1):(a[key]<b[key]?1:-1)); renderUsers(sorted); }
+
+function showDetail(id){
+  currentUser = users.find(u=>u.id===id);
+  document.getElementById('detail-title').textContent = currentUser.name;
+  document.getElementById('detail-sub').textContent = 'عضو از '+currentUser.date;
+  document.getElementById('detail-avatar').textContent = currentUser.avatar;
+  document.getElementById('detail-avatar').parentElement.style.background = 'linear-gradient(135deg,#1C3829,#2D5A3D)';
+  document.getElementById('detail-name').textContent = currentUser.name;
+  document.getElementById('detail-phone').textContent = currentUser.phone;
+  var rm = roleMap[currentUser.role];
+  document.getElementById('detail-role').innerHTML = '<i class="ti ti-star" style="font-size:10px"></i> '+rm.label;
+  document.getElementById('view-list').classList.remove('active');
+  document.getElementById('view-detail').classList.add('active');
+  document.getElementById('page-title').textContent = 'پروفایل کاربر';
+  document.getElementById('page-sub').textContent = currentUser.name;
+}
+function showList(){
+  document.getElementById('view-detail').classList.remove('active');
+  document.getElementById('view-list').classList.add('active');
+  document.getElementById('page-title').textContent = 'مدیریت کاربران';
+  document.getElementById('page-sub').textContent = '۲,۸۴۰ کاربر در سیستم';
+}
+
+function setDTab(el,idx){
+  document.querySelectorAll('.dtab').forEach(t=>t.classList.remove('on'));
+  el.classList.add('on');
+  document.querySelectorAll('.dtab-panel').forEach((p,i)=>p.classList.toggle('on',i===idx));
+}
+
+var blockTarget=null;
+function openBlockModal(id){ blockTarget=id||currentUser.id; document.getElementById('block-modal').classList.add('show'); }
+function closeBlockModal(){ document.getElementById('block-modal').classList.remove('show'); }
+function confirmBlock(){ var u=users.find(x=>x.id===blockTarget); if(u) u.active=!u.active; closeBlockModal(); renderUsers(users); showToast('وضعیت کاربر تغییر کرد','success'); }
+
+function openRoleModal(){ document.getElementById('role-modal').classList.add('show'); }
+function closeRoleModal(){ document.getElementById('role-modal').classList.remove('show'); }
+function confirmRole(){ closeRoleModal(); showToast('نقش کاربر با موفقیت تغییر کرد','success'); }
+document.querySelectorAll('.role-opt').forEach(o=>o.addEventListener('click',function(){ document.querySelectorAll('.role-opt').forEach(x=>x.classList.remove('on')); this.classList.add('on'); }));
+
+function nav(el){ document.querySelectorAll('.sb-item').forEach(i=>i.classList.remove('on')); el.classList.add('on'); }
+function showToast(msg,type='success'){ var t=document.getElementById('toast'); t.querySelector('span').textContent=msg; t.className='toast '+type+' show'; t.querySelector('i').className='ti ti-'+(type==='success'?'circle-check':'alert-circle'); setTimeout(()=>t.classList.remove('show'),3000); }
+</script>
+</body>
+</html>

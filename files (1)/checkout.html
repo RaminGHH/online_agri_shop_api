@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>سبزینه — تکمیل خرید</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;600;700;900&display=swap');
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --fg:#1C3829;--fm:#2D5A3D;--fa:#52936B;
+  --gold:#C8A84B;--gold-l:#F0DFA0;
+  --cream:#F2EDE4;--white:#fff;
+  --txt:#1a2e1f;--txt2:#4a6b52;--txt3:#8a9e8d;
+  --bdr:#D8E8D4;--red:#C0392B;--red-l:#FDECEA;
+  --blue:#2563EB;--blue-l:#EFF6FF;
+}
+body{font-family:'Vazirmatn',sans-serif;background:var(--cream);color:var(--txt);direction:rtl;min-height:100vh}
+
+/* NAV */
+nav{background:var(--fg);height:54px;padding:0 20px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:200}
+.nlogo{display:flex;align-items:center;gap:8px}
+.nlm{width:30px;height:30px;background:var(--gold);border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:900;color:var(--fg)}
+.nlt{color:#fff;font-size:13px;font-weight:700}
+.nlt span{color:rgba(255,255,255,0.4);font-weight:300}
+.nav-secure{display:flex;align-items:center;gap:6px;color:rgba(255,255,255,0.55);font-size:12px}
+.nav-secure i{color:var(--gold);font-size:15px}
+
+/* STEPS */
+.steps-bar{background:var(--white);border-bottom:0.5px solid var(--bdr);padding:14px 20px}
+.steps-inner{max-width:820px;margin:0 auto;display:flex;align-items:center;justify-content:center}
+.si{display:flex;align-items:center;gap:7px}
+.sc{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0}
+.sc.done{background:var(--fa);color:#fff}
+.sc.active{background:var(--fg);color:#fff;box-shadow:0 0 0 3px rgba(28,56,41,0.15)}
+.sc.idle{background:var(--cream);color:var(--txt3);border:0.5px solid var(--bdr)}
+.sl{font-size:11px;font-weight:600;color:var(--txt3)}
+.sl.active{color:var(--fg);font-weight:700}
+.sl.done{color:var(--fa)}
+.sline{width:56px;height:0.5px;background:var(--bdr);margin:0 8px}
+.sline.done{background:var(--fa)}
+
+/* LAYOUT */
+.wrap{max-width:820px;margin:0 auto;padding:20px 20px 56px;display:grid;grid-template-columns:1fr 300px;gap:18px;align-items:start}
+
+/* LEFT COL */
+.left-col{}
+
+/* CARD */
+.card{background:var(--white);border:0.5px solid var(--bdr);border-radius:14px;overflow:hidden;margin-bottom:14px}
+.card-head{padding:14px 18px;border-bottom:0.5px solid var(--bdr);display:flex;align-items:center;justify-content:space-between}
+.card-head h3{font-size:14px;font-weight:800;color:var(--txt);display:flex;align-items:center;gap:8px}
+.card-head h3 .step-num{width:22px;height:22px;background:var(--fg);color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;flex-shrink:0}
+.card-head h3 .step-num.done{background:var(--fa)}
+.card-body{padding:18px}
+.card-body.tight{padding:14px 18px}
+
+/* TABS — address */
+.addr-tabs{display:flex;gap:8px;margin-bottom:16px}
+.atab{flex:1;padding:10px;border:0.5px solid var(--bdr);border-radius:10px;cursor:pointer;text-align:center;transition:all .15s}
+.atab.on{border-color:var(--fa);background:#EAF3DE}
+.atab i{font-size:18px;color:var(--txt3);display:block;margin-bottom:4px}
+.atab.on i{color:var(--fa)}
+.atab span{font-size:11px;font-weight:600;color:var(--txt2)}
+.atab.on span{color:var(--fg)}
+
+/* saved addresses */
+.saved-addrs{display:flex;flex-direction:column;gap:8px;margin-bottom:14px}
+.addr-opt{display:flex;align-items:flex-start;gap:10px;padding:12px 14px;border:0.5px solid var(--bdr);border-radius:10px;cursor:pointer;transition:all .15s}
+.addr-opt.on{border-color:var(--fa);background:#EAF3DE}
+.addr-opt input[type=radio]{accent-color:var(--fa);flex-shrink:0;margin-top:3px}
+.ao-body{flex:1}
+.ao-title{font-size:12px;font-weight:700;color:var(--txt);margin-bottom:3px;display:flex;align-items:center;gap:6px}
+.ao-default{background:var(--fa);color:#fff;font-size:9px;padding:1px 6px;border-radius:3px;font-weight:700}
+.ao-text{font-size:11px;color:var(--txt2);line-height:1.8}
+.ao-edit{font-size:10px;color:var(--fa);cursor:pointer;font-weight:600;white-space:nowrap;flex-shrink:0;margin-top:2px}
+
+.new-addr-btn{display:flex;align-items:center;gap:7px;padding:10px 14px;border:1px dashed var(--bdr);border-radius:10px;cursor:pointer;color:var(--txt3);font-size:12px;font-weight:600;transition:all .15s;background:transparent;width:100%;font-family:'Vazirmatn',sans-serif}
+.new-addr-btn:hover{border-color:var(--fa);color:var(--fa)}
+
+/* form fields */
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:14px;display:none}
+.form-grid.show{display:grid}
+.field{margin-bottom:0}
+.field.full{grid-column:1/-1}
+.field label{display:block;font-size:11px;font-weight:700;color:var(--txt2);margin-bottom:6px}
+.field label span{color:var(--red);margin-right:2px;font-size:10px}
+.finput{width:100%;height:38px;background:var(--cream);border:0.5px solid var(--bdr);border-radius:8px;padding:0 36px 0 12px;font-size:12px;font-family:'Vazirmatn',sans-serif;color:var(--txt);outline:none;transition:border .18s,background .18s}
+.finput:focus{border-color:var(--fa);background:#fff}
+.finput::placeholder{color:var(--txt3)}
+.fwrap{position:relative}
+.fwrap i{position:absolute;top:50%;transform:translateY(-50%);right:11px;font-size:15px;color:var(--txt3);pointer-events:none}
+.fselect{width:100%;height:38px;background:var(--cream);border:0.5px solid var(--bdr);border-radius:8px;padding:0 12px;font-size:12px;font-family:'Vazirmatn',sans-serif;color:var(--txt);outline:none;cursor:pointer}
+.fselect:focus{border-color:var(--fa)}
+
+/* SHIPPING */
+.ship-opts{display:flex;flex-direction:column;gap:8px}
+.sopt{display:flex;align-items:center;gap:12px;padding:12px 14px;border:0.5px solid var(--bdr);border-radius:10px;cursor:pointer;transition:all .15s}
+.sopt.on{border-color:var(--fa);background:#EAF3DE}
+.sopt input{accent-color:var(--fa);flex-shrink:0}
+.sopt-icon{width:36px;height:36px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.sopt-info{flex:1}
+.sopt-name{font-size:12px;font-weight:700;color:var(--txt);margin-bottom:2px}
+.sopt-time{font-size:10px;color:var(--txt3)}
+.sopt-price{font-size:13px;font-weight:800;color:var(--fg)}
+.sopt-price.free{color:var(--fa)}
+
+/* PAYMENT */
+.pay-methods{display:flex;flex-direction:column;gap:8px;margin-bottom:16px}
+.pmethod{display:flex;align-items:center;gap:12px;padding:13px 14px;border:0.5px solid var(--bdr);border-radius:10px;cursor:pointer;transition:all .15s}
+.pmethod.on{border-color:var(--blue);background:var(--blue-l)}
+.pmethod input{accent-color:var(--blue);flex-shrink:0}
+.pm-icon{width:38px;height:38px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+.pm-info{flex:1}
+.pm-name{font-size:13px;font-weight:700;color:var(--txt);margin-bottom:2px}
+.pm-sub{font-size:10px;color:var(--txt3)}
+.pm-badge{font-size:9px;font-weight:700;padding:2px 7px;border-radius:4px;background:#EAF3DE;color:#27500A;white-space:nowrap}
+
+/* gateway logos */
+.gateway-logos{display:flex;align-items:center;gap:8px;margin-top:10px;padding:10px 14px;background:var(--cream);border-radius:8px}
+.gw-logo{background:var(--white);border:0.5px solid var(--bdr);border-radius:6px;padding:4px 10px;font-size:11px;font-weight:700;color:var(--txt2)}
+.gw-sep{color:var(--bdr);font-size:12px}
+
+/* wallet */
+.wallet-box{display:flex;align-items:center;justify-content:space-between;padding:12px 14px;background:linear-gradient(135deg,var(--fg),#2D5A3D);border-radius:10px;margin-bottom:10px}
+.wb-info .wt{font-size:12px;font-weight:700;color:#fff;margin-bottom:2px}
+.wb-info .ws{font-size:11px;color:rgba(255,255,255,.55)}
+.wb-balance{text-align:left}
+.wb-balance .amt{font-size:16px;font-weight:900;color:var(--gold-l);display:block}
+.wb-balance .unit{font-size:10px;color:rgba(255,255,255,.45)}
+.wb-toggle{width:38px;height:22px;border-radius:11px;background:rgba(255,255,255,.15);position:relative;cursor:pointer;flex-shrink:0;transition:background .2s}
+.wb-toggle.on{background:var(--fa)}
+.wb-toggle::after{content:'';width:16px;height:16px;border-radius:50%;background:#fff;position:absolute;top:3px;right:3px;transition:right .2s;box-shadow:0 1px 3px rgba(0,0,0,.2)}
+.wb-toggle.on::after{right:calc(100% - 19px)}
+
+/* notes */
+.notes-area{width:100%;min-height:72px;background:var(--cream);border:0.5px solid var(--bdr);border-radius:8px;padding:10px 12px;font-size:12px;font-family:'Vazirmatn',sans-serif;color:var(--txt);outline:none;resize:vertical;direction:rtl}
+.notes-area:focus{border-color:var(--fa);background:#fff}
+.notes-area::placeholder{color:var(--txt3)}
+
+/* RIGHT SUMMARY */
+.right-col{}
+.summary-card{background:var(--white);border:0.5px solid var(--bdr);border-radius:14px;overflow:hidden;position:sticky;top:72px}
+.sc-head{background:var(--fg);padding:14px 16px}
+.sc-head h3{font-size:13px;font-weight:800;color:#fff;display:flex;align-items:center;gap:7px}
+.sc-head p{font-size:10px;color:rgba(255,255,255,.45);margin-top:2px}
+
+.order-items{padding:12px 16px;border-bottom:0.5px solid var(--bdr)}
+.oi{display:flex;align-items:center;gap:10px;padding:7px 0;border-bottom:0.5px solid var(--bdr)}
+.oi:last-child{border-bottom:none}
+.oi-img{width:38px;height:38px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.oi-name{flex:1;font-size:11px;font-weight:600;color:var(--txt);line-height:1.5}
+.oi-qty{font-size:10px;color:var(--txt3);margin-top:2px}
+.oi-price{font-size:12px;font-weight:700;color:var(--fg);flex-shrink:0}
+
+.sum-rows{padding:12px 16px;border-bottom:0.5px solid var(--bdr)}
+.sum-row{display:flex;justify-content:space-between;align-items:center;padding:6px 0}
+.sr-label{font-size:12px;color:var(--txt2)}
+.sr-val{font-size:12px;font-weight:600;color:var(--txt)}
+.sr-val.green{color:#27500A;font-weight:700}
+.sr-val.free{color:var(--fa);font-weight:700}
+
+.sum-total-box{padding:12px 16px;border-bottom:0.5px solid var(--bdr)}
+.stb-inner{background:var(--cream);border-radius:8px;padding:11px 13px;display:flex;justify-content:space-between;align-items:center}
+.stb-label{font-size:12px;font-weight:700;color:var(--txt)}
+.stb-amount{font-size:18px;font-weight:900;color:var(--fg)}
+.stb-unit{font-size:10px;font-weight:400;color:var(--txt3);margin-right:3px}
+
+.pay-btn-wrap{padding:14px 16px}
+.btn-pay{width:100%;height:46px;background:var(--fg);color:#fff;border:none;border-radius:11px;font-size:14px;font-weight:700;cursor:pointer;font-family:'Vazirmatn',sans-serif;display:flex;align-items:center;justify-content:center;gap:8px;transition:background .18s;margin-bottom:10px}
+.btn-pay:hover{background:var(--fm)}
+.btn-pay.gold{background:var(--gold);color:var(--fg)}
+.btn-pay.gold:hover{background:#b8942f}
+
+.trust-row{display:flex;justify-content:center;gap:12px}
+.ti{display:flex;align-items:center;gap:4px;font-size:10px;color:var(--txt3)}
+.ti i{font-size:12px;color:var(--fa)}
+
+/* CONFIRM PAGE */
+.confirm-page{display:none;max-width:500px;margin:48px auto;text-align:center;padding:0 20px}
+.confirm-icon{width:80px;height:80px;background:#EAF3DE;border:3px solid var(--fa);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 20px;font-size:36px}
+.confirm-page h2{font-size:22px;font-weight:900;color:var(--fg);margin-bottom:8px}
+.confirm-page p{font-size:13px;color:var(--txt3);line-height:1.9;margin-bottom:24px}
+.confirm-num{background:var(--white);border:0.5px solid var(--bdr);border-radius:10px;padding:14px 20px;margin-bottom:20px}
+.confirm-num .cn-label{font-size:11px;color:var(--txt3);margin-bottom:4px}
+.confirm-num .cn-val{font-size:20px;font-weight:900;color:var(--fg);letter-spacing:2px}
+.confirm-steps{display:flex;justify-content:space-around;background:var(--white);border:0.5px solid var(--bdr);border-radius:10px;padding:16px;margin-bottom:20px}
+.cs-item{text-align:center}
+.cs-icon{font-size:24px;margin-bottom:6px}
+.cs-label{font-size:10px;color:var(--txt3)}
+.btn-home{display:inline-flex;align-items:center;gap:7px;background:var(--fg);color:#fff;border:none;border-radius:10px;padding:11px 28px;font-size:13px;font-weight:700;cursor:pointer;font-family:'Vazirmatn',sans-serif}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nlogo">
+    <div class="nlm">س</div>
+    <div class="nlt">سبزینه <span>/ تکمیل خرید</span></div>
+  </div>
+  <div class="nav-secure">
+    <i class="ti ti-lock"></i> پرداخت امن و رمزنگاری‌شده
+  </div>
+</nav>
+
+<div class="steps-bar">
+  <div class="steps-inner">
+    <div class="si">
+      <div class="sc done"><i class="ti ti-check" style="font-size:12px"></i></div>
+      <span class="sl done">سبد خرید</span>
+    </div>
+    <div class="sline done"></div>
+    <div class="si">
+      <div class="sc active" id="step2-c">۲</div>
+      <span class="sl active" id="step2-l">اطلاعات ارسال</span>
+    </div>
+    <div class="sline" id="line23"></div>
+    <div class="si">
+      <div class="sc idle" id="step3-c">۳</div>
+      <span class="sl" id="step3-l">پرداخت</span>
+    </div>
+    <div class="sline" id="line34"></div>
+    <div class="si">
+      <div class="sc idle" id="step4-c"><i class="ti ti-check" style="font-size:12px"></i></div>
+      <span class="sl" id="step4-l">تأیید سفارش</span>
+    </div>
+  </div>
+</div>
+
+<!-- MAIN CHECKOUT -->
+<div class="wrap" id="checkout-wrap">
+
+  <div class="left-col">
+
+    <!-- STEP 1: ADDRESS -->
+    <div class="card" id="card-address">
+      <div class="card-head">
+        <h3><span class="step-num" id="addr-num">۱</span> آدرس تحویل</h3>
+        <span style="font-size:11px;color:var(--txt3);display:flex;align-items:center;gap:4px"><i class="ti ti-map-pin" style="color:var(--fa)"></i> علی احمدی</span>
+      </div>
+      <div class="card-body">
+
+        <div class="addr-tabs">
+          <div class="atab on" onclick="setAddrTab(this,'saved')">
+            <i class="ti ti-bookmark"></i>
+            <span>آدرس‌های ذخیره‌شده</span>
+          </div>
+          <div class="atab" onclick="setAddrTab(this,'new')">
+            <i class="ti ti-plus"></i>
+            <span>آدرس جدید</span>
+          </div>
+        </div>
+
+        <div class="saved-addrs" id="saved-section">
+          <label class="addr-opt on">
+            <input type="radio" name="addr" checked>
+            <div class="ao-body">
+              <div class="ao-title">منزل <span class="ao-default">پیش‌فرض</span></div>
+              <div class="ao-text">تهران، خیابان ولیعصر، کوچه گلها، پلاک ۱۲، واحد ۳<br>کد پستی: ۱۴۵۶۸۷۳۲۱۰ — ۰۹۱۲۱۲۳۴۵۶۷</div>
+            </div>
+            <span class="ao-edit">ویرایش</span>
+          </label>
+          <label class="addr-opt">
+            <input type="radio" name="addr">
+            <div class="ao-body">
+              <div class="ao-title">محل کار</div>
+              <div class="ao-text">کرج، بلوار ارم، شهرک صنعتی، سالن ۴<br>کد پستی: ۳۱۵۸۷۶۵۴۳۲ — ۰۹۱۲۱۲۳۴۵۶۷</div>
+            </div>
+            <span class="ao-edit">ویرایش</span>
+          </label>
+        </div>
+
+        <div id="new-section" style="display:none">
+          <div class="form-grid show">
+            <div class="field">
+              <label>نام گیرنده <span>*</span></label>
+              <div class="fwrap"><i class="ti ti-user"></i><input class="finput" placeholder="علی"></div>
+            </div>
+            <div class="field">
+              <label>نام خانوادگی <span>*</span></label>
+              <div class="fwrap"><i class="ti ti-user"></i><input class="finput" placeholder="احمدی"></div>
+            </div>
+            <div class="field">
+              <label>موبایل گیرنده <span>*</span></label>
+              <div class="fwrap"><i class="ti ti-phone"></i><input class="finput" placeholder="09121234567"></div>
+            </div>
+            <div class="field">
+              <label>کد پستی <span>*</span></label>
+              <div class="fwrap"><i class="ti ti-map-2"></i><input class="finput" placeholder="۱۰ رقم"></div>
+            </div>
+            <div class="field">
+              <label>استان <span>*</span></label>
+              <select class="fselect">
+                <option>تهران</option><option>البرز</option><option>اصفهان</option>
+                <option>فارس</option><option>خراسان رضوی</option><option>مازندران</option>
+              </select>
+            </div>
+            <div class="field">
+              <label>شهر <span>*</span></label>
+              <div class="fwrap"><i class="ti ti-building-community"></i><input class="finput" placeholder="شهر"></div>
+            </div>
+            <div class="field full">
+              <label>آدرس کامل <span>*</span></label>
+              <div class="fwrap"><i class="ti ti-home"></i><input class="finput" placeholder="خیابان، کوچه، پلاک، واحد"></div>
+            </div>
+            <div class="field full" style="display:flex;align-items:center;gap:8px;margin-top:4px">
+              <input type="checkbox" id="save-addr" style="accent-color:var(--fa);width:14px;height:14px">
+              <label for="save-addr" style="font-size:12px;color:var(--txt2);cursor:pointer">این آدرس را ذخیره کن</label>
+            </div>
+          </div>
+        </div>
+
+        <button style="width:100%;height:40px;background:var(--fg);color:#fff;border:none;border-radius:9px;font-size:12px;font-weight:700;cursor:pointer;font-family:'Vazirmatn',sans-serif;margin-top:14px;display:flex;align-items:center;justify-content:center;gap:7px" onclick="nextToShipping()">
+          <i class="ti ti-arrow-left" style="font-size:13px"></i> ادامه — انتخاب روش ارسال
+        </button>
+
+      </div>
+    </div>
+
+    <!-- STEP 2: SHIPPING -->
+    <div class="card" id="card-shipping" style="opacity:.5;pointer-events:none">
+      <div class="card-head">
+        <h3><span class="step-num" id="ship-num">۲</span> روش ارسال</h3>
+      </div>
+      <div class="card-body">
+        <div class="ship-opts">
+          <label class="sopt on" onclick="selectSopt(this,45000)">
+            <input type="radio" name="ship" checked>
+            <div class="sopt-icon" style="background:#E6F1FB">📬</div>
+            <div class="sopt-info">
+              <div class="sopt-name">پست پیشتاز</div>
+              <div class="sopt-time">تحویل ۳ تا ۵ روز کاری</div>
+            </div>
+            <span class="sopt-price">۴۵,۰۰۰ تومان</span>
+          </label>
+          <label class="sopt" onclick="selectSopt(this,85000)">
+            <input type="radio" name="ship">
+            <div class="sopt-icon" style="background:#FEF3CD">🚚</div>
+            <div class="sopt-info">
+              <div class="sopt-name">تیپاکس — ارسال فوری</div>
+              <div class="sopt-time">تحویل ۱ تا ۲ روز کاری</div>
+            </div>
+            <span class="sopt-price">۸۵,۰۰۰ تومان</span>
+          </label>
+          <label class="sopt" onclick="selectSopt(this,0)">
+            <input type="radio" name="ship">
+            <div class="sopt-icon" style="background:#EAF3DE">🎁</div>
+            <div class="sopt-info">
+              <div class="sopt-name">ارسال رایگان</div>
+              <div class="sopt-time" style="color:#27500A;font-weight:600">برای خریدهای بالای ۱.۵ میلیون تومان</div>
+            </div>
+            <span class="sopt-price free">رایگان</span>
+          </label>
+        </div>
+
+        <div style="margin-top:14px">
+          <label style="display:block;font-size:11px;font-weight:700;color:var(--txt2);margin-bottom:6px"><i class="ti ti-notes" style="color:var(--fa);font-size:13px;vertical-align:-2px"></i> یادداشت برای پیک / فروشنده</label>
+          <textarea class="notes-area" placeholder="مثلاً: زنگ نزنید، پشت در بگذارید..."></textarea>
+        </div>
+
+        <button style="width:100%;height:40px;background:var(--fg);color:#fff;border:none;border-radius:9px;font-size:12px;font-weight:700;cursor:pointer;font-family:'Vazirmatn',sans-serif;margin-top:14px;display:flex;align-items:center;justify-content:center;gap:7px" onclick="nextToPayment()">
+          <i class="ti ti-arrow-left" style="font-size:13px"></i> ادامه — انتخاب روش پرداخت
+        </button>
+      </div>
+    </div>
+
+    <!-- STEP 3: PAYMENT -->
+    <div class="card" id="card-payment" style="opacity:.5;pointer-events:none">
+      <div class="card-head">
+        <h3><span class="step-num" id="pay-num">۳</span> روش پرداخت</h3>
+        <span style="display:flex;align-items:center;gap:4px;font-size:11px;color:var(--fa);font-weight:600"><i class="ti ti-shield-check"></i> پرداخت امن</span>
+      </div>
+      <div class="card-body">
+
+        <div class="wallet-box">
+          <div class="wb-info">
+            <div class="wt"><i class="ti ti-wallet" style="font-size:14px;vertical-align:-2px;margin-left:4px"></i> کیف پول سبزینه</div>
+            <div class="ws">استفاده از اعتبار کیف پول</div>
+          </div>
+          <div class="wb-balance">
+            <span class="amt">۲۵۰,۰۰۰</span>
+            <span class="unit">تومان موجودی</span>
+          </div>
+          <div class="wb-toggle" onclick="this.classList.toggle('on')"></div>
+        </div>
+
+        <div class="pay-methods">
+          <label class="pmethod on" onclick="selectPM(this)">
+            <input type="radio" name="pay" checked>
+            <div class="pm-icon" style="background:#EFF6FF">💳</div>
+            <div class="pm-info">
+              <div class="pm-name">پرداخت آنلاین (درگاه بانکی)</div>
+              <div class="pm-sub">زرین‌پال، بانک ملت، پارسیان</div>
+            </div>
+            <span class="pm-badge"><i class="ti ti-lock" style="font-size:9px"></i> SSL</span>
+          </label>
+          <label class="pmethod" onclick="selectPM(this)">
+            <input type="radio" name="pay">
+            <div class="pm-icon" style="background:#FFF0E8">🏦</div>
+            <div class="pm-info">
+              <div class="pm-name">کارت به کارت</div>
+              <div class="pm-sub">واریز مستقیم به حساب فروشنده</div>
+            </div>
+            <span class="pm-badge" style="background:#FEF3CD;color:#8a6400">تأیید دستی</span>
+          </label>
+          <label class="pmethod" onclick="selectPM(this)">
+            <input type="radio" name="pay">
+            <div class="pm-icon" style="background:#EAF3DE">💵</div>
+            <div class="pm-info">
+              <div class="pm-name">پرداخت در محل</div>
+              <div class="pm-sub">فقط برای تحویل در تهران</div>
+            </div>
+            <span class="pm-badge" style="background:#EAF3DE;color:#27500A">COD</span>
+          </label>
+        </div>
+
+        <div class="gateway-logos">
+          <span style="font-size:10px;color:var(--txt3)">درگاه‌های پشتیبانی‌شده:</span>
+          <div class="gw-logo">زرین‌پال</div>
+          <div class="gw-logo">ملت</div>
+          <div class="gw-logo">پارسیان</div>
+          <div class="gw-logo">سامان</div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+
+  <!-- RIGHT: ORDER SUMMARY -->
+  <div class="right-col">
+    <div class="summary-card">
+      <div class="sc-head">
+        <h3><i class="ti ti-receipt" style="font-size:15px"></i> خلاصه سفارش</h3>
+        <p>۳ محصول</p>
+      </div>
+
+      <div class="order-items">
+        <div class="oi">
+          <div class="oi-img" style="background:#EAF3DE">🌿</div>
+          <div class="oi-name">کود هیومیک اسید ۱ کیلو<div class="oi-qty">× ۲</div></div>
+          <div class="oi-price">۳۷۰,۰۰۰</div>
+        </div>
+        <div class="oi">
+          <div class="oi-img" style="background:#E6F1FB">💧</div>
+          <div class="oi-name">قطره‌چکان ۱۰۰ عددی<div class="oi-qty">× ۱</div></div>
+          <div class="oi-price">۲۴۰,۰۰۰</div>
+        </div>
+        <div class="oi">
+          <div class="oi-img" style="background:#FEF3CD">🌱</div>
+          <div class="oi-name">بذر گوجه هیبرید ۵ گرم<div class="oi-qty">× ۳</div></div>
+          <div class="oi-price">۲۸۵,۰۰۰</div>
+        </div>
+      </div>
+
+      <div class="sum-rows">
+        <div class="sum-row"><span class="sr-label">جمع محصولات</span><span class="sr-val">۱,۰۶۶,۰۰۰ تومان</span></div>
+        <div class="sum-row"><span class="sr-label">تخفیف محصولات</span><span class="sr-val green">− ۸۱,۰۰۰ تومان</span></div>
+        <div class="sum-row"><span class="sr-label">هزینه ارسال</span><span class="sr-val" id="ship-cost-lbl">۴۵,۰۰۰ تومان</span></div>
+        <div class="sum-row"><span class="sr-label">کد تخفیف (SABZ10)</span><span class="sr-val green">− ۸۹,۵۰۰ تومان</span></div>
+      </div>
+
+      <div class="sum-total-box">
+        <div class="stb-inner">
+          <span class="stb-label">مبلغ قابل پرداخت</span>
+          <span class="stb-amount" id="final-total">۹۴۰,۵۰۰<span class="stb-unit">تومان</span></span>
+        </div>
+      </div>
+
+      <div class="pay-btn-wrap">
+        <button class="btn-pay gold" onclick="doPayment()">
+          <i class="ti ti-lock" style="font-size:14px"></i>
+          پرداخت و ثبت سفارش
+        </button>
+        <div class="trust-row">
+          <div class="ti"><i class="ti ti-shield-check"></i> پرداخت امن</div>
+          <div class="ti"><i class="ti ti-refresh"></i> بازگشت ۷ روزه</div>
+          <div class="ti"><i class="ti ti-certificate"></i> ضمانت اصالت</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+
+<!-- CONFIRM PAGE -->
+<div class="confirm-page" id="confirm-page">
+  <div class="confirm-icon">✅</div>
+  <h2>سفارش شما ثبت شد!</h2>
+  <p>پرداخت با موفقیت انجام شد.<br>اطلاعات سفارش به پیامک و ایمیل شما ارسال می‌شود.</p>
+  <div class="confirm-num">
+    <div class="cn-label">شماره پیگیری سفارش</div>
+    <div class="cn-val">#۱۰۰۶۴</div>
+  </div>
+  <div class="confirm-steps">
+    <div class="cs-item"><div class="cs-icon">📦</div><div class="cs-label">آماده‌سازی</div></div>
+    <div style="color:var(--bdr);align-self:center;font-size:18px">←</div>
+    <div class="cs-item"><div class="cs-icon">🚚</div><div class="cs-label">ارسال</div></div>
+    <div style="color:var(--bdr);align-self:center;font-size:18px">←</div>
+    <div class="cs-item"><div class="cs-icon">🏠</div><div class="cs-label">تحویل</div></div>
+  </div>
+  <button class="btn-home" onclick="location.reload()">
+    <i class="ti ti-home" style="font-size:14px"></i> بازگشت به صفحه اصلی
+  </button>
+</div>
+
+<script>
+var shipCost = 45000;
+
+function setAddrTab(el, type){
+  document.querySelectorAll('.atab').forEach(t=>t.classList.remove('on'));
+  el.classList.add('on');
+  document.getElementById('saved-section').style.display = type==='saved' ? 'flex' : 'none';
+  document.getElementById('saved-section').style.flexDirection = 'column';
+  document.getElementById('new-section').style.display = type==='new' ? 'block' : 'none';
+}
+
+function nextToShipping(){
+  var cs = document.getElementById('card-shipping');
+  cs.style.opacity='1'; cs.style.pointerEvents='auto';
+  document.getElementById('ship-num').classList.add('done');
+  document.getElementById('addr-num').classList.add('done');
+  cs.scrollIntoView({behavior:'smooth',block:'start'});
+  // update steps bar
+  document.getElementById('step2-c').className='sc done';
+  document.getElementById('step2-c').innerHTML='<i class="ti ti-check" style="font-size:12px"></i>';
+  document.getElementById('step2-l').className='sl done';
+  document.getElementById('step3-c').className='sc active';
+  document.getElementById('step3-l').className='sl active';
+  document.getElementById('line23').className='sline done';
+}
+
+function nextToPayment(){
+  var cp = document.getElementById('card-payment');
+  cp.style.opacity='1'; cp.style.pointerEvents='auto';
+  document.getElementById('pay-num').classList.add('done');
+  document.getElementById('ship-num').classList.add('done');
+  cp.scrollIntoView({behavior:'smooth',block:'start'});
+  document.getElementById('step3-c').className='sc done';
+  document.getElementById('step3-c').innerHTML='<i class="ti ti-check" style="font-size:12px"></i>';
+  document.getElementById('step3-l').className='sl done';
+  document.getElementById('step4-c').className='sc active';
+  document.getElementById('step4-l').className='sl active';
+  document.getElementById('line34').className='sline done';
+}
+
+function selectSopt(el, cost){
+  document.querySelectorAll('.sopt').forEach(s=>s.classList.remove('on'));
+  el.classList.add('on');
+  shipCost = cost;
+  document.getElementById('ship-cost-lbl').textContent = cost===0 ? 'رایگان' : cost.toLocaleString('fa-IR')+' تومان';
+  var base = 940500 - 45000 + cost;
+  document.getElementById('final-total').innerHTML = base.toLocaleString('fa-IR')+'<span class="stb-unit">تومان</span>';
+}
+
+function selectPM(el){
+  document.querySelectorAll('.pmethod').forEach(p=>p.classList.remove('on'));
+  el.classList.add('on');
+}
+
+function doPayment(){
+  document.getElementById('checkout-wrap').style.display='none';
+  document.getElementById('confirm-page').style.display='block';
+  document.getElementById('step4-c').className='sc done';
+  document.getElementById('step4-c').innerHTML='<i class="ti ti-check" style="font-size:12px"></i>';
+  document.getElementById('step4-l').className='sl done';
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+document.querySelectorAll('.addr-opt').forEach(opt=>{
+  opt.addEventListener('click',function(){
+    document.querySelectorAll('.addr-opt').forEach(o=>o.classList.remove('on'));
+    this.classList.add('on');
+  });
+});
+</script>
+</body>
+</html>
