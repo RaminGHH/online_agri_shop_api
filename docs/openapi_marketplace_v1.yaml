@@ -1,0 +1,6896 @@
+openapi: 3.0.3
+info:
+  title: Marketplace API
+  version: 1.0.0
+  description: API Contract generated from Marketplace SRS/ERD.
+servers:
+- url: /api/v1
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    ErrorResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: false
+        error:
+          type: object
+          properties:
+            code:
+              type: string
+            message:
+              type: string
+            fields:
+              type: object
+              additionalProperties: true
+        request_id:
+          type: string
+    PaginationMeta:
+      type: object
+      properties:
+        page:
+          type: integer
+        page_size:
+          type: integer
+        total:
+          type: integer
+        pages:
+          type: integer
+    Money:
+      type: string
+      format: decimal
+      description: مقدار پولی؛ float ممنوع است.
+paths:
+  /auth/otp/request/:
+    post:
+      tags:
+      - احراز هویت و حساب کاربری
+      summary: درخواست OTP
+      operationId: post_auth_otp_request
+      description: 'Permission: -
+
+
+        Request: phone, purpose
+
+
+        Response: request_id, expires_in, resend_after
+
+
+        Notes: برای هر phone+purpose فقط یک OTP فعال نگهداری شود.'
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Validation/Business error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not found
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              description: phone, purpose
+  /auth/otp/verify/:
+    post:
+      tags:
+      - احراز هویت و حساب کاربری
+      summary: تأیید OTP
+      operationId: post_auth_otp_verify
+      description: 'Permission: -
+
+
+        Request: phone, purpose, code
+
+
+        Response: access_token, refresh_token, user
+
+
+        Notes: -'
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Validation/Business error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not found
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              description: phone, purpose, code
+  /auth/token/refresh/:
+    post:
+      tags:
+      - احراز هویت و حساب کاربری
+      summary: نوسازی Access Token
+      operationId: post_auth_token_refresh
+      description: 'Permission: -
+
+
+        Request: refresh_token
+
+
+        Response: access_token, refresh_token?
+
+
+        Notes: -'
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Validation/Business error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not found
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              description: refresh_token
+  /auth/logout/:
+    post:
+      tags:
+      - احراز هویت و حساب کاربری
+      summary: خروج از نشست
+      operationId: post_auth_logout
+      description: 'Permission: -
+
+
+        Request: refresh_token
+
+
+        Response: success
+
+
+        Notes: -'
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Validation/Business error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not found
+      security:
+      - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              description: refresh_token
+  /auth/logout-all/:
+    post:
+      tags:
+      - احراز هویت و حساب کاربری
+      summary: خروج از همه نشست‌ها
+      operationId: post_auth_logout_all
+      description: 'Permission: -
+
+
+        Request: -
+
+
+        Response: revoked_sessions
+
+
+        Notes: -'
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Validation/Business error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not found
+      security:
+      - bearerAuth: []
+  /me/:
+    get:
+      tags:
+      - احراز هویت و حساب کاربری
+      summary: مشاهده حساب جاری
+      operationId: get_me
+      description: 'Permission: -
+
+
+        Request: -
+
+
+        Response: user profile + permissions summary
+
+
+        Notes: -'
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Validation/Business error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not found
+      security:
+      - bearerAuth: []
+    patch:
+      tags:
+      - احراز هویت و حساب کاربری
+      summary: ویرایش پروفایل
+      operationId: patch_me
+      description: 'Permission: -
+
+
+        Request: first_name,last_name,email,avatar_id,birth_date?
+
+
+        Response: updated user
+
+
+        Notes: -'
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Validation/Business error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not found
+      security:
+      - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              description: first_name,last_name,email,avatar_id,birth_date?
+  /me/change-phone/request/:
+    post:
+      tags:
+      - احراز هویت و حساب کاربری
+      summary: درخواست تغییر شماره
+      operationId: post_me_change_phone_request
+      description: 'Permission: -
+
+
+        Request: new_phone
+
+
+        Response: request_id, expires_in
+
+
+        Notes: -'
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Validation/Business error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not found
+      security:
+      - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              description: new_phone
+  /me/change-phone/verify/:
+    post:
+      tags:
+      - احراز هویت و حساب کاربری
+      summary: تأیید تغییر شماره
+      operationId: post_me_change_phone_verify
+      description: 'Permission: -
+
+
+        Request: new_phone, code
+
+
+        Response: updated user
+
+
+        Notes: -'
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Validation/Business error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not found
+      security:
+      - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              description: new_phone, code
+  /me/sessions/:
+    get:
+      tags:
+      - احراز هویت و حساب کاربری
+      summary: نشست‌های فعال
+      operationId: get_me_sessions
+      description: 'Permission: -
+
+
+        Request: -
+
+
+        Response: sessions[]
+
+
+        Notes: -'
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Validation/Business error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not found
+      security:
+      - bearerAuth: []
+  /me/sessions/{id}/:
+    delete:
+      tags:
+      - احراز هویت و حساب کاربری
+      summary: لغو یک نشست
+      operationId: delete_me_sessions_by_id
+      description: 'Permission: -
+
+
+        Request: -
+
+
+        Response: 204
+
+
+        Notes: -'
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Validation/Business error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not found
+      security:
+      - bearerAuth: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+  /me/addresses/:
+    get:
+      tags:
+      - احراز هویت و حساب کاربری
+      summary: لیست آدرس‌ها
+      operationId: get_me_addresses
+      description: 'Permission: -
+
+
+        Request: -
+
+
+        Response: addresses[]
+
+
+        Notes: -'
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Validation/Business error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not found
+      security:
+      - bearerAuth: []
+    post:
+      tags:
+      - احراز هویت و حساب کاربری
+      summary: ایجاد آدرس
+      operationId: post_me_addresses
+      description: 'Permission: -
+
+
+        Request: title,receiver_name,receiver_phone,province,city,address,postal_code,lat?,lng?,is_default?
+
+
+        Response: address
+
+
+        Notes: -'
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Validation/Business error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not found
+      security:
+      - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              description: title,receiver_name,receiver_phone,province,city,address,postal_code,lat?,lng?,is_default?
+  /me/addresses/{id}/:
+    patch:
+      tags:
+      - احراز هویت و حساب کاربری
+      summary: ویرایش آدرس
+      operationId: patch_me_addresses_by_id
+      description: 'Permission: object ownership
+
+
+        Request: partial address fields
+
+
+        Response: address
+
+
+        Notes: -'
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Validation/Business error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not found
+      security:
+      - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              description: partial address fields
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+    delete:
+      tags:
+      - احراز هویت و حساب کاربری
+      summary: حذف آدرس
+      operationId: delete_me_addresses_by_id
+      description: 'Permission: object ownership
+
+
+        Request: -
+
+
+        Response: 204
+
+
+        Notes: -'
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Validation/Business error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not found
+      security:
+      - bearerAuth: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+  /sellers/applications/:
+    post:
+      tags:
+      - فروشندگان و Marketplace
+      summary: ثبت درخواست فروشندگی
+      operationId: post_sellers_applications
+      description: 'Permission: -
+
+
+        Request: seller_type,legal_name,store_name,identity_fields,bank_account,address,documents[]
+
+
+        Response: application
+
+
+        Notes: -'
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Validation/Business error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not found
+      security:
+      - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              description: seller_type,legal_name,store_name,identity_fields,bank_account,address,documents[]
+  /seller/profile/:
+    get:
+      tags:
+      - فروشندگان و Marketplace
+      summary: پروفایل فروشنده جاری
+      operationId: get_seller_profile
+      description: 'Permission: seller.access
+
+
+        Request: -
+
+
+        Response: seller
+
+
+        Notes: -'
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Validation/Business error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not found
+      security:
+      - bearerAuth: []
+    patch:
+      tags:
+      - فروشندگان و Marketplace
+      summary: ویرایش پروفایل فروشنده
+      operationId: patch_seller_profile
+      description: 'Permission: seller.profile.change
+
+
+        Request: allowed seller fields
+
+
+        Response: seller
+
+
+        Notes: -'
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Validation/Business error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not found
+      security:
+      - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              description: allowed seller fields
+  /seller/staff/:
+    get:
+      tags:
+      - فروشندگان و Marketplace
+      summary: کارکنان فروشنده
+      operationId: get_seller_staff
+      description: 'Permission: seller.staff.view
+
+
+        Request: -
+
+
+        Response: staff[]
+
+
+        Notes: -'
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Validation/Business error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not found
+      security:
+      - bearerAuth: []
+    post:
+      tags:
+      - فروشندگان و Marketplace
+      summary: افزودن کارمند فروشنده
+      operationId: post_seller_staff
+      description: 'Permission: seller.staff.manage
+
+
+        Request: user_id or phone, permissions/groups
+
+
+        Response: seller_staff
+
+
+        Notes: -'
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Validation/Business error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not found
+      security:
+      - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              description: user_id or phone, permissions/groups
+  /seller/staff/{id}/:
+    patch:
+      tags:
+      - فروشندگان و Marketplace
+      summary: ویرایش دسترسی کارمند
+      operationId: patch_seller_staff_by_id
+      description: 'Permission: seller.staff.manage
+
+
+        Request: is_active, groups, permissions
+
+
+        Response: seller_staff
+
+
+        Notes: -'
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Validation/Business error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not found
+      security:
+      - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              description: is_active, groups, permissions
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+    delete:
+      tags:
+      - فروشندگان و Marketplace
+      summary: حذف کارمند فروشنده
+      operationId: delete_seller_staff_by_id
+      description: 'Permission: seller.staff.manage
+
+
+        Request: -
+
+
+        Response: 204
+
+
+        Notes: -'
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Validation/Business error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not found
+      security:
+      - bearerAuth: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+  /sellers/{slug}/:
+    get:
+      tags:
+      - فروشندگان و Marketplace
+      summary: صفحه عمومی فروشنده
+      operationId: get_sellers_slug
+      description: 'Permission: -
+
+
+        Request: -
+
+
+        Response: public seller profile
+
+
+        Notes: -'
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Validation/Business error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not found
+      parameters:
+      - name: slug
+        in: path
+        required: true
+        schema:
+          type: string
+  /sellers/{slug}/offers/:
+    get:
+      tags:
+      - فروشندگان و Marketplace
+      summary: کالاهای فروشنده
+      operationId: get_sellers_slug_offers
+      description: 'Permission: -
+
+
+        Request: -
+
+
+        Response: offers paginated
+
+
+        Notes: -'
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Validation/Business error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not found
+      parameters:
+      - name: page
+        in: query
+        required: false
+        schema:
+          type: integer
+      - name: page_size
+        in: query
+        required: false
+        schema:
+          type: integer
+      - name: category
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: brand
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: ordering
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: slug
+        in: path
+        required: true
+        schema:
+          type: string
+  /seller/offers/:
+    get:
+      tags:
+      - فروشندگان و Marketplace
+      summary: عرضه‌های فروشنده جاری
+      operationId: get_seller_offers
+      description: 'Permission: seller.offers.view
+
+
+        Request: -
+
+
+        Response: offers paginated
+
+
+        Notes: -'
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Validation/Business error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not found
+      security:
+      - bearerAuth: []
+      parameters:
+      - name: status
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: product
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: stock_status
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: page
+        in: query
+        required: false
+        schema:
+          type: integer
+    post:
+      tags:
+      - فروشندگان و Marketplace
+      summary: ایجاد Offer
+      operationId: post_seller_offers
+      description: 'Permission: seller.offers.create
+
+
+        Request: variant_id,price,compare_price?,stock,prep_time,max_qty?
+
+
+        Response: offer
+
+
+        Notes: -'
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Validation/Business error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not found
+      security:
+      - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              description: variant_id,price,compare_price?,stock,prep_time,max_qty?
+  /seller/offers/{id}/:
+    patch:
+      tags:
+      - فروشندگان و Marketplace
+      summary: ویرایش Offer
+      operationId: patch_seller_offers_by_id
+      description: 'Permission: seller.offers.change
+
+
+        Request: price?,compare_price?,stock?,is_active?,prep_time?
+
+
+        Response: offer
+
+
+        Notes: -'
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Validation/Business error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not found
+      security:
+      - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              description: price?,compare_price?,stock?,is_active?,prep_time?
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+  /seller/offers/{id}/deactivate/:
+    post:
+      tags:
+      - فروشندگان و Marketplace
+      summary: غیرفعال‌سازی Offer
+      operationId: post_seller_offers_by_id_deactivate
+      description: 'Permission: seller.offers.change
+
+
+        Request: -
+
+
+        Response: offer
+
+
+        Notes: -'
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Validation/Business error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not found
+      security:
+      - bearerAuth: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+  /categories/:
+    get:
+      tags:
+      - کاتالوگ و محصولات
+      summary: درخت دسته‌بندی
+      operationId: get_categories
+      description: 'Permission: -
+
+
+        Request: -
+
+
+        Response: categories tree
+
+
+        Notes: -'
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Validation/Business error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not found
+      parameters:
+      - name: parent
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: active
+        in: query
+        required: false
+        schema:
+          type: string
+  /brands/:
+    get:
+      tags:
+      - کاتالوگ و محصولات
+      summary: لیست برندها
+      operationId: get_brands
+      description: 'Permission: -
+
+
+        Request: -
+
+
+        Response: brands paginated
+
+
+        Notes: -'
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Validation/Business error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not found
+      parameters:
+      - name: search
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: page
+        in: query
+        required: false
+        schema:
+          type: integer
+  /products/:
+    get:
+      tags:
+      - کاتالوگ و محصولات
+      summary: لیست محصولات
+      operationId: get_products
+      description: 'Permission: -
+
+
+        Request: -
+
+
+        Response: products paginated
+
+
+        Notes: -'
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Validation/Business error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not found
+      parameters:
+      - name: search
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: category
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: brand
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: min_price
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: max_price
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: in_stock
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: rating
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: ordering
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: page
+        in: query
+        required: false
+        schema:
+          type: integer
+      - name: page_size
+        in: query
+        required: false
+        schema:
+          type: integer
+  /products/{slug}/:
+    get:
+      tags:
+      - کاتالوگ و محصولات
+      summary: جزئیات محصول
+      operationId: get_products_slug
+      description: 'Permission: -
+
+
+        Request: -
+
+
+        Response: product + variants + best offers + media + rating
+
+
+        Notes: -'
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Validation/Business error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not found
+      parameters:
+      - name: slug
+        in: path
+        required: true
+        schema:
+          type: string
+  /products/{id}/offers/:
+    get:
+      tags:
+      - کاتالوگ و محصولات
+      summary: فروشندگان یک محصول
+      operationId: get_products_by_id_offers
+      description: 'Permission: -
+
+
+        Request: -
+
+
+        Response: offers[]
+
+
+        Notes: -'
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Validation/Business error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not found
+      parameters:
+      - name: ordering
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: in_stock
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+  /products/{id}/related/:
+    get:
+      tags:
+      - کاتالوگ و محصولات
+      summary: محصولات مرتبط
+      operationId: get_products_by_id_related
+      description: 'Permission: -
+
+
+        Request: -
+
+
+        Response: products[]
+
+
+        Notes: -'
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Validation/Business error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not found
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+  /admin/products/:
+    post:
+      tags:
+      - کاتالوگ و محصولات
+      summary: ایجاد محصول
+      operationId: post_admin_products
+      description: 'Permission: products.add_product
+
+
+        Request: title,slug?,category_id,brand_id?,description,attributes,media_ids
+
+
+        Response: product
+
+
+        Notes: -'
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Validation/Business error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not found
+      security:
+      - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              description: title,slug?,category_id,brand_id?,description,attributes,media_ids
+  /admin/products/{id}/:
+    patch:
+      tags:
+      - کاتالوگ و محصولات
+      summary: ویرایش محصول
+      operationId: patch_admin_products_by_id
+      description: 'Permission: products.change_product
+
+
+        Request: partial product fields
+
+
+        Response: product
+
+
+        Notes: -'
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Validation/Business error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not found
+      security:
+      - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              description: partial product fields
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+  /admin/products/{id}/publish/:
+    post:
+      tags:
+      - کاتالوگ و محصولات
+      summary: انتشار محصول
+      operationId: post_admin_products_by_id_publish
+      description: 'Permission: products.publish_product
+
+
+        Request: -
+
+
+        Response: product
+
+
+        Notes: -'
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Validation/Business error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not found
+      security:
+      - bearerAuth: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+  /admin/products/{id}/archive/:
+    post:
+      tags:
+      - کاتالوگ و محصولات
+      summary: آرشیو محصول
+      operationId: post_admin_products_by_id_archive
+      description: 'Permission: products.archive_product
+
+
+        Request: reason?
+
+
+        Response: product
+
+
+        Notes: -'
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Validation/Business error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not found
+      security:
+      - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              description: reason?
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+  /admin/products/{id}/variants/:
+    post:
+      tags:
+      - کاتالوگ و محصولات
+      summary: ایجاد Variant
+      operationId: post_admin_products_by_id_variants
+      description: 'Permission: products.add_productvariant
+
+
+        Request: sku,title?,unit,value?,weight?,dimensions?,attributes
+
+
+        Response: variant
+
+
+        Notes: -'
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Validation/Business error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not found
+      security:
+      - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              description: sku,title?,unit,value?,weight?,dimensions?,attributes
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+  /admin/variants/{id}/:
+    patch:
+      tags:
+      - کاتالوگ و محصولات
+      summary: ویرایش Variant
+      operationId: patch_admin_variants_by_id
+      description: 'Permission: products.change_productvariant
+
+
+        Request: partial variant fields
+
+
+        Response: variant
+
+
+        Notes: -'
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Validation/Business error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not found
+      security:
+      - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              description: partial variant fields
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+  /admin/categories/:
+    post:
+      tags:
+      - کاتالوگ و محصولات
+      summary: ایجاد دسته‌بندی
+      operationId: post_admin_categories
+      description: 'Permission: products.add_category
+
+
+        Request: name,slug?,parent_id?,attributes?
+
+
+        Response: category
+
+
+        Notes: -'
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Validation/Business error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not found
+      security:
+      - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              description: name,slug?,parent_id?,attributes?
+  /admin/categories/{id}/:
+    patch:
+      tags:
+      - کاتالوگ و محصولات
+      summary: ویرایش دسته‌بندی
+      operationId: patch_admin_categories_by_id
+      description: 'Permission: products.change_category
+
+
+        Request: partial category fields
+
+
+        Response: category
+
+
+        Notes: -'
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Validation/Business error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not found
+      security:
+      - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              description: partial category fields
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+  /admin/brands/:
+    post:
+      tags:
+      - کاتالوگ و محصولات
+      summary: ایجاد برند
+      operationId: post_admin_brands
+      description: 'Permission: products.add_brand
+
+
+        Request: name,slug?,logo_id?
+
+
+        Response: brand
+
+
+        Notes: -'
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Validation/Business error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not found
+      security:
+      - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              description: name,slug?,logo_id?
+  /admin/attributes/:
+    get:
+      tags:
+      - کاتالوگ و محصولات
+      summary: کاتالوگ Attributeها
+      operationId: get_admin_attributes
+      description: 'Permission: products.view_attribute
+
+
+        Request: -
+
+
+        Response: attributes[]
+
+
+        Notes: -'
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Validation/Business error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not found
+      security:
+      - bearerAuth: []
+    post:
+      tags:
+      - کاتالوگ و محصولات
+      summary: ایجاد Attribute
+      operationId: post_admin_attributes
+      description: 'Permission: products.add_attribute
+
+
+        Request: name,code,type,unit?,is_filterable,is_required?
+
+
+        Response: attribute
+
+
+        Notes: -'
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Validation/Business error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not found
+      security:
+      - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              description: name,code,type,unit?,is_filterable,is_required?
+  /seller/inventory/:
+    get:
+      tags:
+      - موجودی و انبار
+      summary: موجودی فروشنده
+      operationId: get_seller_inventory
+      description: 'Permission: inventory.view
+
+
+        Request: -
+
+
+        Response: inventory rows
+
+
+        Notes: -'
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Validation/Business error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not found
+      security:
+      - bearerAuth: []
+      parameters:
+      - name: warehouse
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: low_stock
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: search
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: page
+        in: query
+        required: false
+        schema:
+          type: integer
+  /seller/inventory/adjust/:
+    post:
+      tags:
+      - موجودی و انبار
+      summary: اصلاح موجودی
+      operationId: post_seller_inventory_adjust
+      description: 'Permission: inventory.adjust_stock
+
+
+        Request: offer_id,warehouse_id,quantity_delta,reason,note?
+
+
+        Response: inventory_transaction + balance
+
+
+        Notes: -'
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Validation/Business error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not found
+      security:
+      - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              description: offer_id,warehouse_id,quantity_delta,reason,note?
+  /seller/inventory/transactions/:
+    get:
+      tags:
+      - موجودی و انبار
+      summary: گردش موجودی
+      operationId: get_seller_inventory_transactions
+      description: 'Permission: inventory.view
+
+
+        Request: -
+
+
+        Response: transactions paginated
+
+
+        Notes: -'
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Validation/Business error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not found
+      security:
+      - bearerAuth: []
+      parameters:
+      - name: offer
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: reason
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: date_from
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: date_to
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: page
+        in: query
+        required: false
+        schema:
+          type: integer
+  /admin/warehouses/:
+    get:
+      tags:
+      - موجودی و انبار
+      summary: لیست انبارها
+      operationId: get_admin_warehouses
+      description: 'Permission: inventory.warehouse.view
+
+
+        Request: -
+
+
+        Response: warehouses[]
+
+
+        Notes: -'
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Validation/Business error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not found
+      security:
+      - bearerAuth: []
+    post:
+      tags:
+      - موجودی و انبار
+      summary: ایجاد انبار
+      operationId: post_admin_warehouses
+      description: 'Permission: inventory.warehouse.manage
+
+
+        Request: name,code,address,is_active
+
+
+        Response: warehouse
+
+
+        Notes: -'
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Validation/Business error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not found
+      security:
+      - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              description: name,code,address,is_active
+  /admin/warehouses/{id}/:
+    patch:
+      tags:
+      - موجودی و انبار
+      summary: ویرایش انبار
+      operationId: patch_admin_warehouses_by_id
+      description: 'Permission: inventory.warehouse.manage
+
+
+        Request: partial warehouse fields
+
+
+        Response: warehouse
+
+
+        Notes: -'
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Validation/Business error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not found
+      security:
+      - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              description: partial warehouse fields
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+  /admin/inventory/reservations/:
+    get:
+      tags:
+      - موجودی و انبار
+      summary: رزروهای موجودی
+      operationId: get_admin_inventory_reservations
+      description: 'Permission: inventory.reservations.view
+
+
+        Request: -
+
+
+        Response: reservations paginated
+
+
+        Notes: -'
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Validation/Business error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not found
+      security:
+      - bearerAuth: []
+      parameters:
+      - name: status
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: expired
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: order
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: offer
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: page
+        in: query
+        required: false
+        schema:
+          type: integer
+  /cart/:
+    get:
+      tags:
+      - سبد خرید، کوپن و پروموشن
+      summary: مشاهده سبد
+      operationId: get_cart
+      description: 'Permission: -
+
+
+        Request: -
+
+
+        Response: cart + items + totals + warnings
+
+
+        Notes: -'
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Validation/Business error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not found
+    delete:
+      tags:
+      - سبد خرید، کوپن و پروموشن
+      summary: خالی کردن سبد
+      operationId: delete_cart
+      description: 'Permission: ownership
+
+
+        Request: -
+
+
+        Response: 204
+
+
+        Notes: -'
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Validation/Business error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not found
+  /cart/items/:
+    post:
+      tags:
+      - سبد خرید، کوپن و پروموشن
+      summary: افزودن کالا
+      operationId: post_cart_items
+      description: 'Permission: -
+
+
+        Request: offer_id,quantity
+
+
+        Response: cart
+
+
+        Notes: -'
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Validation/Business error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not found
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              description: offer_id,quantity
+  /cart/items/{id}/:
+    patch:
+      tags:
+      - سبد خرید، کوپن و پروموشن
+      summary: تغییر تعداد
+      operationId: patch_cart_items_by_id
+      description: 'Permission: ownership
+
+
+        Request: quantity
+
+
+        Response: cart
+
+
+        Notes: -'
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Validation/Business error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not found
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              description: quantity
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+    delete:
+      tags:
+      - سبد خرید، کوپن و پروموشن
+      summary: حذف از سبد
+      operationId: delete_cart_items_by_id
+      description: 'Permission: ownership
+
+
+        Request: -
+
+
+        Response: cart
+
+
+        Notes: -'
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Validation/Business error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not found
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+  /cart/merge/:
+    post:
+      tags:
+      - سبد خرید، کوپن و پروموشن
+      summary: ادغام سبد مهمان
+      operationId: post_cart_merge
+      description: 'Permission: -
+
+
+        Request: guest_cart_token
+
+
+        Response: merged cart
+
+
+        Notes: -'
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Validation/Business error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not found
+      security:
+      - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              description: guest_cart_token
+  /cart/coupon/:
+    post:
+      tags:
+      - سبد خرید، کوپن و پروموشن
+      summary: اعمال کوپن
+      operationId: post_cart_coupon
+      description: 'Permission: -
+
+
+        Request: code
+
+
+        Response: cart totals + coupon
+
+
+        Notes: -'
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Validation/Business error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not found
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              description: code
+    delete:
+      tags:
+      - سبد خرید، کوپن و پروموشن
+      summary: حذف کوپن
+      operationId: delete_cart_coupon
+      description: 'Permission: -
+
+
+        Request: -
+
+
+        Response: cart totals
+
+
+        Notes: -'
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Validation/Business error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not found
+  /promotions/active/:
+    get:
+      tags:
+      - سبد خرید، کوپن و پروموشن
+      summary: پروموشن‌های فعال
+      operationId: get_promotions_active
+      description: 'Permission: -
+
+
+        Request: -
+
+
+        Response: promotions[]
+
+
+        Notes: -'
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Validation/Business error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not found
+  /admin/coupons/:
+    get:
+      tags:
+      - سبد خرید، کوپن و پروموشن
+      summary: مدیریت کوپن‌ها
+      operationId: get_admin_coupons
+      description: 'Permission: coupons.view_coupon
+
+
+        Request: -
+
+
+        Response: coupons paginated
+
+
+        Notes: -'
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Validation/Business error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not found
+      security:
+      - bearerAuth: []
+      parameters:
+      - name: active
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: search
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: page
+        in: query
+        required: false
+        schema:
+          type: integer
+    post:
+      tags:
+      - سبد خرید، کوپن و پروموشن
+      summary: ایجاد کوپن
+      operationId: post_admin_coupons
+      description: 'Permission: coupons.add_coupon
+
+
+        Request: code,type,value,max_discount?,starts_at,expires_at,usage_limit?,user_usage_limit?,min_amount?
+
+
+        Response: coupon
+
+
+        Notes: -'
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Validation/Business error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not found
+      security:
+      - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              description: code,type,value,max_discount?,starts_at,expires_at,usage_limit?,user_usage_limit?,min_amount?
+  /admin/coupons/{id}/:
+    patch:
+      tags:
+      - سبد خرید، کوپن و پروموشن
+      summary: ویرایش کوپن
+      operationId: patch_admin_coupons_by_id
+      description: 'Permission: coupons.change_coupon
+
+
+        Request: partial coupon fields
+
+
+        Response: coupon
+
+
+        Notes: -'
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Validation/Business error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not found
+      security:
+      - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              description: partial coupon fields
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+  /checkout/preview/:
+    post:
+      tags:
+      - Checkout و سفارش‌ها
+      summary: پیش‌نمایش Checkout
+      operationId: post_checkout_preview
+      description: 'Permission: -
+
+
+        Request: address_id,shipping_selections?,coupon_code?
+
+
+        Response: pricing breakdown + seller groups + shipping options
+
+
+        Notes: -'
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Validation/Business error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not found
+      security:
+      - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              description: address_id,shipping_selections?,coupon_code?
+  /checkout/:
+    post:
+      tags:
+      - Checkout و سفارش‌ها
+      summary: ایجاد سفارش
+      operationId: post_checkout
+      description: 'Permission: -
+
+
+        Request: address_id,shipping_selections,idempotency_key
+
+
+        Response: order + payment_required + payable_amount
+
+
+        Notes: تمام Snapshotها و رزرو موجودی در transaction.'
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Validation/Business error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not found
+      security:
+      - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              description: address_id,shipping_selections,idempotency_key
+  /orders/:
+    get:
+      tags:
+      - Checkout و سفارش‌ها
+      summary: سفارش‌های مشتری
+      operationId: get_orders
+      description: 'Permission: -
+
+
+        Request: -
+
+
+        Response: orders paginated
+
+
+        Notes: -'
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Validation/Business error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not found
+      security:
+      - bearerAuth: []
+      parameters:
+      - name: status
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: date_from
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: date_to
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: page
+        in: query
+        required: false
+        schema:
+          type: integer
+  /orders/{id}/:
+    get:
+      tags:
+      - Checkout و سفارش‌ها
+      summary: جزئیات سفارش
+      operationId: get_orders_by_id
+      description: 'Permission: ownership
+
+
+        Request: -
+
+
+        Response: order + items + seller_orders + shipments + payments
+
+
+        Notes: -'
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Validation/Business error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not found
+      security:
+      - bearerAuth: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+  /orders/{id}/cancel/:
+    post:
+      tags:
+      - Checkout و سفارش‌ها
+      summary: لغو سفارش
+      operationId: post_orders_by_id_cancel
+      description: 'Permission: ownership
+
+
+        Request: reason
+
+
+        Response: order
+
+
+        Notes: -'
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Validation/Business error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not found
+      security:
+      - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              description: reason
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+  /orders/{id}/items/{item_id}/cancel/:
+    post:
+      tags:
+      - Checkout و سفارش‌ها
+      summary: لغو قلم سفارش
+      operationId: post_orders_by_id_items_item_by_id_cancel
+      description: 'Permission: ownership
+
+
+        Request: quantity?,reason
+
+
+        Response: order
+
+
+        Notes: -'
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Validation/Business error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not found
+      security:
+      - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              description: quantity?,reason
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: item_id
+        in: path
+        required: true
+        schema:
+          type: string
+  /seller/orders/:
+    get:
+      tags:
+      - Checkout و سفارش‌ها
+      summary: سفارش‌های فروشنده
+      operationId: get_seller_orders
+      description: 'Permission: seller.orders.view
+
+
+        Request: -
+
+
+        Response: seller_orders paginated
+
+
+        Notes: -'
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Validation/Business error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not found
+      security:
+      - bearerAuth: []
+      parameters:
+      - name: status
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: date_from
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: date_to
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: page
+        in: query
+        required: false
+        schema:
+          type: integer
+  /seller/orders/{id}/:
+    get:
+      tags:
+      - Checkout و سفارش‌ها
+      summary: جزئیات سفارش فروشنده
+      operationId: get_seller_orders_by_id
+      description: 'Permission: seller.orders.view + ownership
+
+
+        Request: -
+
+
+        Response: seller_order + items
+
+
+        Notes: -'
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Validation/Business error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not found
+      security:
+      - bearerAuth: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+  /seller/orders/{id}/accept/:
+    post:
+      tags:
+      - Checkout و سفارش‌ها
+      summary: پذیرش سفارش فروشنده
+      operationId: post_seller_orders_by_id_accept
+      description: 'Permission: seller.orders.change_status
+
+
+        Request: -
+
+
+        Response: seller_order
+
+
+        Notes: -'
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Validation/Business error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not found
+      security:
+      - bearerAuth: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+  /seller/orders/{id}/ready/:
+    post:
+      tags:
+      - Checkout و سفارش‌ها
+      summary: آماده ارسال
+      operationId: post_seller_orders_by_id_ready
+      description: 'Permission: seller.orders.change_status
+
+
+        Request: package_count?,note?
+
+
+        Response: seller_order
+
+
+        Notes: -'
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Validation/Business error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not found
+      security:
+      - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              description: package_count?,note?
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+  /admin/orders/{id}/status/:
+    post:
+      tags:
+      - Checkout و سفارش‌ها
+      summary: تغییر وضعیت مدیریتی سفارش
+      operationId: post_admin_orders_by_id_status
+      description: 'Permission: orders.change_status
+
+
+        Request: status,reason
+
+
+        Response: order
+
+
+        Notes: -'
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Validation/Business error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not found
+      security:
+      - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              description: status,reason
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+  /admin/orders/{id}/history/:
+    get:
+      tags:
+      - Checkout و سفارش‌ها
+      summary: تاریخچه سفارش
+      operationId: get_admin_orders_by_id_history
+      description: 'Permission: orders.view_history
+
+
+        Request: -
+
+
+        Response: status_history[] + audit refs
+
+
+        Notes: -'
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Validation/Business error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not found
+      security:
+      - bearerAuth: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+  /shipping/methods/:
+    get:
+      tags:
+      - ارسال و لجستیک
+      summary: روش‌های ارسال قابل استفاده
+      operationId: get_shipping_methods
+      description: 'Permission: -
+
+
+        Request: -
+
+
+        Response: shipping_methods[]
+
+
+        Notes: -'
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Validation/Business error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not found
+      security:
+      - bearerAuth: []
+  /shipping/calculate/:
+    post:
+      tags:
+      - ارسال و لجستیک
+      summary: محاسبه ارسال
+      operationId: post_shipping_calculate
+      description: 'Permission: -
+
+
+        Request: address_id
+
+
+        Response: seller_groups + available_methods + fees
+
+
+        Notes: وزن و اقلام از Cart سمت سرور محاسبه شوند.'
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Validation/Business error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not found
+      security:
+      - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              description: address_id
+  /orders/{id}/shipments/:
+    get:
+      tags:
+      - ارسال و لجستیک
+      summary: مرسوله‌های سفارش
+      operationId: get_orders_by_id_shipments
+      description: 'Permission: ownership
+
+
+        Request: -
+
+
+        Response: shipments[]
+
+
+        Notes: -'
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Validation/Business error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not found
+      security:
+      - bearerAuth: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+  /shipments/{id}/tracking/:
+    get:
+      tags:
+      - ارسال و لجستیک
+      summary: رهگیری مرسوله
+      operationId: get_shipments_by_id_tracking
+      description: 'Permission: ownership
+
+
+        Request: -
+
+
+        Response: shipment + events[]
+
+
+        Notes: -'
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Validation/Business error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not found
+      security:
+      - bearerAuth: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+  /seller/shipments/:
+    post:
+      tags:
+      - ارسال و لجستیک
+      summary: ایجاد مرسوله
+      operationId: post_seller_shipments
+      description: 'Permission: seller.shipping.manage
+
+
+        Request: seller_order_id,items[],method_id,carrier?,tracking_code?
+
+
+        Response: shipment
+
+
+        Notes: -'
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Validation/Business error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not found
+      security:
+      - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              description: seller_order_id,items[],method_id,carrier?,tracking_code?
+  /seller/shipments/{id}/events/:
+    post:
+      tags:
+      - ارسال و لجستیک
+      summary: ثبت رویداد ارسال
+      operationId: post_seller_shipments_by_id_events
+      description: 'Permission: seller.shipping.manage
+
+
+        Request: status,description?,occurred_at?
+
+
+        Response: shipment_event
+
+
+        Notes: -'
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Validation/Business error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not found
+      security:
+      - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              description: status,description?,occurred_at?
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+  /admin/shipping/methods/:
+    get:
+      tags:
+      - ارسال و لجستیک
+      summary: مدیریت روش‌های ارسال
+      operationId: get_admin_shipping_methods
+      description: 'Permission: shipping.manage
+
+
+        Request: -
+
+
+        Response: methods[]
+
+
+        Notes: -'
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Validation/Business error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not found
+      security:
+      - bearerAuth: []
+    post:
+      tags:
+      - ارسال و لجستیک
+      summary: ایجاد روش ارسال
+      operationId: post_admin_shipping_methods
+      description: 'Permission: shipping.manage
+
+
+        Request: name,code,pricing_rule,active
+
+
+        Response: method
+
+
+        Notes: -'
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Validation/Business error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not found
+      security:
+      - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              description: name,code,pricing_rule,active
+  /payments/initiate/:
+    post:
+      tags:
+      - پرداخت، تراکنش و کیف پول
+      summary: شروع پرداخت سفارش
+      operationId: post_payments_initiate
+      description: 'Permission: -
+
+
+        Request: order_id,gateway,idempotency_key
+
+
+        Response: payment_id,redirect_url,expires_at
+
+
+        Notes: -'
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Validation/Business error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not found
+      security:
+      - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              description: order_id,gateway,idempotency_key
+  /payments/{id}/:
+    get:
+      tags:
+      - پرداخت، تراکنش و کیف پول
+      summary: وضعیت پرداخت
+      operationId: get_payments_by_id
+      description: 'Permission: ownership
+
+
+        Request: -
+
+
+        Response: payment
+
+
+        Notes: -'
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Validation/Business error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not found
+      security:
+      - bearerAuth: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+  /payments/callback/{gateway}/:
+    get:
+      tags:
+      - پرداخت، تراکنش و کیف پول
+      summary: Callback درگاه
+      operationId: get_payments_callback_gateway
+      description: 'Permission: signature/authority validation
+
+
+        Request: gateway query params
+
+
+        Response: redirect or callback result
+
+
+        Notes: -'
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Validation/Business error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not found
+      parameters:
+      - name: gateway
+        in: path
+        required: true
+        schema:
+          type: string
+  /payments/webhooks/{gateway}/:
+    post:
+      tags:
+      - پرداخت، تراکنش و کیف پول
+      summary: Webhook درگاه
+      operationId: post_payments_webhooks_gateway
+      description: 'Permission: signature verification
+
+
+        Request: gateway event
+
+
+        Response: accepted
+
+
+        Notes: -'
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Validation/Business error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not found
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              description: gateway event
+      parameters:
+      - name: gateway
+        in: path
+        required: true
+        schema:
+          type: string
+  /payments/{id}/verify/:
+    post:
+      tags:
+      - پرداخت، تراکنش و کیف پول
+      summary: Verify داخلی/دستی پرداخت
+      operationId: post_payments_by_id_verify
+      description: 'Permission: payments.verify_payment
+
+
+        Request: -
+
+
+        Response: payment + order state
+
+
+        Notes: -'
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Validation/Business error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not found
+      security:
+      - bearerAuth: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+  /wallet/:
+    get:
+      tags:
+      - پرداخت، تراکنش و کیف پول
+      summary: کیف پول کاربر
+      operationId: get_wallet
+      description: 'Permission: -
+
+
+        Request: -
+
+
+        Response: balance,available_balance
+
+
+        Notes: -'
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Validation/Business error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not found
+      security:
+      - bearerAuth: []
+  /wallet/transactions/:
+    get:
+      tags:
+      - پرداخت، تراکنش و کیف پول
+      summary: تراکنش‌های کیف پول
+      operationId: get_wallet_transactions
+      description: 'Permission: -
+
+
+        Request: -
+
+
+        Response: transactions paginated
+
+
+        Notes: -'
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Validation/Business error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not found
+      security:
+      - bearerAuth: []
+      parameters:
+      - name: type
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: date_from
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: date_to
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: page
+        in: query
+        required: false
+        schema:
+          type: integer
+  /wallet/charge/initiate/:
+    post:
+      tags:
+      - پرداخت، تراکنش و کیف پول
+      summary: شروع شارژ کیف پول
+      operationId: post_wallet_charge_initiate
+      description: 'Permission: -
+
+
+        Request: amount,gateway,idempotency_key
+
+
+        Response: payment_id,redirect_url
+
+
+        Notes: -'
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Validation/Business error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not found
+      security:
+      - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              description: amount,gateway,idempotency_key
+  /admin/payments/:
+    get:
+      tags:
+      - پرداخت، تراکنش و کیف پول
+      summary: لیست پرداخت‌ها
+      operationId: get_admin_payments
+      description: 'Permission: payments.view_payment
+
+
+        Request: -
+
+
+        Response: payments paginated
+
+
+        Notes: -'
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Validation/Business error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not found
+      security:
+      - bearerAuth: []
+      parameters:
+      - name: status
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: gateway
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: order
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: date_from
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: date_to
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: page
+        in: query
+        required: false
+        schema:
+          type: integer
+  /admin/payments/{id}/reconcile/:
+    post:
+      tags:
+      - پرداخت، تراکنش و کیف پول
+      summary: Reconcile پرداخت
+      operationId: post_admin_payments_by_id_reconcile
+      description: 'Permission: payments.reconcile
+
+
+        Request: -
+
+
+        Response: reconciliation result
+
+
+        Notes: -'
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Validation/Business error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not found
+      security:
+      - bearerAuth: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+  /admin/refunds/:
+    post:
+      tags:
+      - پرداخت، تراکنش و کیف پول
+      summary: ایجاد Refund
+      operationId: post_admin_refunds
+      description: 'Permission: payments.refund_payment
+
+
+        Request: order_id,payment_id,amount,method,reason,idempotency_key
+
+
+        Response: refund
+
+
+        Notes: -'
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Validation/Business error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not found
+      security:
+      - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              description: order_id,payment_id,amount,method,reason,idempotency_key
+  /admin/refunds/{id}/:
+    get:
+      tags:
+      - پرداخت، تراکنش و کیف پول
+      summary: وضعیت Refund
+      operationId: get_admin_refunds_by_id
+      description: 'Permission: payments.view_refund
+
+
+        Request: -
+
+
+        Response: refund
+
+
+        Notes: -'
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Validation/Business error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not found
+      security:
+      - bearerAuth: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+  /seller/finance/summary/:
+    get:
+      tags:
+      - کمیسیون و تسویه فروشندگان
+      summary: خلاصه مالی فروشنده
+      operationId: get_seller_finance_summary
+      description: 'Permission: seller.finance.view
+
+
+        Request: -
+
+
+        Response: pending,available,settled,refunds,commission
+
+
+        Notes: -'
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Validation/Business error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not found
+      security:
+      - bearerAuth: []
+  /seller/finance/transactions/:
+    get:
+      tags:
+      - کمیسیون و تسویه فروشندگان
+      summary: گردش مالی فروشنده
+      operationId: get_seller_finance_transactions
+      description: 'Permission: seller.finance.view
+
+
+        Request: -
+
+
+        Response: ledger rows
+
+
+        Notes: -'
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Validation/Business error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not found
+      security:
+      - bearerAuth: []
+      parameters:
+      - name: type
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: date_from
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: date_to
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: page
+        in: query
+        required: false
+        schema:
+          type: integer
+  /seller/settlements/:
+    get:
+      tags:
+      - کمیسیون و تسویه فروشندگان
+      summary: تسویه‌های فروشنده
+      operationId: get_seller_settlements
+      description: 'Permission: seller.settlements.view
+
+
+        Request: -
+
+
+        Response: settlements paginated
+
+
+        Notes: -'
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Validation/Business error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not found
+      security:
+      - bearerAuth: []
+  /seller/settlements/request/:
+    post:
+      tags:
+      - کمیسیون و تسویه فروشندگان
+      summary: درخواست تسویه
+      operationId: post_seller_settlements_request
+      description: 'Permission: seller.settlements.request
+
+
+        Request: amount?
+
+
+        Response: settlement_request
+
+
+        Notes: -'
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Validation/Business error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not found
+      security:
+      - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              description: amount?
+  /admin/settlements/:
+    get:
+      tags:
+      - کمیسیون و تسویه فروشندگان
+      summary: لیست تسویه‌ها
+      operationId: get_admin_settlements
+      description: 'Permission: settlements.view
+
+
+        Request: -
+
+
+        Response: settlements paginated
+
+
+        Notes: -'
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Validation/Business error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not found
+      security:
+      - bearerAuth: []
+      parameters:
+      - name: seller
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: status
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: date_from
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: date_to
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: page
+        in: query
+        required: false
+        schema:
+          type: integer
+  /admin/settlements/{id}/approve/:
+    post:
+      tags:
+      - کمیسیون و تسویه فروشندگان
+      summary: تأیید تسویه
+      operationId: post_admin_settlements_by_id_approve
+      description: 'Permission: settlements.approve
+
+
+        Request: note?
+
+
+        Response: settlement
+
+
+        Notes: -'
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Validation/Business error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not found
+      security:
+      - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              description: note?
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+  /admin/settlements/{id}/mark-paid/:
+    post:
+      tags:
+      - کمیسیون و تسویه فروشندگان
+      summary: ثبت پرداخت تسویه
+      operationId: post_admin_settlements_by_id_mark_paby_id
+      description: 'Permission: settlements.mark_paid
+
+
+        Request: bank_ref,paid_at
+
+
+        Response: settlement
+
+
+        Notes: -'
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Validation/Business error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not found
+      security:
+      - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              description: bank_ref,paid_at
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+  /admin/commissions/rules/:
+    get:
+      tags:
+      - کمیسیون و تسویه فروشندگان
+      summary: قواعد کمیسیون
+      operationId: get_admin_commissions_rules
+      description: 'Permission: commissions.view
+
+
+        Request: -
+
+
+        Response: rules[]
+
+
+        Notes: -'
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Validation/Business error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not found
+      security:
+      - bearerAuth: []
+    post:
+      tags:
+      - کمیسیون و تسویه فروشندگان
+      summary: ایجاد قانون کمیسیون
+      operationId: post_admin_commissions_rules
+      description: 'Permission: commissions.manage
+
+
+        Request: scope,seller_id?,category_id?,product_id?,type,value,starts_at,ends_at?
+
+
+        Response: rule
+
+
+        Notes: -'
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Validation/Business error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not found
+      security:
+      - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              description: scope,seller_id?,category_id?,product_id?,type,value,starts_at,ends_at?
+  /returns/:
+    post:
+      tags:
+      - مرجوعی و بازپرداخت
+      summary: ثبت درخواست مرجوعی
+      operationId: post_returns
+      description: 'Permission: -
+
+
+        Request: order_id,items[{order_item_id,quantity,reason}],description?,evidence_media_ids?
+
+
+        Response: return_request
+
+
+        Notes: -'
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Validation/Business error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not found
+      security:
+      - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              description: order_id,items[{order_item_id,quantity,reason}],description?,evidence_media_ids?
+    get:
+      tags:
+      - مرجوعی و بازپرداخت
+      summary: مرجوعی‌های مشتری
+      operationId: get_returns
+      description: 'Permission: -
+
+
+        Request: -
+
+
+        Response: returns paginated
+
+
+        Notes: -'
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Validation/Business error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not found
+      security:
+      - bearerAuth: []
+  /returns/{id}/:
+    get:
+      tags:
+      - مرجوعی و بازپرداخت
+      summary: جزئیات مرجوعی
+      operationId: get_returns_by_id
+      description: 'Permission: ownership
+
+
+        Request: -
+
+
+        Response: return + items + refund?
+
+
+        Notes: -'
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Validation/Business error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not found
+      security:
+      - bearerAuth: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+  /returns/{id}/cancel/:
+    post:
+      tags:
+      - مرجوعی و بازپرداخت
+      summary: لغو درخواست مرجوعی
+      operationId: post_returns_by_id_cancel
+      description: 'Permission: ownership
+
+
+        Request: -
+
+
+        Response: return
+
+
+        Notes: -'
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Validation/Business error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not found
+      security:
+      - bearerAuth: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+  /seller/returns/:
+    get:
+      tags:
+      - مرجوعی و بازپرداخت
+      summary: مرجوعی‌های فروشنده
+      operationId: get_seller_returns
+      description: 'Permission: seller.returns.view
+
+
+        Request: -
+
+
+        Response: returns paginated
+
+
+        Notes: -'
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Validation/Business error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not found
+      security:
+      - bearerAuth: []
+  /admin/returns/{id}/approve/:
+    post:
+      tags:
+      - مرجوعی و بازپرداخت
+      summary: تأیید مرجوعی
+      operationId: post_admin_returns_by_id_approve
+      description: 'Permission: returns.approve
+
+
+        Request: approved_items,notes?
+
+
+        Response: return
+
+
+        Notes: -'
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Validation/Business error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not found
+      security:
+      - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              description: approved_items,notes?
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+  /admin/returns/{id}/reject/:
+    post:
+      tags:
+      - مرجوعی و بازپرداخت
+      summary: رد مرجوعی
+      operationId: post_admin_returns_by_id_reject
+      description: 'Permission: returns.approve
+
+
+        Request: reason
+
+
+        Response: return
+
+
+        Notes: -'
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Validation/Business error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not found
+      security:
+      - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              description: reason
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+  /admin/returns/{id}/received/:
+    post:
+      tags:
+      - مرجوعی و بازپرداخت
+      summary: ثبت دریافت کالای مرجوعی
+      operationId: post_admin_returns_by_id_received
+      description: 'Permission: returns.receive
+
+
+        Request: received_items,condition,restock?
+
+
+        Response: return + inventory effects
+
+
+        Notes: -'
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Validation/Business error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not found
+      security:
+      - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              description: received_items,condition,restock?
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+  /products/{id}/reviews/:
+    get:
+      tags:
+      - Review، Rating و Wishlist
+      summary: نظرات محصول
+      operationId: get_products_by_id_reviews
+      description: 'Permission: -
+
+
+        Request: -
+
+
+        Response: reviews paginated
+
+
+        Notes: -'
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Validation/Business error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not found
+      parameters:
+      - name: rating
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: verified
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: ordering
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: page
+        in: query
+        required: false
+        schema:
+          type: integer
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+    post:
+      tags:
+      - Review، Rating و Wishlist
+      summary: ثبت نظر
+      operationId: post_products_by_id_reviews
+      description: 'Permission: -
+
+
+        Request: rating,title?,body,media_ids?
+
+
+        Response: review
+
+
+        Notes: -'
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Validation/Business error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not found
+      security:
+      - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              description: rating,title?,body,media_ids?
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+  /reviews/{id}/:
+    patch:
+      tags:
+      - Review، Rating و Wishlist
+      summary: ویرایش نظر
+      operationId: patch_reviews_by_id
+      description: 'Permission: ownership
+
+
+        Request: rating?,title?,body?
+
+
+        Response: review
+
+
+        Notes: -'
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Validation/Business error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not found
+      security:
+      - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              description: rating?,title?,body?
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+    delete:
+      tags:
+      - Review، Rating و Wishlist
+      summary: حذف نظر
+      operationId: delete_reviews_by_id
+      description: 'Permission: ownership
+
+
+        Request: -
+
+
+        Response: 204
+
+
+        Notes: -'
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Validation/Business error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not found
+      security:
+      - bearerAuth: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+  /reviews/{id}/like/:
+    post:
+      tags:
+      - Review، Rating و Wishlist
+      summary: لایک نظر
+      operationId: post_reviews_by_id_like
+      description: 'Permission: -
+
+
+        Request: -
+
+
+        Response: like state
+
+
+        Notes: -'
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Validation/Business error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not found
+      security:
+      - bearerAuth: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+    delete:
+      tags:
+      - Review، Rating و Wishlist
+      summary: حذف لایک
+      operationId: delete_reviews_by_id_like
+      description: 'Permission: -
+
+
+        Request: -
+
+
+        Response: 204
+
+
+        Notes: -'
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Validation/Business error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not found
+      security:
+      - bearerAuth: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+  /reviews/{id}/report/:
+    post:
+      tags:
+      - Review، Rating و Wishlist
+      summary: گزارش نظر
+      operationId: post_reviews_by_id_report
+      description: 'Permission: -
+
+
+        Request: reason,description?
+
+
+        Response: report
+
+
+        Notes: -'
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Validation/Business error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not found
+      security:
+      - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              description: reason,description?
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+  /wishlist/:
+    get:
+      tags:
+      - Review، Rating و Wishlist
+      summary: علاقه‌مندی‌ها
+      operationId: get_wishlist
+      description: 'Permission: -
+
+
+        Request: -
+
+
+        Response: products paginated
+
+
+        Notes: -'
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Validation/Business error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not found
+      security:
+      - bearerAuth: []
+    post:
+      tags:
+      - Review، Rating و Wishlist
+      summary: افزودن علاقه‌مندی
+      operationId: post_wishlist
+      description: 'Permission: -
+
+
+        Request: product_id
+
+
+        Response: wishlist_item
+
+
+        Notes: -'
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Validation/Business error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not found
+      security:
+      - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              description: product_id
+  /wishlist/{product_id}/:
+    delete:
+      tags:
+      - Review، Rating و Wishlist
+      summary: حذف علاقه‌مندی
+      operationId: delete_wishlist_product_by_id
+      description: 'Permission: -
+
+
+        Request: -
+
+
+        Response: 204
+
+
+        Notes: -'
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Validation/Business error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not found
+      security:
+      - bearerAuth: []
+      parameters:
+      - name: product_id
+        in: path
+        required: true
+        schema:
+          type: string
+  /admin/reviews/:
+    get:
+      tags:
+      - Review، Rating و Wishlist
+      summary: مدیریت نظرات
+      operationId: get_admin_reviews
+      description: 'Permission: reviews.moderate
+
+
+        Request: -
+
+
+        Response: reviews paginated
+
+
+        Notes: -'
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Validation/Business error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not found
+      security:
+      - bearerAuth: []
+      parameters:
+      - name: status
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: rating
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: reported
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: page
+        in: query
+        required: false
+        schema:
+          type: integer
+  /admin/reviews/{id}/moderate/:
+    post:
+      tags:
+      - Review، Rating و Wishlist
+      summary: تأیید/رد نظر
+      operationId: post_admin_reviews_by_id_moderate
+      description: 'Permission: reviews.moderate
+
+
+        Request: status,reason?
+
+
+        Response: review
+
+
+        Notes: -'
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Validation/Business error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not found
+      security:
+      - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              description: status,reason?
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+  /notifications/:
+    get:
+      tags:
+      - اعلان‌ها و تنظیمات ارتباطی
+      summary: اعلان‌های کاربر
+      operationId: get_notifications
+      description: 'Permission: -
+
+
+        Request: -
+
+
+        Response: notifications paginated
+
+
+        Notes: -'
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Validation/Business error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not found
+      security:
+      - bearerAuth: []
+      parameters:
+      - name: unread
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: type
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: page
+        in: query
+        required: false
+        schema:
+          type: integer
+  /notifications/{id}/read/:
+    post:
+      tags:
+      - اعلان‌ها و تنظیمات ارتباطی
+      summary: خوانده‌شدن اعلان
+      operationId: post_notifications_by_id_read
+      description: 'Permission: ownership
+
+
+        Request: -
+
+
+        Response: notification
+
+
+        Notes: -'
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Validation/Business error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not found
+      security:
+      - bearerAuth: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+  /notifications/read-all/:
+    post:
+      tags:
+      - اعلان‌ها و تنظیمات ارتباطی
+      summary: خواندن همه اعلان‌ها
+      operationId: post_notifications_read_all
+      description: 'Permission: -
+
+
+        Request: -
+
+
+        Response: updated_count
+
+
+        Notes: -'
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Validation/Business error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not found
+      security:
+      - bearerAuth: []
+  /notification-settings/:
+    get:
+      tags:
+      - اعلان‌ها و تنظیمات ارتباطی
+      summary: تنظیمات اعلان
+      operationId: get_notification_settings
+      description: 'Permission: -
+
+
+        Request: -
+
+
+        Response: settings
+
+
+        Notes: -'
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Validation/Business error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not found
+      security:
+      - bearerAuth: []
+    patch:
+      tags:
+      - اعلان‌ها و تنظیمات ارتباطی
+      summary: ویرایش تنظیمات اعلان
+      operationId: patch_notification_settings
+      description: 'Permission: -
+
+
+        Request: sms_enabled,email_enabled,push_enabled,preferences
+
+
+        Response: settings
+
+
+        Notes: -'
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Validation/Business error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not found
+      security:
+      - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              description: sms_enabled,email_enabled,push_enabled,preferences
+  /admin/notification-templates/:
+    get:
+      tags:
+      - اعلان‌ها و تنظیمات ارتباطی
+      summary: قالب‌های اعلان
+      operationId: get_admin_notification_templates
+      description: 'Permission: notifications.templates.manage
+
+
+        Request: -
+
+
+        Response: templates[]
+
+
+        Notes: -'
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Validation/Business error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not found
+      security:
+      - bearerAuth: []
+    post:
+      tags:
+      - اعلان‌ها و تنظیمات ارتباطی
+      summary: ایجاد قالب
+      operationId: post_admin_notification_templates
+      description: 'Permission: notifications.templates.manage
+
+
+        Request: code,channel,title_template?,body_template,is_active
+
+
+        Response: template
+
+
+        Notes: -'
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Validation/Business error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not found
+      security:
+      - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              description: code,channel,title_template?,body_template,is_active
+  /articles/:
+    get:
+      tags:
+      - محتوا و رسانه
+      summary: مقالات منتشرشده
+      operationId: get_articles
+      description: 'Permission: -
+
+
+        Request: -
+
+
+        Response: articles paginated
+
+
+        Notes: -'
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Validation/Business error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not found
+      parameters:
+      - name: tag
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: search
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: page
+        in: query
+        required: false
+        schema:
+          type: integer
+  /articles/{slug}/:
+    get:
+      tags:
+      - محتوا و رسانه
+      summary: جزئیات مقاله
+      operationId: get_articles_slug
+      description: 'Permission: -
+
+
+        Request: -
+
+
+        Response: article
+
+
+        Notes: -'
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Validation/Business error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not found
+      parameters:
+      - name: slug
+        in: path
+        required: true
+        schema:
+          type: string
+  /media/:
+    post:
+      tags:
+      - محتوا و رسانه
+      summary: آپلود فایل
+      operationId: post_media
+      description: 'Permission: media.upload
+
+
+        Request: multipart file + purpose
+
+
+        Response: media_asset
+
+
+        Notes: -'
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Validation/Business error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not found
+      security:
+      - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              description: multipart file + purpose
+  /media/{id}/:
+    delete:
+      tags:
+      - محتوا و رسانه
+      summary: حذف فایل بدون استفاده
+      operationId: delete_media_by_id
+      description: 'Permission: media.delete
+
+
+        Request: -
+
+
+        Response: 204
+
+
+        Notes: -'
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Validation/Business error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not found
+      security:
+      - bearerAuth: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+  /admin/articles/:
+    get:
+      tags:
+      - محتوا و رسانه
+      summary: مدیریت مقالات
+      operationId: get_admin_articles
+      description: 'Permission: content.view_article
+
+
+        Request: -
+
+
+        Response: articles paginated
+
+
+        Notes: -'
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Validation/Business error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not found
+      security:
+      - bearerAuth: []
+      parameters:
+      - name: status
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: author
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: page
+        in: query
+        required: false
+        schema:
+          type: integer
+    post:
+      tags:
+      - محتوا و رسانه
+      summary: ایجاد مقاله
+      operationId: post_admin_articles
+      description: 'Permission: content.add_article
+
+
+        Request: title,slug?,body,excerpt?,cover_media_id?,tags[],status,published_at?
+
+
+        Response: article
+
+
+        Notes: -'
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Validation/Business error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not found
+      security:
+      - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              description: title,slug?,body,excerpt?,cover_media_id?,tags[],status,published_at?
+  /admin/articles/{id}/:
+    patch:
+      tags:
+      - محتوا و رسانه
+      summary: ویرایش مقاله
+      operationId: patch_admin_articles_by_id
+      description: 'Permission: content.change_article
+
+
+        Request: partial fields
+
+
+        Response: article
+
+
+        Notes: -'
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Validation/Business error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not found
+      security:
+      - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              description: partial fields
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+  /admin/articles/{id}/publish/:
+    post:
+      tags:
+      - محتوا و رسانه
+      summary: انتشار مقاله
+      operationId: post_admin_articles_by_id_publish
+      description: 'Permission: content.publish_article
+
+
+        Request: published_at?
+
+
+        Response: article
+
+
+        Notes: -'
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Validation/Business error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not found
+      security:
+      - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              description: published_at?
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+  /admin/users/:
+    get:
+      tags:
+      - مدیریت کاربران و دسترسی‌ها
+      summary: لیست کاربران
+      operationId: get_admin_users
+      description: 'Permission: users.view_user
+
+
+        Request: -
+
+
+        Response: users paginated
+
+
+        Notes: -'
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Validation/Business error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not found
+      security:
+      - bearerAuth: []
+      parameters:
+      - name: search
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: status
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: role
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: page
+        in: query
+        required: false
+        schema:
+          type: integer
+  /admin/users/{id}/:
+    get:
+      tags:
+      - مدیریت کاربران و دسترسی‌ها
+      summary: جزئیات کاربر
+      operationId: get_admin_users_by_id
+      description: 'Permission: users.view_user
+
+
+        Request: -
+
+
+        Response: user admin view
+
+
+        Notes: -'
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Validation/Business error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not found
+      security:
+      - bearerAuth: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+  /admin/users/{id}/status/:
+    patch:
+      tags:
+      - مدیریت کاربران و دسترسی‌ها
+      summary: تغییر وضعیت کاربر
+      operationId: patch_admin_users_by_id_status
+      description: 'Permission: users.change_status
+
+
+        Request: status,reason,until?
+
+
+        Response: user
+
+
+        Notes: -'
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Validation/Business error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not found
+      security:
+      - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              description: status,reason,until?
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+  /admin/access/permissions/:
+    get:
+      tags:
+      - مدیریت کاربران و دسترسی‌ها
+      summary: کاتالوگ Permissionها
+      operationId: get_admin_access_permissions
+      description: 'Permission: auth.view_permission
+
+
+        Request: -
+
+
+        Response: permissions grouped by app
+
+
+        Notes: -'
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Validation/Business error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not found
+      security:
+      - bearerAuth: []
+  /admin/access/groups/:
+    get:
+      tags:
+      - مدیریت کاربران و دسترسی‌ها
+      summary: لیست گروه‌ها
+      operationId: get_admin_access_groups
+      description: 'Permission: auth.view_group
+
+
+        Request: -
+
+
+        Response: groups[]
+
+
+        Notes: -'
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Validation/Business error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not found
+      security:
+      - bearerAuth: []
+    post:
+      tags:
+      - مدیریت کاربران و دسترسی‌ها
+      summary: ایجاد Group
+      operationId: post_admin_access_groups
+      description: 'Permission: auth.add_group
+
+
+        Request: name,permission_ids[]
+
+
+        Response: group
+
+
+        Notes: -'
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Validation/Business error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not found
+      security:
+      - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              description: name,permission_ids[]
+  /admin/access/groups/{id}/:
+    patch:
+      tags:
+      - مدیریت کاربران و دسترسی‌ها
+      summary: ویرایش Group
+      operationId: patch_admin_access_groups_by_id
+      description: 'Permission: auth.change_group
+
+
+        Request: name?,permission_ids?
+
+
+        Response: group
+
+
+        Notes: -'
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Validation/Business error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not found
+      security:
+      - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              description: name?,permission_ids?
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+    delete:
+      tags:
+      - مدیریت کاربران و دسترسی‌ها
+      summary: حذف Group
+      operationId: delete_admin_access_groups_by_id
+      description: 'Permission: auth.delete_group
+
+
+        Request: -
+
+
+        Response: 204
+
+
+        Notes: -'
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Validation/Business error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not found
+      security:
+      - bearerAuth: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+  /admin/users/{id}/groups/:
+    put:
+      tags:
+      - مدیریت کاربران و دسترسی‌ها
+      summary: تنظیم گروه‌های کاربر
+      operationId: put_admin_users_by_id_groups
+      description: 'Permission: users.manage_access
+
+
+        Request: group_ids[]
+
+
+        Response: effective access summary
+
+
+        Notes: -'
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Validation/Business error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not found
+      security:
+      - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              description: group_ids[]
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+  /admin/users/{id}/permissions/:
+    put:
+      tags:
+      - مدیریت کاربران و دسترسی‌ها
+      summary: تنظیم Permission مستقیم Django
+      operationId: put_admin_users_by_id_permissions
+      description: 'Permission: users.manage_access
+
+
+        Request: permission_ids[]
+
+
+        Response: effective access summary
+
+
+        Notes: -'
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Validation/Business error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not found
+      security:
+      - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              description: permission_ids[]
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+  /admin/users/{id}/permission-overrides/:
+    get:
+      tags:
+      - مدیریت کاربران و دسترسی‌ها
+      summary: Overrideهای کاربر
+      operationId: get_admin_users_by_id_permission_overrby_ides
+      description: 'Permission: users.manage_access
+
+
+        Request: -
+
+
+        Response: overrides[]
+
+
+        Notes: -'
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Validation/Business error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not found
+      security:
+      - bearerAuth: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+    put:
+      tags:
+      - مدیریت کاربران و دسترسی‌ها
+      summary: تنظیم ALLOW/DENY سفارشی
+      operationId: put_admin_users_by_id_permission_overrby_ides
+      description: 'Permission: users.manage_access
+
+
+        Request: overrides[{permission_id,effect,reason?,expires_at?}]
+
+
+        Response: overrides
+
+
+        Notes: -'
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Validation/Business error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not found
+      security:
+      - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              description: overrides[{permission_id,effect,reason?,expires_at?}]
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+  /admin/users/{id}/effective-permissions/:
+    get:
+      tags:
+      - مدیریت کاربران و دسترسی‌ها
+      summary: Permission مؤثر کاربر
+      operationId: get_admin_users_by_id_effective_permissions
+      description: 'Permission: users.manage_access
+
+
+        Request: -
+
+
+        Response: permissions[{code,allowed,source}]
+
+
+        Notes: -'
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Validation/Business error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not found
+      security:
+      - bearerAuth: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+  /admin/reports/dashboard/:
+    get:
+      tags:
+      - گزارش، Audit و تنظیمات سیستم
+      summary: KPI داشبورد
+      operationId: get_admin_reports_dashboard
+      description: 'Permission: reports.view
+
+
+        Request: -
+
+
+        Response: gmv,net_sales,aov,orders,new_users,sellers,refund_rate
+
+
+        Notes: -'
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Validation/Business error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not found
+      security:
+      - bearerAuth: []
+      parameters:
+      - name: date_from
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: date_to
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: timezone
+        in: query
+        required: false
+        schema:
+          type: string
+  /admin/reports/sales/:
+    get:
+      tags:
+      - گزارش، Audit و تنظیمات سیستم
+      summary: گزارش فروش
+      operationId: get_admin_reports_sales
+      description: 'Permission: reports.view
+
+
+        Request: -
+
+
+        Response: time series + breakdown
+
+
+        Notes: -'
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Validation/Business error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not found
+      security:
+      - bearerAuth: []
+      parameters:
+      - name: date_from
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: date_to
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: group_by
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: seller
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: category
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: product
+        in: query
+        required: false
+        schema:
+          type: string
+  /admin/reports/exports/:
+    post:
+      tags:
+      - گزارش، Audit و تنظیمات سیستم
+      summary: ایجاد Export
+      operationId: post_admin_reports_exports
+      description: 'Permission: reports.export
+
+
+        Request: report_type,filters,format
+
+
+        Response: export_job
+
+
+        Notes: -'
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Validation/Business error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not found
+      security:
+      - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              description: report_type,filters,format
+  /admin/reports/exports/{id}/:
+    get:
+      tags:
+      - گزارش، Audit و تنظیمات سیستم
+      summary: وضعیت Export
+      operationId: get_admin_reports_exports_by_id
+      description: 'Permission: reports.export
+
+
+        Request: -
+
+
+        Response: export_job + download_url?
+
+
+        Notes: -'
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Validation/Business error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not found
+      security:
+      - bearerAuth: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+  /admin/audit-logs/:
+    get:
+      tags:
+      - گزارش، Audit و تنظیمات سیستم
+      summary: Audit Log
+      operationId: get_admin_audit_logs
+      description: 'Permission: audit.view
+
+
+        Request: -
+
+
+        Response: audit logs paginated
+
+
+        Notes: -'
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Validation/Business error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not found
+      security:
+      - bearerAuth: []
+      parameters:
+      - name: actor
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: action
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: object_type
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: object_id
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: date_from
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: date_to
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: page
+        in: query
+        required: false
+        schema:
+          type: integer
+  /admin/system/settings/:
+    get:
+      tags:
+      - گزارش، Audit و تنظیمات سیستم
+      summary: تنظیمات سامانه
+      operationId: get_admin_system_settings
+      description: 'Permission: system.settings.view
+
+
+        Request: -
+
+
+        Response: settings grouped
+
+
+        Notes: -'
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Validation/Business error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not found
+      security:
+      - bearerAuth: []
+  /admin/system/settings/{key}/:
+    patch:
+      tags:
+      - گزارش، Audit و تنظیمات سیستم
+      summary: ویرایش تنظیم
+      operationId: patch_admin_system_settings_key
+      description: 'Permission: system.settings.change
+
+
+        Request: value
+
+
+        Response: setting
+
+
+        Notes: -'
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Validation/Business error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not found
+      security:
+      - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              description: value
+      parameters:
+      - name: key
+        in: path
+        required: true
+        schema:
+          type: string
+  /admin/system/features/:
+    get:
+      tags:
+      - گزارش، Audit و تنظیمات سیستم
+      summary: Feature Flagها
+      operationId: get_admin_system_features
+      description: 'Permission: system.features.view
+
+
+        Request: -
+
+
+        Response: features[]
+
+
+        Notes: -'
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Validation/Business error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not found
+      security:
+      - bearerAuth: []
+  /admin/system/features/{key}/:
+    patch:
+      tags:
+      - گزارش، Audit و تنظیمات سیستم
+      summary: تغییر Feature Flag
+      operationId: patch_admin_system_features_key
+      description: 'Permission: system.features.change
+
+
+        Request: enabled,rollout_percent?,metadata?
+
+
+        Response: feature
+
+
+        Notes: -'
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Validation/Business error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not found
+      security:
+      - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              description: enabled,rollout_percent?,metadata?
+      parameters:
+      - name: key
+        in: path
+        required: true
+        schema:
+          type: string
+  /health/live/:
+    get:
+      tags:
+      - گزارش، Audit و تنظیمات سیستم
+      summary: Liveness
+      operationId: get_health_live
+      description: 'Permission: -
+
+
+        Request: -
+
+
+        Response: status
+
+
+        Notes: -'
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Validation/Business error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not found
+  /health/ready/:
+    get:
+      tags:
+      - گزارش، Audit و تنظیمات سیستم
+      summary: Readiness
+      operationId: get_health_ready
+      description: 'Permission: -
+
+
+        Request: -
+
+
+        Response: status + dependencies
+
+
+        Notes: -'
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Validation/Business error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not found
