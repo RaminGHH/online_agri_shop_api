@@ -255,3 +255,77 @@ class OTPCode(models.Model):
     One-time code for authentication.
     The code is stored as a hash (security).
     """
+    class Purpose(models.TextChoices):
+        LOGIN = 'login', 'ورود'
+        REGISTER = 'resgister', 'ثبت نام'
+        CHANGE_PHONE = 'change_phone', 'تغییر شماره'
+        FORGOT_PASSOWRD = 'forgot_password', 'فراموشی رمز'
+    
+    id = models.UUIDField(
+        primary_key=True,
+        default=uuid.uuid4, verbose_name='هش کد', editable=False
+    )
+
+    phone = models.CharField(
+        max_length=11,
+        verbose_name='شماره موبایل'
+    )
+    code_hash = models.CharField(max_length=64, verbose_name='کد هش') #SHA-256
+    purpose = models.CharField(
+        max_length=20,
+        choices=Purpose.choices,
+        verbose_name='هدف'
+    )
+    
+    # === limit ====
+    attempts = models.PositiveSmallIntegerField(default=0, verbose_name='تعداد تلاش')
+    max_attempts = models.PositiveSmallIntegerField(default=3)
+
+    # === status ===
+    is_used = models.BooleanField(default=False, verbose_name='استفاده شده')
+    expires_at = models.DateTimeField(verbose_name='زمان انقضا')
+    created_At = models.DateField(auto_now_add=True)
+
+    class Meta:
+        db_table = 'otp_codes'
+        verbose_name = 'کد OTP'
+        verbose_name_plural = 'کدهای OTP'
+        ordering = ['-created_at']
+        indexes = [
+            models.Index(fields=['phone','purpose','is_used'])
+        ]
+    
+    def __str__(self):
+        return f"{self.phone} - {self.get_purpose_display()} - {'✓' if self.is_used else 'O'}"
+
+    @staticmethod
+    def make_hash(code: str) -> str:
+        return hashlib.sha256(code.encode()).hexdigest
+
+    def check_code(self, code: str) -> bool:
+        return self.code_hash == self.make_hash(code)
+    
+    @property
+    def is_expired(self):
+        return timezone.now > self.expires_at
+    
+    @property
+    def is_max_attempts_reached(self):
+        return self.attempts > self.max_attempts
+    
+    @property
+    def is_valid(self):
+        return (
+            not self.is_used
+            and not self.is_expired
+            and not self.is_max_attempts_reached
+        )
+    
+    def consume(self):
+        """Use OTP — Only Once"""
+        self.is_used = True
+        self.save(update_fields=['is_used'])
+
+    def increment_attempts(self):
+        self.attempts += 1
+        self.save(update_fields=['attempts'])
