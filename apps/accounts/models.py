@@ -70,10 +70,24 @@ class User(AbstractBaseUser, PermissionsMixin):
     The main identity of all system users.
     Login only with mobile number + OTP.
 
+    PROPERTIES:
     id, 
     phone, is_phone_verified
     first_name, last_name, email, national_code, birth_date, avatar
     role, status, status_reason
+    wallet_balance
+    sms_marketing, email_marketing
+    admin_note, last_login_ip, last_login_at
+    is_staff, is_active
+    created_at, updated_at
+
+    get_full_name()
+    is_admin()
+    is_active()
+    can_login()
+    suspend()
+    block()
+    active()
     """
     class Role(models.TextChoices):
         CUSTOMER = 'customer', 'مشتری'
@@ -151,3 +165,93 @@ class User(AbstractBaseUser, PermissionsMixin):
         verbose_name='دلیل تغییر وضعیت'
     )
 
+    # === Wallet ===
+    # This field is for quick display only
+    # The actual value is calculated from the WalletTransaction (append-only ledger)
+    wallet_balance = models.DecimalField(
+        max_digits=12,
+        decimal_places=0,
+        default=0,
+        verbose_name='موجودی کیف پول'
+    )
+
+    # === news ====
+    sms_marketing = models.BooleanField(default=True, verbose_name='پیامک تبلیغاتی')
+    email_marketing = models.BooleanField(default=True, verbose_name='ایمیل مارکتینگ')
+
+    # === admin ===
+    admin_note = models.TextField(blank=True, verbose_name='یادداشت مدیر')
+    last_login_ip = models.GenericIPAddressField(null=True, blank=True)
+    last_login_at = models.DateField(null=True, blank=True)
+
+    # === permissions of admin pannel ===
+    is_staff = models.BooleanField(default=False)
+    is_active = models.BooleanField(default=True)
+
+    # === timing ===
+    created_at = models.DateField(auto_now_add=True, verbose_name='تاریخ ثبت نام')
+    updated_at = models.DateField(auto_now=True)
+
+    objects = UserManager()
+
+    USERNAME_FIELD = 'phone'
+    REQUIRED_FIELDS =  []
+
+    class Meta:
+        db_table = 'users'
+        verbose_name = 'کاربر'
+        verbose_name_plural = 'کاربران'
+        ordering = ['-created_at']
+        indexes = [
+            models.Index(fields=['phone']),
+            models.Index(fields=['status', 'role']),
+            models.Index(fields=['created_at'])
+        ]
+
+    def __str__(self):
+        return f"{self.get_full_name()} ({self.phone})"
+    
+    def get_full_name(self):
+        name = f"{self.first_name} {self.last_name}".strip()
+        return name or self.phone
+
+    # === shortcuts ===
+    @property
+    def is_admin(self):
+        return self.role == self.role.ADMIN
+
+    @property
+    def is_active(self):
+        return self.status == self.status.ACTIVE
+    
+    def can_login(self):
+        """
+        Is this user allowed to log in?
+        """
+        return self.is_active and self.status != self.status.BLOCKED
+    
+    def suspend(self, reason='', by=None):
+        self.status = self.status.SUSPENDED
+        self.status_reason =reason
+        self.save(update_fields=['status', 'status_reason', 'updated_at'])
+
+    def block(self, reason, by=None):
+        self.status = self.status.BLOCKED
+        self.status_reason = reason
+        self.save(update_fields=['status', 'status_reason', 'updated_at'])
+    
+    def active(self, reason, by=None):
+        self.status = self.status.ACTIVE
+        self.status_reason = reason
+        self.save(update_fields=['status', 'status_reason', 'updated_at'])
+
+
+
+# ======================
+# OTP CODE
+# ======================
+class OTPCode(models.Model):
+    """
+    One-time code for authentication.
+    The code is stored as a hash (security).
+    """
