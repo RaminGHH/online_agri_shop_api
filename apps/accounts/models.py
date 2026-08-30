@@ -20,6 +20,7 @@ from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, Permis
 from django.utils import timezone
 from django.contrib.auth.hashers import make_password, check_password
 from django.core.validators import RegexValidator
+from django.db.models import Q
 
 # ======================
 # USER MANAGER
@@ -250,136 +251,164 @@ class User(AbstractBaseUser, PermissionsMixin):
 # ======================
 class OTPCode(models.Model):
     """
-    Represents a one-time password (OTP) used for authentication operations.
-    OTP codes are stored securely as SHA-256 hashes instead of plain text.
+    One-time password used for authentication operations.
+
+    OTP codes are never stored in plain text.
+
+    Rules:
+        - Each OTP is valid for a limited time.
+        - Each OTP can only be used once.
+        - Failed verification attempts are limited.
+        - Only one active OTP should exist for each phone/purpose pair.
 
     Supported purposes:
-    - LOGIN: User login.
-    - REGISTER: User registration.
-    - CHANGE_PHONE: Change user's phone number.
-    - FORGOT_PASSWORD: Password recovery.
-
-    Main fields:
-    phone: Phone number associated with the OTP.
-
-    code_hash:SHA-256 hash of the generated OTP code.
-
-    purpose: Authentication operation for which the OTP was generated.
-
-    attempts / max_attempts: Track and limit verification attempts.
-
-    is_used: Indicates whether the OTP has already been consumed.
-
-    expires_at: Determines when the OTP becomes invalid.
-
-    Properties:
-    is_expired: Whether the OTP has expired.
-
-    is_max_attempts_reached: Whether the maximum number of attempts has been reached.
-
-    is_valid: Whether the OTP can still be used.
-
-    Methods:
-    make_hash(code): Generates the SHA-256 hash of an OTP code.
-
-    check_code(code): Verifies a plain OTP code against the stored hash.
-
-    consume(): Marks the OTP as used.
-
-    increment_attempts(): Increments the verification attempt counter.
-
-    Database: Stored in the `otp_codes` table and indexed by
-    (`phone`, `purpose`, `is_used`).
-
-    An OTP is usable only when it has not been used, has not expired,
-    and has not reached its maximum verification attempts.
+        - LOGIN: User login.
+        - REGISTER: User registration.
+        - CHANGE_PHONE: Change user's phone number.
+        - FORGOT_PASSWORD: Password recovery.
     """
+
     class Purpose(models.TextChoices):
-        LOGIN = 'login', 'ورود'
-        REGISTER = 'register', 'ثبت نام'
-        CHANGE_PHONE = 'change_phone', 'تغییر شماره'
-        FORGOT_PASSWORD = 'forgot_password', 'فراموشی رمز'
-    
+        LOGIN = "login", "ورود"
+        REGISTER = "register", "ثبت نام"
+        CHANGE_PHONE = "change_phone", "تغییر شماره"
+        FORGOT_PASSWORD = "forgot_password", "فراموشی رمز"
+
     id = models.UUIDField(
         primary_key=True,
-        default=uuid.uuid4, verbose_name='هش کد', editable=False
+        default=uuid.uuid4,
+        editable=False,
     )
 
-    iran_phone_validator = RegexValidator(
-        regex=r'^09\d{9}$',
-        message='شماره موبایل باید با 09 شروع شده و 11 رقم باشد.'
-    )
     phone = models.CharField(
         max_length=11,
-        unique=True,
-        validators=[iran_phone_validator],
-        verbose_name='شماره موبایل'
+        verbose_name="شماره موبایل",
     )
 
     code_hash = models.CharField(
         max_length=128,
-        verbose_name='هش کد'
+        verbose_name="هش کد",
     )
+
     purpose = models.CharField(
         max_length=20,
         choices=Purpose.choices,
-        verbose_name='هدف'
+        verbose_name="هدف",
     )
-    
-    # === limit ====
-    attempts = models.PositiveSmallIntegerField(default=0, verbose_name='تعداد تلاش')
-    max_attempts = models.PositiveSmallIntegerField(default=3)
 
-    # === status ===
-    is_used = models.BooleanField(default=False, verbose_name='استفاده شده')
-    expires_at = models.DateTimeField(verbose_name='زمان انقضا')
-    created_at = models.DateField(auto_now_add=True, verbose_name='زمان ایجاد')
+    # === Limits ===
+
+    attempts = models.PositiveSmallIntegerField(
+        default=0,
+        verbose_name="تعداد تلاش",
+    )
+
+    max_attempts = models.PositiveSmallIntegerField(
+        default=3,
+        verbose_name="حداکثر تلاش",
+    )
+
+    # === Status ===
+
+    is_used = models.BooleanField(
+        default=False,
+        verbose_name="استفاده شده",
+    )
+
+    expires_at = models.DateTimeField(
+        verbose_name="زمان انقضا",
+    )
+
+    created_at = models.DateTimeField(
+        auto_now_add=True,
+        verbose_name="زمان ایجاد",
+    )
 
     class Meta:
-        db_table = 'otp_codes'
-        verbose_name = 'کد OTP'
-        verbose_name_plural = 'کدهای OTP'
-        ordering = ['-created_at']
+        db_table = "otp_codes"
+
+        verbose_name = "کد OTP"
+        verbose_name_plural = "کدهای OTP"
+
+        ordering = ["-created_at"]
+
         indexes = [
-            models.Index(fields=['phone','purpose','is_used'])
+            models.Index(
+                fields=["phone", "purpose", "is_used"]
+            ),
+            models.Index(
+                fields=["phone", "purpose", "created_at"]
+            ),
         ]
-    
+
+        constraints = [
+            models.UniqueConstraint(
+                fields=["phone", "purpose"],
+                condition=Q(is_used=False),
+                name="unique_active_otp_per_phone_purpose",
+            ),
+        ]
+
     def __str__(self):
-        return f"{self.phone} - {self.get_purpose_display()} - {'✓' if self.is_used else 'O'}"
+        status = "used" if self.is_used else "active"
+
+        return (
+            f"{self.phone} - "
+            f"{self.get_purpose_display()} - "
+            f"{status}"
+        )
 
     @staticmethod
     def make_hash(code: str) -> str:
+        """
+        Securely hash an OTP before storing it.
+        """
         return make_password(code)
 
-
     def check_code(self, code: str) -> bool:
-        return check_password(code, self.code_hash)
-    
+        """
+        Compare a plain OTP with its stored hash.
+        """
+        return check_password(
+            str(code),
+            self.code_hash,
+        )
+
     @property
-    def is_expired(self):
+    def is_expired(self) -> bool:
+        """
+        Whether the OTP has expired.
+        """
         return timezone.now() >= self.expires_at
-    
+
     @property
-    def is_max_attempts_reached(self):
+    def is_max_attempts_reached(self) -> bool:
+        """
+        Whether the verification attempt limit has been reached.
+        """
         return self.attempts >= self.max_attempts
-    
+
     @property
-    def is_valid(self):
+    def is_valid(self) -> bool:
+        """
+        Whether the OTP can currently be used.
+        """
         return (
             not self.is_used
             and not self.is_expired
             and not self.is_max_attempts_reached
         )
-    
+
     def consume(self):
-        """Use OTP — Only Once"""
+        """
+        Permanently mark the OTP as used.
+        """
         self.is_used = True
-        self.save(update_fields=['is_used'])
 
-    def increment_attempts(self):
-        self.attempts += 1
-        self.save(update_fields=['attempts'])
-
+        self.save(
+            update_fields=["is_used"]
+        )
+        
 
 
 # ======================
