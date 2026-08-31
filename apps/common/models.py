@@ -33,3 +33,23 @@ class SoftDeleteQuerySet(models.Model):
 
     def deleted(self):
         return self.filter(is_deleted=True)    
+
+    def delete(self):
+        """Soft delete — هرگز از دیتابیس حذف نمی‌شود"""
+        return self.update(is_deleted=True)
+    
+    def hard_delete(self):
+        """فقط ادمین و فقط در موارد خاص"""
+        return super().delete()
+    
+
+    
+class SoftDeleteManager(models.Model):
+    def get_queryset(self):
+        return SoftDeleteQuerySet(self.model, using=self._db).active()
+    
+    def all_with_deleted(self):
+        return SoftDeleteQuerySet(self.model, using=self._db)
+    
+    def deleted_only(self):
+        return SoftDeleteQuerySet(self.model, using=self._db).deleted()    
