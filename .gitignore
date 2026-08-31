@@ -1,2 +1,4 @@
-files(1)/
-files(1).zip
+documents/
+files/
+docs/
+.env
