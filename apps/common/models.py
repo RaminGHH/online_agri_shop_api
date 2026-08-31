@@ -23,7 +23,7 @@ class BaseModel(models.Model):
 
     class Meta:
         abstract = True
-        ordering = ['created_at']
+        ordering = ['-created_at']
 
 
 
@@ -121,3 +121,87 @@ class AuditLog(models.Model):
         EXPORT   = "export",   "خروجی"
         GRANT    = "grant",    "اعطای دسترسی"
         REVOKE   = "revoke",   "لغو دسترسی"
+    id = models.UUIDField(
+        primary_key=True,
+        default=uuid.uuid4,
+        editable=False
+    )
+
+    # === Who ===
+    actor = models.ForeignKey(
+        "accounts.User",
+        on_delete=models.SET_NULL,
+        null=True, blank=True,
+        related_name='audit_logs',
+        verbose_name='انجام دهنده'
+    )
+
+    actor_phone = models.CharField(
+        max_length=11,
+        blank=True
+    )
+
+    # === What to do ===
+    action = models.CharField(
+        max_length=20,
+        choices=Action.choices
+    )
+
+    # === On what ===
+    resource_type = models.CharField(max_length=50) # "User" / "Order" / "Product"
+    resource_id = models.CharField(max_length=36)
+
+    # === Changes ===
+    old_value = models.JSONField(null=True, blank=True)
+    new_value = models.JSONField(null=True, blank=True)
+    description = models.TextField(blank=True)
+
+    # === Request information ===
+    ip_address = models.GenericIPAddressField(null=True, blank=True)
+    user_agent = models.TextField(blank=True)
+    request_id = models.CharField(max_length=36, blank=True)
+
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta: 
+        db_table = 'audit_logs'
+        verbose_name = 'گزارش تغییر'
+        verbose_name_plural = 'گزارش‌های تغییر'
+        ordering = ['-created_at']
+        indexes = [
+            models.Index(fields=['actor', 'created_at']),
+            models.Index(fields=['resource_type', 'resource_id']),
+            models.Index(fields=['action', 'created_at']),
+
+        ]
+    
+    def __str__(self):
+        return f'{self.actor_phone} - {self.action} - {self.resource_type}:{self.resource_id}'
+    
+    @classmethod
+    def log(cls, actor, action, resource, old=None, new=None, description='', request=None):
+        """
+        helper for easier logging:
+
+        AuditLog.log(
+            actor=request.user,
+            action=AuditLog.Action.UPDATE,
+            resource=order,
+            old={"status": "pending"},
+            new={"status": "processing"},
+            request=request,
+        )
+        """
+        cls.objects.create(
+            actor=actor,
+            actor_phone=actor.phone if actor else '',
+            action=action,
+            resource_type=type(resource).__name__,
+            resource_id=str(resource.pk),
+            old_value=old,
+            new_value=new,
+            description=description,
+            ip_address=request.META.get("REMOTE_ADDR") if request else None,
+            user_agent=request.META.get("HTTP_USER_AGENT", "") if request else "",
+            request_id=request.META.get("HTTP_X_REQUEST_ID", "") if request else "",
+        )
