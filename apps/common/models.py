@@ -19,4 +19,17 @@ class BaseModel(models.Model):
     )
 
     created_at = models.DateTimeField(auto_now_add=True, verbose_name='تاریخ ایجاد')
-    updated_At = models.DateTimeField(auto_now=True, verbose_name='آخرین ویرایش')
+    updated_at = models.DateTimeField(auto_now=True, verbose_name='آخرین ویرایش')
+
+    class Meta:
+        abstract = True
+        ordering = ['created_at']
+
+
+
+class SoftDeleteQuerySet(models.Model):
+    def active(self):
+        return self.filter(is_deleted=False)
+
+    def deleted(self):
+        return self.filter(is_deleted=True)    
