@@ -28,7 +28,8 @@ DJANGO_APPS = [
 
 # Local apps
 LOCAL_APPS = [
-    # "api",
+    "apps.accounts.apps.AccountsConfig",
+    "apps.catalog.apps.CatalogConfig",
 ]
 
 # Third party apps
@@ -178,6 +179,3 @@ SIMPLE_JWT = {
 
     "AUTH_HEADER_TYPES": ("Bearer",),
 }
-
-
-# --------------------- cors allowed headers--------------------- #
